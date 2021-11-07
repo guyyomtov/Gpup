@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class Menu {
 // nadav was here
     // private File f =  new File(); // needes to be a file? alon
+    // hey jjjn
     private UiDataManager dM = new UiDataManager();
     private Boolean isThereGraph = false;
 

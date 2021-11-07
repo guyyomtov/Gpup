@@ -15,6 +15,8 @@ public class Menu {
         System.out.println("whwhwhw");
     }
 
+    public void foo(){}
+
     // TO CHECK
     public void start(){
 

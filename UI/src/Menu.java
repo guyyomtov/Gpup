@@ -11,6 +11,8 @@ public class Menu {
     private UiDataManager dM = new UiDataManager();
     private Boolean isThereGraph = false;
 
+    public void foo(){}
+
     // TO CHECK
     public void start(){
 

@@ -10,12 +10,6 @@ public class Menu {
     // hey jjjn
     private UiDataManager dM = new UiDataManager();
     private Boolean isThereGraph = false;
-    public void whowhaaa()
-    {
-        System.out.println("whwhwhw");
-    }
-
-    public void foo(){}
 
     // TO CHECK
     public void start(){

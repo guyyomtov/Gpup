@@ -1,4 +1,4 @@
-package dataManager;
+package DataManager;
 
 import errors.ErrorUtils;
 

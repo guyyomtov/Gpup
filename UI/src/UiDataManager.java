@@ -1,13 +1,13 @@
-package dataManager;
-import E.Engine;
+
 import errors.ErrorUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import DataManager.*;
 
 public class UiDataManager implements DataManager {
 
-    private Engine engine;
+    private BackDataManager bDM;
 
 
 
@@ -15,23 +15,21 @@ public class UiDataManager implements DataManager {
     } // default ctor
 
     public UiDataManager(File f) throws ErrorUtils {
-        if (this.checkFile(f)) {
-            this.setUpEngine(f);
+        if (this.bDM.checkFile(f)) {
+           // this.setUpEngine(f);
         }
     else{
             throw new ErrorUtils(ErrorUtils.invalidFile());
         }
 
     }
-
-    public boolean checkFile(File f) {
-
-        return false;
+    public boolean checkFile(File f)
+    {
+       return bDM.checkFile(f);
     }
-
-    public void setUpEngine(File f) {
-
-        this.engine = new Engine(f); // ctor of Engine with file
+    public void setUpGraph(File f) throws ErrorUtils
+    {
+        bDM.setUpGraph(f);
     }
 
     public List<Integer> getInfoFromGraph() {
@@ -46,38 +44,33 @@ public class UiDataManager implements DataManager {
 
     @Override
     public int getNumOfIndependents() {
-        // return this.engine.getNumOfIndependents();
-        return 0;
+        return this.bDM.getNumOfIndependents();
     }
 
     @Override
     public int getNumOfRoots() {
-        //return this.engine.getNumOfRoots();
-        return 0;
+        return this.bDM.getNumOfRoots();
     }
 
     @Override
     public int getNumOfMiddle() {
-        //return this.engine.getNumOfMiddle();
-        return 0;
+        return this.bDM.getNumOfMiddle();
     }
 
     @Override
     public int getNumOfLeafs() {
-        //return this.engine.getNumOfLeafs();
-        return 0;
+        return this.bDM.getNumOfLeafs();
     }
 
     @Override
     public int getNumOfTargets() {
-        //return this.engine.getNumOfTargets();
-        return 0;
+        return this.bDM.getNumOfTargets();
     }
 
     @Override
     public List<String> getInfoFromTarget(String nameOfTarget) throws ErrorUtils {
-        if (this.engine.findTarget(nameOfTarget)) // to do findTarget
-            return this.engine.getInfoFromTarget(nameOfTargets);
+        if (this.bDM.findTarget(nameOfTarget)) // to do findTarget
+            return this.bDM.getInfoFromTarget(nameOfTarget);
         else {
             throw new ErrorUtils(ErrorUtils.invalidFile());// the target doesn't exist.
         }
@@ -87,14 +80,14 @@ public class UiDataManager implements DataManager {
     @Override
     public List<String> getPathFromTargets(String src, String dest, String connection) throws ErrorUtils {
 
-        if (this.engine.findTarget(src) && this.engine.findTarget(dest)) {
-            return this.engine.getPathFromTargets(src, dest, connection);
+        if (this.bDM.findTarget(src) && this.bDM.findTarget(dest)) {
+            return this.bDM.getPathFromTargets(src, dest, connection);
         }
-        else if (this.engine.findTarget(src)) {
+        else if (this.bDM.findTarget(src)) {
             throw new ErrorUtils(ErrorUtils.invalidTarget() + "/n The Target " + dest + " doesn't exist" );
         }
-         else if (this.engine.findTarget(dest)) {
-            throw new ErrorUtils(ErrorUtils.invalidTarget() + "The Target " + src + " doesn't exist")
+         else if (this.bDM.findTarget(dest)) {
+            throw new ErrorUtils(ErrorUtils.invalidTarget() + "The Target " + src + " doesn't exist");
         }
          else {
             throw new ErrorUtils(ErrorUtils.invalidTarget() +"The Targets " + src + dest + " doesn't exist");
@@ -104,7 +97,7 @@ public class UiDataManager implements DataManager {
     public void swapFiles(File newFile) throws ErrorUtils {
 
         if (this.checkFile(newFile))
-            this.engine = new Engine(newFile);
+            this.bDM = new BackDataManager(newFile);
         else {
             throw new ErrorUtils(ErrorUtils.invalidFile());
         }

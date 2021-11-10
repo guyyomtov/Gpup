@@ -1,6 +1,5 @@
 // This class is responsible to print & interact with the ui
 
-import dataManager.UiDataManager;
 import errors.ErrorUtils;
 
 import java.io.File;
@@ -71,17 +70,19 @@ public class Menu {
 
     // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
-        // File f = new File();
-        // ask for file
-        // get file from user
-        try {
-            this.dM = new UiDataManager(f);
+        // to get file
+        File f = new File();
+        if(this.dM.checkFile(f)) // only check the file syntax
+        {
+            try{
+                this.dM.setUpGraph(f);
+            }catch(ErrorUtils e)
+            {
+                e.getMessage();
+            }
 
-            this.isThereGraph = true;
         }
-        catch(ErrorUtils e){            // invalid file
-            System.out.println(e.getMessage());
-        }
+
     }
 
     private void graphHandler(){

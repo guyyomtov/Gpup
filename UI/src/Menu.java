@@ -1,5 +1,8 @@
 // This class is responsible to print & interact with the ui
 
+import dataManager.UiDataManager;
+import errors.ErrorUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +80,7 @@ public class Menu {
             this.isThereGraph = true;
         }
         catch(ErrorUtils e){            // invalid file
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 

@@ -1,3 +1,7 @@
+package dataManager;
+
+import errors.ErrorUtils;
+
 import java.util.List;
 
 public interface DataManager {
@@ -19,6 +23,6 @@ public interface DataManager {
     [3] = list of requires for targets.
     [4] = general information.
     */
-    public List<String> getPathFromTargets(String src, String dest, String connection); // connection meaning depends on required for
+    public List<String> getPathFromTargets(String src, String dest, String connection) throws ErrorUtils; // connection meaning depends on required for
 
 }

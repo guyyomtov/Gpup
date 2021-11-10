@@ -1,8 +1,6 @@
+package dataManager;
 import E.Engine;
-import Graph.Graph;
-import Graph.Targets;
-
-import java.beans.Expression;
+import errors.ErrorUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,50 +86,36 @@ public class UiDataManager implements DataManager {
 
     //to do find target
     @Override
-    public List<String> getPathFromTargets(String src, String dest, String connection) {
+    public List<String> getPathFromTargets(String src, String dest, String connection) throws ErrorUtils {
 
-        if (this.engine.findTarget(src) && this.engine.findTarget(dest)) // only if find both of the Targets
-        {
+        if (this.engine.findTarget(src) && this.engine.findTarget(dest)) {
             return this.engine.getPathFromTargets(src, dest, connection);
-        } else if (this.engine.findTarget(src)) {
-            throw (new ErrorUtils())
-            {
-                e.invalidTarget("The Target " + dest + " doesn't exist");
-            }
-
-        } else if (this.engine.findTarget(dest)) {
-            throw (ErrorUtils e)
-            {
-                e.invalidTarget("The Target " + src + " doesn't exist");
-            }
-        } else {
-            throw (ErrorUtils e)
-            {
-                e.invalidTarget("The Targets " + src + dest + " doesn't exist");
-
-            }
+        }
+        else if (this.engine.findTarget(src)) {
+            throw new ErrorUtils(ErrorUtils.invalidTarget() + "/n The Target " + dest + " doesn't exist" );
+        }
+         else if (this.engine.findTarget(dest)) {
+            throw new ErrorUtils(ErrorUtils.invalidTarget() + "The Target " + src + " doesn't exist")
+        }
+         else {
+            throw new ErrorUtils(ErrorUtils.invalidTarget() +"The Targets " + src + dest + " doesn't exist");
         }
     }
 
-    public void swapFiles(File newFile) {
+    public void swapFiles(File newFile) throws ErrorUtils {
 
         if (this.checkFile(newFile))
             this.engine = new Engine(newFile);
         else {
-            throw new ErrorUtils()  /*(ErrorUtils e){
-                e.invalidFile();
-            }*/
+            throw new ErrorUtils(ErrorUtils.invalidFile());
         }
     }
 //to check with aviad.
-    public void setUpTask(String taskName) {
+    public void setUpTask(String taskName) throws ErrorUtils {
         if (checkValidTask(taskName))
             this.startProcess(taskName);
         else {
-            throw (ErrorUtils e){
-                e.invalidTask();
-            }
-
+            throw new ErrorUtils(ErrorUtils.invalidTask());
         }
 
     }

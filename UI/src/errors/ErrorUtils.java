@@ -1,3 +1,5 @@
+package errors;
+
 public class ErrorUtils extends Exception {
     private String ms;
     public ErrorUtils(String s)
@@ -22,4 +24,6 @@ public class ErrorUtils extends Exception {
 
     public static String invalidTask(){ return "The task given was invalid, please try again."; }
 
+    @Override
+    public String getMessage() { return this.ms; }
 }

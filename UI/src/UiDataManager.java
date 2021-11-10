@@ -46,7 +46,6 @@ public class UiDataManager implements DataManager {
         return infoList;
     }
 
-
     @Override
     public int getNumOfIndependents() {
         // return this.engine.getNumOfIndependents();

@@ -1,13 +1,14 @@
 // This class is responsible to print & interact with the ui
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
-// nadav was here
-    // private File f =  new File(); // needes to be a file? alon
-    // hey jjjn
+
+    // private File f =  new File(); // needes to be a file?
+
     private UiDataManager dM = new UiDataManager();
     private Boolean isThereGraph = false;
 
@@ -67,13 +68,9 @@ public class Menu {
 
     // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
-
-        File f = new File();
-
+        // File f = new File();
         // ask for file
-
         // get file from user
-
         try {
             this.dM = new UiDataManager(f);
 
@@ -135,25 +132,20 @@ public class Menu {
                     switch(i){
                         case 1:
                             System.out.println("Info of the wanted target: ");
-                            System.out.println("Name: "+ tarInfo.get(i));
-                            break;
+                            System.out.println("Name: "+ tarInfo.get(i)); break;
                         case 2:
-                            System.out.println("Target Role in the graph: " + tarInfo.get(i));
-                            break;
+                            System.out.println("Target Role in the graph: " + tarInfo.get(i)); break;
                         case 3:
-                            System.out.println("Names of targets which depend on him: "+ tarInfo.get(i));
-                            break;
+                            System.out.println("Names of targets which depend on him: "+ tarInfo.get(i)); break;
                         case 4:
-                            System.out.println("Names of targets which he depends on: "+ tarInfo.get(i));
-                            break;
+                            System.out.println("Names of targets which he depends on: "+ tarInfo.get(i)); break;
                         case 5:
-                            System.out.println("General information about him: "+ tarInfo.get(i));
-                            break;
+                            System.out.println("General information about him: "+ tarInfo.get(i)); break;
                     }
                 }
             }
             catch (ErrorUtils e){
-                System.out.println(e);
+                System.out.println(e.getMessage());
             }
         }
         else
@@ -175,35 +167,37 @@ public class Menu {
         Scanner sc= new Scanner(System.in); //System.in is a standard input stream
         String[] words;
         String pathName = null, src = null, dest = null, connection = null;                     // start to null? empty?
+        List<String> tPath = new ArrayList<>();
 
         if(this.isThereGraph){
 
             // need to get from the user src, dest & connection
             System.out.println("Let's try to find the targets path you want!");
             System.out.println("PLease enter path in the following format: <target source>  <target destination>  <wanted relationship>");
+            System.out.println("After that, press enter.");
 
             pathName = sc.nextLine();
-            try{
 
-                words = pathName.split(" ");
+            words = pathName.split(" ");
 
-                // check the input is in the format way
+            // check the input is in the format way
 
-                //if so
-                if(pathName != null && src != null && dest != null && connection != null)
-                    List<String> tPath = this.dM.getPathFromTargets();
-                else
-                    System.out.println(ErrorUtils.invalidInput("Incorrcet format"));
+
+            if(pathName != null && src != null && dest != null && connection != null) {
+
+                try {
+                    tPath = this.dM.getPathFromTargets(src, dest, connection);
+                }
+                catch (ErrorUtils e) {
+                    System.out.println(e.getMessage());
+                }
             }
-            catch(ErrorUtils e){
-                System.out.println(e);
-            }
+            else
+                System.out.println(ErrorUtils.invalidInput("Incorrcet format"));
         }
         else
             System.out.println(ErrorUtils.noGraph());
     }
 
-    private void exitProgram(){
-
-    }
+    private void exitProgram(){ System.exit(0);}
 }

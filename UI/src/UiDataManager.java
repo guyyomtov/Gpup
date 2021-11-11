@@ -2,113 +2,118 @@
 import errors.ErrorUtils;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import DataManager.*;
 
 public class UiDataManager implements DataManager {
 
-    private BackDataManager bDM;
+    // private BackDataManager bDM;
 
 
 
-    public UiDataManager() {
-    } // default ctor
+    public UiDataManager() {} // default ctor
 
     public UiDataManager(File f) throws ErrorUtils {
-        if (this.bDM.checkFile(f)) {
-           // this.setUpEngine(f);
-        }
-    else{
-            throw new ErrorUtils(ErrorUtils.invalidFile());
-        }
+//        if (this.bDM.checkFile(f)) {
+//           // this.setUpEngine(f);
+//        }
+//    else{
+//            throw new ErrorUtils(ErrorUtils.invalidFile());
+//        }
 
     }
     public boolean checkFile(File f)
     {
-       return bDM.checkFile(f);
+ //      return bDM.checkFile(f);
+        return false;
     }
     public void setUpGraph(File f) throws ErrorUtils
     {
-        bDM.setUpGraph(f);
+   //     bDM.setUpGraph(f);
     }
 
     public List<Integer> getInfoFromGraph() {
         List<Integer> infoList = new ArrayList<>();
-        infoList.add(this.getNumOfTargets());
-        infoList.add(this.getNumOfLeafs());
-        infoList.add(this.getNumOfMiddle());
-        infoList.add(this.getNumOfRoots());
-        infoList.add(this.getNumOfIndependents());
+//        infoList.add(this.getNumOfTargets());
+//        infoList.add(this.getNumOfLeafs());
+//        infoList.add(this.getNumOfMiddle());
+//        infoList.add(this.getNumOfRoots());
+//        infoList.add(this.getNumOfIndependents());
         return infoList;
     }
 
     @Override
     public int getNumOfIndependents() {
-        return this.bDM.getNumOfIndependents();
+        return 3; //this.bDM.getNumOfIndependents();
     }
 
     @Override
     public int getNumOfRoots() {
-        return this.bDM.getNumOfRoots();
+        return 2; //this.bDM.getNumOfRoots();
     }
 
     @Override
     public int getNumOfMiddle() {
-        return this.bDM.getNumOfMiddle();
+        return 4;// this.bDM.getNumOfMiddle();
     }
 
     @Override
     public int getNumOfLeafs() {
-        return this.bDM.getNumOfLeafs();
+        return 5; // this.bDM.getNumOfLeafs();
     }
 
     @Override
     public int getNumOfTargets() {
-        return this.bDM.getNumOfTargets();
+        return 10; //this.bDM.getNumOfTargets();
     }
 
     @Override
     public List<String> getInfoFromTarget(String nameOfTarget) throws ErrorUtils {
-        if (this.bDM.findTarget(nameOfTarget)) // to do findTarget
-            return this.bDM.getInfoFromTarget(nameOfTarget);
-        else {
-            throw new ErrorUtils(ErrorUtils.invalidFile());// the target doesn't exist.
-        }
+//        if (this.bDM.findTarget(nameOfTarget)) // to do findTarget
+//            return this.bDM.getInfoFromTarget(nameOfTarget);
+//        else {
+//            throw new ErrorUtils(ErrorUtils.invalidFile());// the target doesn't exist.
+//        }
+        List<String> res = Arrays.asList("Nadav", "Guy");
+        return res;
     }
 
     //to do find target
     @Override
     public List<String> getPathFromTargets(String src, String dest, String connection) throws ErrorUtils {
-
-        if (this.bDM.findTarget(src) && this.bDM.findTarget(dest)) {
-            return this.bDM.getPathFromTargets(src, dest, connection);
-        }
-        else if (this.bDM.findTarget(src)) {
-            throw new ErrorUtils(ErrorUtils.invalidTarget() + "/n The Target " + dest + " doesn't exist" );
-        }
-         else if (this.bDM.findTarget(dest)) {
-            throw new ErrorUtils(ErrorUtils.invalidTarget() + "The Target " + src + " doesn't exist");
-        }
-         else {
-            throw new ErrorUtils(ErrorUtils.invalidTarget() +"The Targets " + src + dest + " doesn't exist");
-        }
+//
+//        if (this.bDM.findTarget(src) && this.bDM.findTarget(dest)) {
+//            return this.bDM.getPathFromTargets(src, dest, connection);
+//        }
+//        else if (this.bDM.findTarget(src)) {
+//            throw new ErrorUtils(ErrorUtils.invalidTarget() + "/n The Target " + dest + " doesn't exist" );
+//        }
+//         else if (this.bDM.findTarget(dest)) {
+//            throw new ErrorUtils(ErrorUtils.invalidTarget() + "The Target " + src + " doesn't exist");
+//        }
+//         else {
+//            throw new ErrorUtils(ErrorUtils.invalidTarget() +"The Targets " + src + dest + " doesn't exist");
+//        }
+        List<String> res = Arrays.asList("A", "V");
+        return res;
     }
 
     public void swapFiles(File newFile) throws ErrorUtils {
-
-        if (this.checkFile(newFile))
-            this.bDM = new BackDataManager(newFile);
-        else {
-            throw new ErrorUtils(ErrorUtils.invalidFile());
-        }
+//
+//        if (this.checkFile(newFile))
+//            this.bDM = new BackDataManager(newFile);
+//        else {
+//            throw new ErrorUtils(ErrorUtils.invalidFile());
+//        }
     }
 //to check with aviad.
     public void setUpTask(String taskName) throws ErrorUtils {
-        if (checkValidTask(taskName))
-            this.startProcess(taskName);
-        else {
-            throw new ErrorUtils(ErrorUtils.invalidTask());
-        }
+//        if (checkValidTask(taskName))
+//            this.startProcess(taskName);
+//        else {
+//            throw new ErrorUtils(ErrorUtils.invalidTask());
+//        }
 
     }
 

@@ -8,7 +8,7 @@ public class ErrorUtils extends Exception {
        // super(s);
     }
 
-    public static String noGraph(){ return "No graph doesn't exist yet in the system, please upload one.";}
+    public static String noGraph(){ return "No graph exists yet in the system, please upload one.";}
 
     public static String invalidInput(){ return "The input given is invalid."; }
 

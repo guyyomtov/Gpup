@@ -8,50 +8,47 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
-    // nadav
-    // private File f =  new File(); // needes to be a file?
 
     private UiDataManager dM = new UiDataManager();
     private Boolean isThereGraph = false;
 
-    // TO CHECK
     public void start(){
 
-        Integer userInput;
+        char userInput;
         Scanner sc = new Scanner(System.in);
 
         System.out.println("\n" + this.welcomeMessage() + "\n");
         this.printMenu();
 
-        userInput = sc.nextInt();
+        userInput = sc.next().charAt(0);
 
-        while(userInput != 6){      // In menu until presses 6 == exit
+        while(userInput != '6'){      // In menu until presses 6 == exit
 
             switch(userInput) {
 
-                case 1:
+                case '1':
                     this.fileHandler();
                     break;
-                case 2:
+                case '2':
                     this.graphHandler();
                     break;
-                case 3:
+                case '3':
                     this.targetHandler();
                     break;
-                case 4:
+                case '4':
                     this.pathHandler();
                     break;
-                case 5:
+                case '5':
                     this.processHandler();
                     break;
-                case 6:
+                case '6':
                     this.exitProgram();
                     break;
-                default: // Invalid inpt, not number\number isn't good
-                    ErrorUtils.invalidInput("Please enter a number from 1-6.");
+                default: // Invalid input, not number\number isn't good
+                    System.out.println("\r\n" + ErrorUtils.invalidInput("Please enter a number from 1-6.")+ "\r\n");
             }
             this.printMenu();
-            userInput = sc.nextInt();
+            userInput = sc.next().charAt(0);
         }
     }
 
@@ -71,18 +68,19 @@ public class Menu {
     // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
         // to get file
-        File f = new File();
-        if(this.dM.checkFile(f)) // only check the file syntax
-        {
-            try{
-                this.dM.setUpGraph(f);
-            }catch(ErrorUtils e)
-            {
-                e.getMessage();
-            }
+       // File f = new File();
 
-        }
-
+//        if(this.dM.checkFile(f)) // only check the file syntax
+//        {
+//            try{
+//                this.dM.setUpGraph(f);
+//            }catch(ErrorUtils e)
+//            {
+//                e.getMessage();
+//            }
+//
+//        }
+        this.isThereGraph = true;
     }
 
     private void graphHandler(){
@@ -115,7 +113,7 @@ public class Menu {
             }
         }
         else
-            System.out.println(ErrorUtils.noGraph());
+            System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
     }
 
     private void targetHandler(){
@@ -153,7 +151,7 @@ public class Menu {
             }
         }
         else
-            System.out.println(ErrorUtils.noGraph());
+            System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
     }
 
     // TO DO
@@ -163,7 +161,7 @@ public class Menu {
 
         }
         else
-            System.out.println(ErrorUtils.noGraph());
+            System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
     }
 
     private void pathHandler(){
@@ -200,7 +198,7 @@ public class Menu {
                 System.out.println(ErrorUtils.invalidInput("Incorrcet format"));
         }
         else
-            System.out.println(ErrorUtils.noGraph());
+            System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
     }
 
     private void exitProgram(){ System.exit(0);}

@@ -1,8 +1,15 @@
 // This class is responsible to print & interact with the ui
 
 import errors.ErrorUtils;
+import fileHandler.GPUPDescriptor;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -67,20 +74,24 @@ public class Menu {
 
     // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
-        // to get file
-       // File f = new File();
 
-//        if(this.dM.checkFile(f)) // only check the file syntax
-//        {
-//            try{
-//                this.dM.setUpGraph(f);
-//            }catch(ErrorUtils e)
-//            {
-//                e.getMessage();
-//            }
-//
-//        }
+        String pathName;
+       //System.out.println("Please write the path of the file: (example:src/resources/ex1-big.xml)");
+       {
+       if(this.dM.checkFile()) // only check the file syntax
+           try{
+                this.dM.setUpGraph(f);
+           }catch(ErrorUtils e)         {
+                e.getMessage();
+            }
+
+        }
         this.isThereGraph = true;
+    }
+    private static GPUPDescriptor deserializeFrom(InputStream in) throws JAXBException {
+        JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
+        Unmarshaller u = jc.createUnmarshaller();
+        return (GPUPDescriptor) u.unmarshal(in);
     }
 
     private void graphHandler(){

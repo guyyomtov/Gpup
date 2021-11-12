@@ -1,9 +1,9 @@
 package Graph;
 
-public class Targets {
+public class Target {
     protected String name;
     protected Integer countOfDependency;
-    public Targets(String name)
+    public Target(String name)
     {
         this.name = name;
         this.countOfDependency =0;

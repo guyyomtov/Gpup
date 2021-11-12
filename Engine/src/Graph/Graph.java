@@ -25,8 +25,15 @@ public class Graph {
         targets = new HashSet<Target>(size);
         for(int i = 0;i<size;i++)
         {
+            Target tmpTarget = setUpTarget(information, i);
 
         }
+    }
+    public Target setUpTarget(GPUPDescriptor information, int index)
+    {
+        GPUPTarget tmp = information.getGPUPTargets().getGPUPTarget().get(index);
+        String name = tmp.getName();
+        if(tmp.getGPUPTargetDependencies().getGPUGDependency())
     }
 
     public Set<Targets> getAllTargets(){ return this.targets; }

@@ -1,4 +1,3 @@
-
 import errors.ErrorUtils;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +15,7 @@ import javax.xml.bind.JAXBException;
 
 public class UiDataManager implements DataManager {
 
-     private BackDataManager bDM;
+    private BackDataManager bDM;
 
 
 
@@ -41,7 +40,7 @@ public class UiDataManager implements DataManager {
     }
     public void setUpGraph(File f) throws ErrorUtils
     {
-   //     bDM.setUpGraph(f);
+        //     bDM.setUpGraph(f);
     }
 
     public List<Integer> getInfoFromGraph() {
@@ -118,7 +117,7 @@ public class UiDataManager implements DataManager {
 //            throw new ErrorUtils(ErrorUtils.invalidFile());
 //        }
     }
-//to check with aviad.
+    //to check with aviad.
     public void setUpTask(String taskName) throws ErrorUtils {
 //        if (checkValidTask(taskName))
 //            this.startProcess(taskName);

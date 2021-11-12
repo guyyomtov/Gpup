@@ -12,6 +12,8 @@ public class Graph {
     {
 
     }
+
+    public Set<Targets> getAllTargets(){ return this.targets; }
  /*   public Graph(Collection<Targets> info)
     {
         this.targets = new HashSet<Targets>(20);

@@ -1,6 +1,6 @@
 package Graph;
 
-public class Independent extends Targets{
+public class Independent extends Target {
     public Independent(String name)
     {
         super(name);

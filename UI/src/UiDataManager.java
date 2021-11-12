@@ -1,14 +1,22 @@
 
 import errors.ErrorUtils;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
+
 import DataManager.*;
+import fileHandler.GPUPDescriptor;
+
+import javax.xml.bind.JAXBException;
 
 public class UiDataManager implements DataManager {
 
-    // private BackDataManager bDM;
+     private BackDataManager bDM;
 
 
 
@@ -23,10 +31,13 @@ public class UiDataManager implements DataManager {
 //        }
 
     }
-    public boolean checkFile(File f)
+    public boolean checkFile()
     {
- //      return bDM.checkFile(f);
-        return false;
+        boolean result = false;
+        try{
+            result = bDM.checkFile();
+        }catch(ErrorUtils e){e.getMessage();}
+        return result;
     }
     public void setUpGraph(File f) throws ErrorUtils
     {

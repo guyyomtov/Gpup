@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Leaf extends Target {
+
     private List<Target> requiredFor;
     public Leaf(String name)
     {
@@ -12,5 +13,7 @@ public class Leaf extends Target {
     public void setRequiredFor(List<Target> requiredFor) {
         this.requiredFor = requiredFor;
     }
-
+    public List<Target> getRequired() {
+        return requiredFor;
+    }
 }

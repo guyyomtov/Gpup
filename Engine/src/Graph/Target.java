@@ -7,7 +7,10 @@ import java.util.Objects;
 
 public class Target {
     private String name;
+
     private Integer countOfDependency;
+
+    private String generalInfo = "";
     public Target(String name)
     {
         this.name = name;
@@ -32,6 +35,17 @@ public class Target {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    public String getGeneralInfo() {
+        return generalInfo;
+    }
+    public Integer getCountOfDependency() {
+        return countOfDependency;
+    }
+
+    public void setCountOfDependency(Integer countOfDependency) {
+        this.countOfDependency = countOfDependency;
     }
 
 }

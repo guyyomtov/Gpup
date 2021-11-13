@@ -74,34 +74,22 @@ public class Menu {
 
     // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
-//
-//        String pathName;
-//       //System.out.println("Please write the path of the file: (example:src/resources/ex1-big.xml)");
-//       {
-//       if(this.dM.checkFile()) // only check the file syntax
-//           try{
-//                this.dM.setUpGraph(f);
 
-        this.isThereGraph = true;
+       //System.out.println("Please write the path of the file: (example:src/resources/ex1-big.xml)");
+        System.out.println("Please write the name of the file: (example: ex1-big.xml)");
+        Scanner scan = new Scanner(System.in);
+        String fileName = scan.nextLine();
+        try {
+            if (this.dM.checkFile(fileName)) // only check the file syntax
+                this.isThereGraph = true;
 
-        this.dM.checkFile();
+            System.out.println("Graph given was uploaded successfully :)");
+            System.out.println("You may start asking for data from the graph.\r\n ");
 
-        System.out.println("Graph given was uploaded successfully :)");
-        System.out.println("You may start asking for data from the graph.\r\n ");
-//           }catch(ErrorUtils e)         {
-//                e.getMessage();
-//            }
-//
-//        }
-
+        }catch (ErrorUtils e){
+            System.out.println(e.getMessage());}
 
     }
-//    private static GPUPDescriptor deserializeFrom(InputStream in) throws JAXBException {
-//        JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
-//        Unmarshaller u = jc.createUnmarshaller();
-//        return (GPUPDescriptor) u.unmarshal(in);
-//    }
-
     private void graphHandler(){
 
         if(this.isThereGraph) {

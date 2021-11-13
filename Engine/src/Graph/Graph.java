@@ -5,42 +5,36 @@ import fileHandler.*;
 import java.util.*;
 
 public class Graph {
-    private List<Target> targets;
+    private List<Target> targets = new ArrayList<Target>();
+    public boolean isGood = true;
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
 
-    public boolean buildMe(GPUPDescriptor information ) throws ErrorUtils {
+    public void buildMe(GPUPDescriptor information ) throws ErrorUtils {
         try{
             intilizeTargetsAndCheckDuplication(information);
         }catch(ErrorUtils e){throw e;}
 
-        return false;
     }
 
     public void intilizeTargetsAndCheckDuplication(GPUPDescriptor information) throws ErrorUtils {
         int size = information.getGPUPTargets().getGPUPTarget().size();
-        targets = new ArrayList<Target>(size);
+        this.targets = new ArrayList<Target>(size);
         for(int i = 0;i<size;i++)
         {
-            Target tmpTarget = setUpTarget(information, i);
-
+            Target tmpTarget = this.setUpTarget(information, i);
            if(targetExist(tmpTarget.getName()))
                 throw new ErrorUtils(ErrorUtils.invalidFile()); // to send more messege
-
-            targets.add(tmpTarget);
+            this.targets.add(tmpTarget);
         }
-        initializeMap();
-     //   try{
-            getFromFileDependencies(information.getGPUPTargets().getGPUPTarget());
-
-       // }catch(ErrorUtils e){throw e;}
+        this.initializeMap();
+        this.getFromFileDependencies(information.getGPUPTargets().getGPUPTarget());
     }
     public void initializeMap()
     {
         for(Target currT: this.targets)
-        {
             this.mNameToTarget.put(currT.getName(), currT);
-        }
+
     }
 
     public Target setUpTarget(GPUPDescriptor information, int index)
@@ -48,21 +42,20 @@ public class Graph {
         GPUPTarget currTarget = information.getGPUPTargets().getGPUPTarget().get(index); // get name
         String name = currTarget.getName();
 
-        if(currTarget.getGPUPTargetDependencies().getGPUGDependency().isEmpty())
+        if(currTarget.getGPUPTargetDependencies() == null) // the target is independent
             return new Independent(name);
         else {
             int size = currTarget.getGPUPTargetDependencies().getGPUGDependency().size();
-            Boolean middle = false, root = false;
-
+            Boolean middle = false, root = false, leaf = false;
             for(int i = 0;i<size;i++)
             {
-                if(currTarget.getGPUPTargetDependencies().getGPUGDependency().get(i).getType().compareTo("dependsOn") == 0)
+                GPUPTargetDependencies.GPUGDependency gpupDependency = currTarget.getGPUPTargetDependencies().getGPUGDependency().get(i);
+                if(gpupDependency.getType().compareTo("dependsOn") == 0 )
                     root = true;
-                else if(currTarget.getGPUPTargetDependencies().getGPUGDependency().get(i).getType().compareTo("requiredFor") == 0 && root)
-                    middle = true;
+                else if(gpupDependency.getType().compareTo("requiredFor") == 0 )
+                    leaf = true;
             }
-
-            if(middle)
+            if(root&&leaf)
                 return new Middle(name);
             else if(root)
                 return new Root(name);
@@ -89,16 +82,20 @@ public class Graph {
     }
 
     public void setDepenciesList(GPUPTargetDependencies gpupTargetDependencies, Target currTarget) {
-        int size = gpupTargetDependencies.getGPUGDependency().size();
         List<Target> depensOnList = new ArrayList<Target>();
         List<Target> requiredFor = new ArrayList<Target>();
+        if(gpupTargetDependencies == null) // its independent target
+            return;
+        List<GPUPTargetDependencies.GPUGDependency> lstOfGpupDependncies = gpupTargetDependencies.getGPUGDependency();
+        int size = lstOfGpupDependncies.size();
+
         for(int i = 0;i<size;i++)
         {
-
-            if(gpupTargetDependencies.getGPUGDependency().get(i).getType().compareTo("dependsOn") == 0)
-                depensOnList.add(this.mNameToTarget.get(gpupTargetDependencies.getGPUGDependency().get(i).getValue()));
+            GPUPTargetDependencies.GPUGDependency gpupDependency = lstOfGpupDependncies.get(i);
+            if(gpupDependency.getType().compareTo("dependsOn") == 0)
+                depensOnList.add(this.mNameToTarget.get(gpupDependency.getValue()));
             else
-                requiredFor.add(this.mNameToTarget.get(gpupTargetDependencies.getGPUGDependency().get(i).getValue()));
+                requiredFor.add(this.mNameToTarget.get(gpupDependency.getValue()));
         }
         if(!depensOnList.isEmpty() && !requiredFor.isEmpty())
         {
@@ -107,20 +104,19 @@ public class Graph {
                 ((Middle) currTarget).setRequiredFor(requiredFor);
             }
         }
-
         else if(!depensOnList.isEmpty())
         {
             if(currTarget.getClass().getSimpleName().compareTo("Root") == 0)
-            {
                 ((Root) currTarget).setDependsOn(depensOnList);
-            }
         }
         else if(!requiredFor.isEmpty())
-        {
             ((Leaf) currTarget).setRequiredFor(requiredFor);
-        }
 
     }
+
+    public Target getThisTarget(String nameOfTarget) {return this.mNameToTarget.get(nameOfTarget);}
+
+    public List<Target> getAllTargets() {return this.targets;}
 
 
 //    public Set<Targets> getAllTargets(){ return this.targets; }

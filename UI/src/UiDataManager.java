@@ -15,7 +15,7 @@ import javax.xml.bind.JAXBException;
 
 public class UiDataManager implements DataManager {
 
-    private BackDataManager bDM;
+    private BackDataManager bDM = new BackDataManager();
 
 
 
@@ -44,38 +44,40 @@ public class UiDataManager implements DataManager {
     }
 
     public List<Integer> getInfoFromGraph() {
+
         List<Integer> infoList = new ArrayList<>();
-//        infoList.add(this.getNumOfTargets());
-//        infoList.add(this.getNumOfLeafs());
-//        infoList.add(this.getNumOfMiddle());
-//        infoList.add(this.getNumOfRoots());
-//        infoList.add(this.getNumOfIndependents());
+        infoList.add(this.getNumOfTargets());
+        infoList.add(this.getNumOfLeafs());
+        infoList.add(this.getNumOfMiddle());
+        infoList.add(this.getNumOfRoots());
+        infoList.add(this.getNumOfIndependents());
+
         return infoList;
     }
 
     @Override
     public int getNumOfIndependents() {
-        return 3; //this.bDM.getNumOfIndependents();
+        return this.bDM.getNumOfIndependents();
     }
 
     @Override
     public int getNumOfRoots() {
-        return 2; //this.bDM.getNumOfRoots();
+        return this.bDM.getNumOfRoots();
     }
 
     @Override
     public int getNumOfMiddle() {
-        return 4;// this.bDM.getNumOfMiddle();
+        return this.bDM.getNumOfMiddle();
     }
 
     @Override
     public int getNumOfLeafs() {
-        return 5; // this.bDM.getNumOfLeafs();
+        return this.bDM.getNumOfLeafs();
     }
 
     @Override
     public int getNumOfTargets() {
-        return 10; //this.bDM.getNumOfTargets();
+        return this.bDM.getNumOfTargets();
     }
 
     @Override
@@ -117,6 +119,7 @@ public class UiDataManager implements DataManager {
 //            throw new ErrorUtils(ErrorUtils.invalidFile());
 //        }
     }
+
     //to check with aviad.
     public void setUpTask(String taskName) throws ErrorUtils {
 //        if (checkValidTask(taskName))

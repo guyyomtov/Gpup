@@ -74,25 +74,33 @@ public class Menu {
 
     // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
+//
+//        String pathName;
+//       //System.out.println("Please write the path of the file: (example:src/resources/ex1-big.xml)");
+//       {
+//       if(this.dM.checkFile()) // only check the file syntax
+//           try{
+//                this.dM.setUpGraph(f);
 
-        String pathName;
-       //System.out.println("Please write the path of the file: (example:src/resources/ex1-big.xml)");
-       {
-       if(this.dM.checkFile()) // only check the file syntax
-           try{
-                this.dM.setUpGraph(f);
-           }catch(ErrorUtils e)         {
-                e.getMessage();
-            }
-
-        }
         this.isThereGraph = true;
+
+        this.dM.checkFile();
+
+        System.out.println("Graph given was uploaded successfully :)");
+        System.out.println("You may start asking for data from the graph.\r\n ");
+//           }catch(ErrorUtils e)         {
+//                e.getMessage();
+//            }
+//
+//        }
+
+
     }
-    private static GPUPDescriptor deserializeFrom(InputStream in) throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
-        Unmarshaller u = jc.createUnmarshaller();
-        return (GPUPDescriptor) u.unmarshal(in);
-    }
+//    private static GPUPDescriptor deserializeFrom(InputStream in) throws JAXBException {
+//        JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
+//        Unmarshaller u = jc.createUnmarshaller();
+//        return (GPUPDescriptor) u.unmarshal(in);
+//    }
 
     private void graphHandler(){
 
@@ -105,21 +113,16 @@ public class Menu {
                 switch (i) {
 
                     case 0:
-                        System.out.println("The amount of targets in the current graph are: " + String.valueOf(gData.get(i)));
-                        break;
+                        System.out.println("The amount of targets in the current graph are: " + String.valueOf(gData.get(i))); break;
                     case 1:
                         System.out.println("The amount of targets of type ");
-                        System.out.println("'Leaf': " + String.valueOf(gData.get(i)));
-                        break;
+                        System.out.println("'Leaf': " + String.valueOf(gData.get(i))); break;
                     case 2:
-                        System.out.println("'Middle': " + String.valueOf(gData.get(i)));
-                        break;
+                        System.out.println("'Middle': " + String.valueOf(gData.get(i))); break;
                     case 3:
-                        System.out.println("'Roots': " + String.valueOf(gData.get(i)));
-                        break;
+                        System.out.println("'Roots': " + String.valueOf(gData.get(i))); break;
                     case 4:
-                        System.out.println("'Independents': " + String.valueOf(gData.get(i)));
-                        break;
+                        System.out.println("'Independents': " + String.valueOf(gData.get(i))); break;
                 }
             }
         }

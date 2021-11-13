@@ -52,6 +52,30 @@ public class BackDataManager implements DataManager {
         Unmarshaller u = jc.createUnmarshaller();
         return (GPUPDescriptor) u.unmarshal(in);
     }
+
+    private List<Target> testTList(){
+
+
+        Root        a = new Root("A");
+        Middle      c =  new Middle("C");
+        Leaf        b =  new Leaf("B");
+        Middle      e = new Middle("E");
+        Independent f = new Independent("F");
+
+        a.setDependsOn(Arrays.asList(c,b));
+
+        c.setRequiredFor(Arrays.asList(a));
+        b.setRequiredFor(Arrays.asList(a));
+
+        c.setDependsOn(Arrays.asList(e));
+
+        e.setRequiredFor(Arrays.asList(c));
+
+        e.setDependsOn(Arrays.asList(a));
+
+        return Arrays.asList(a, c, b, e, f);
+    }
+
     public boolean setUpGraph(GPUPDescriptor information ) throws ErrorUtils {
         // graph = new Graph(f);
         if(this.graph.buildMe(information))
@@ -59,7 +83,6 @@ public class BackDataManager implements DataManager {
         else {
             throw new ErrorUtils(ErrorUtils.invalidFile());
         }
-
     }
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
@@ -83,27 +106,31 @@ public class BackDataManager implements DataManager {
 
     @Override
     public int getNumOfIndependents() {
-        return this.graph.isGood = true ? (this.mTypeToTargets.get("Independent")).size() : -1;
+        return this.graph.isGood == true ? (this.mTypeToTargets.get("Independent")).size() : -1;
     }
 
     @Override
     public int getNumOfRoots() {
-        return this.graph.isGood = true ? (this.mTypeToTargets.get("Root")).size() : -1;
+        return (this.mTypeToTargets.get("Root")).size();
+        //return this.graph.isGood == true ? (this.mTypeToTargets.get("Root")).size() : -1;
     }
 
     @Override
     public int getNumOfMiddle() {
-        return this.graph.isGood = true ? (this.mTypeToTargets.get("Middle")).size() : -1;
+        return (this.mTypeToTargets.get("Middle")).size();
+        //return this.graph.isGood == true ? (this.mTypeToTargets.get("Middle")).size() : -1;
     }
 
     @Override
     public int getNumOfLeafs() {
-        return this.graph.isGood = true ? (this.mTypeToTargets.get("Leaf")).size() : -1;
+        return (this.mTypeToTargets.get("Leaf")).size();
+        //return this.graph.isGood == true ? (this.mTypeToTargets.get("Leaf")).size() : -1;
     }
 
     @Override
     public int getNumOfTargets() {
-        return this.graph.isGood = true ? (this.graph.getAllTargets()).size() : -1;
+        return -1;
+        //return this.graph.isGood == true ? (this.graph.getAllTargets()).size() : -1;
     }
 
     @Override
@@ -111,44 +138,40 @@ public class BackDataManager implements DataManager {
 
         List<String> dataOfT = new ArrayList<>(5);
 
-        if(this.graph.isGood == false)
-            throw new ErrorUtils(ErrorUtils.noGraph());
-        else{
-
-            try {
-                Target target = this.graph.getThisTarget(nameOfTarget);
-
-                String listOfDependent = "", listOfRequired = "";
-
-                if(target.getClass().getSimpleName() == "Leaf"){
-                    Leaf leaf = (Leaf)target;
-                    listOfRequired = this.makeToString(leaf.getRequired());
-                }
-                else if(target.getClass().getSimpleName() == "Middle"){
-
-                    Middle middle = (Middle) target;
-                    listOfRequired = this.makeToString(middle.getRequired());
-                    listOfDependent = this.makeToString(middle.getDependencies());
-                }
-                else if(target.getClass().getSimpleName() == "Root"){
-
-                    Root root = (Root) target;
-                    listOfDependent = this.makeToString(root.middle.getDependencies());
-                }
-
-                dataOfT.add(0, target.getName());               // = target name;
-                dataOfT.add(1, target.getClass().getSimpleName());    // = location of the target.
-                dataOfT.add(2, listOfRequired);                 // = list of dependants targets
-                dataOfT.add(3, listOfDependent);                // = list of requires for targets.
-                dataOfT.add(4, target.getGenaralInfo());        // = general information.
-            }
-            catch(ErrorUtils e){ throw e;}
-        }
+//        if(this.graph.isGood == false)
+//            throw new ErrorUtils(ErrorUtils.noGraph());
+//        else{
+//
+//            try {
+//                Target target = this.graph.getThisTarget(nameOfTarget);
+//
+//                String listOfDependent = "", listOfRequired = "";
+//
+//                if(target.getClass().getSimpleName() == "Leaf"){
+//                    Leaf leaf = (Leaf)target;
+//                    listOfRequired = this.makeToString(leaf.getRequired());
+//                }
+//                else if(target.getClass().getSimpleName() == "Middle"){
+//
+//                    Middle middle = (Middle) target;
+//                    listOfRequired = this.makeToString(middle.getRequired());
+//                    listOfDependent = this.makeToString(middle.getDependencies());
+//                }
+//                else if(target.getClass().getSimpleName() == "Root"){
+//
+//                    Root root = (Root) target;
+//                    listOfDependent = this.makeToString(root.middle.getDependencies());
+//                }
+//
+//                dataOfT.add(0, target.getName());               // = target name;
+//                dataOfT.add(1, target.getClass().getSimpleName());    // = location of the target.
+//                dataOfT.add(2, listOfRequired);                 // = list of dependants targets
+//                dataOfT.add(3, listOfDependent);                // = list of requires for targets.
+//                dataOfT.add(4, target.getGenaralInfo());        // = general information.
+//            }
+//            catch(ErrorUtils e){ throw e;}
+//        }
         return dataOfT;
-    }
-
-    private String makeToString(List<Target> targets){
-
     }
 
     @Override

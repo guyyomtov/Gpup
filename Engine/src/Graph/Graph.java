@@ -30,10 +30,10 @@ public class Graph {
             targets.add(tmpTarget);
         }
         initializeMap();
-        try{
+     //   try{
             getFromFileDependencies(information.getGPUPTargets().getGPUPTarget());
 
-        }catch(ErrorUtils e){throw e;}
+       // }catch(ErrorUtils e){throw e;}
     }
     public void initializeMap()
     {

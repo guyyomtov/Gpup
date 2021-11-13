@@ -16,34 +16,25 @@ import javax.xml.bind.Unmarshaller;
 
 public class BackDataManager implements DataManager {
 
-    private Graph graph;
+    private Graph graph = new Graph();
     private Map<String, Set<Target>> mTypeToTargets = new HashMap<String, Set<Target>>();
-    private final static String JAXB_XML_GAME_PACKAGE_NAME = "resources";
+    private final static String JAXB_XML_GAME_PACKAGE_NAME = "fileHandler";
 
-    public boolean checkFile() throws ErrorUtils {
-
-        System.out.println("Please write the path of the file: (example:src/resources/ex1-big.xml)");
-        Scanner scan = new Scanner(System.in);
-        String fileName = scan.next();
-        InputStream inputStream = null;
-        if(fileName.contains(".xml")) // to check more things.
-        {
-            try {
-                inputStream = new FileInputStream(new File("src/resources/" + fileName));
+    public boolean checkFile(String fileName) throws ErrorUtils {
+        try {
+                InputStream inputStream = new FileInputStream(new File("Engine/src/resources/"+fileName));
                 //to check if the ended file is with xml
                 GPUPDescriptor information = deserializeFrom(inputStream);
-                if(setUpGraph(information))
-                    return true;
-                else
-                    throw new ErrorUtils(ErrorUtils.invalidFile());
+                if(information == null)
+                    throw new ErrorUtils(ErrorUtils.invalidFile("file given is empty"));
+                try{
+                    this.graph.buildMe(information);
+                }catch(ErrorUtils e){throw e;}
 
             } catch (JAXBException | FileNotFoundException e) {
-                e.printStackTrace(); // maybe to throw?
+                 throw new ErrorUtils(ErrorUtils.invalidFile("the given file doesnt exist"));
             }
-        }
-        else{
-            throw new ErrorUtils(ErrorUtils.invalidFile());
-        }
+
 
         return false;
     }
@@ -52,15 +43,15 @@ public class BackDataManager implements DataManager {
         Unmarshaller u = jc.createUnmarshaller();
         return (GPUPDescriptor) u.unmarshal(in);
     }
-    public boolean setUpGraph(GPUPDescriptor information ) throws ErrorUtils {
-        // graph = new Graph(f);
-        if(this.graph.buildMe(information))
-            return true;
-        else {
-            throw new ErrorUtils(ErrorUtils.invalidFile());
-        }
-
-    }
+//    public boolean setUpGraph(GPUPDescriptor information ) throws ErrorUtils {
+//        // graph = new Graph(f);
+//        if(this.graph.buildMe(information))
+//            return true;
+//        else {
+//            throw new ErrorUtils(ErrorUtils.invalidFile());
+//        }
+//
+//    }
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
         String tType;
@@ -83,27 +74,27 @@ public class BackDataManager implements DataManager {
 
     @Override
     public int getNumOfIndependents() {
-        return this.graph.isGood = true ? (this.mTypeToTargets.get("Independent")).size() : -1;
+        return this.graph.isGood == true ? (this.mTypeToTargets.get("Independent")).size() : -1;
     }
 
     @Override
     public int getNumOfRoots() {
-        return this.graph.isGood = true ? (this.mTypeToTargets.get("Root")).size() : -1;
+        return this.graph.isGood == true ? (this.mTypeToTargets.get("Root")).size() : -1;
     }
 
     @Override
     public int getNumOfMiddle() {
-        return this.graph.isGood = true ? (this.mTypeToTargets.get("Middle")).size() : -1;
+        return this.graph.isGood == true ? (this.mTypeToTargets.get("Middle")).size() : -1;
     }
 
     @Override
     public int getNumOfLeafs() {
-        return this.graph.isGood = true ? (this.mTypeToTargets.get("Leaf")).size() : -1;
+        return this.graph.isGood == true ? (this.mTypeToTargets.get("Leaf")).size() : -1;
     }
 
     @Override
     public int getNumOfTargets() {
-        return this.graph.isGood = true ? (this.graph.getAllTargets()).size() : -1;
+        return this.graph.isGood == true ? (this.graph.getAllTargets()).size() : -1;
     }
 
     @Override
@@ -115,7 +106,7 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.noGraph());
         else{
 
-            try {
+//            try {
                 Target target = this.graph.getThisTarget(nameOfTarget);
 
                 String listOfDependent = "", listOfRequired = "";
@@ -133,21 +124,22 @@ public class BackDataManager implements DataManager {
                 else if(target.getClass().getSimpleName() == "Root"){
 
                     Root root = (Root) target;
-                    listOfDependent = this.makeToString(root.middle.getDependencies());
+                    listOfDependent = this.makeToString(root.getDependencies());
                 }
 
                 dataOfT.add(0, target.getName());               // = target name;
                 dataOfT.add(1, target.getClass().getSimpleName());    // = location of the target.
                 dataOfT.add(2, listOfRequired);                 // = list of dependants targets
                 dataOfT.add(3, listOfDependent);                // = list of requires for targets.
-                dataOfT.add(4, target.getGenaralInfo());        // = general information.
-            }
-            catch(ErrorUtils e){ throw e;}
+                dataOfT.add(4, target.getGeneralInfo());        // = general information.
+
+//            }catch(ErrorUtils e){ throw e;}
         }
         return dataOfT;
     }
 
     private String makeToString(List<Target> targets){
+        return " ";
 
     }
 

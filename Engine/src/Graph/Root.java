@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Root extends Target {
+
     private List<Target> dependsOn;
     public Root(String name)
     {
@@ -12,6 +13,9 @@ public class Root extends Target {
     public void setDependsOn(List<Target> dependsOn)
     {
         this.dependsOn = dependsOn;
+    }
+    public List<Target> getDependencies() {
+        return dependsOn;
     }
 
 }

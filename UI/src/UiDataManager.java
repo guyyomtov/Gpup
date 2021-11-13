@@ -15,7 +15,7 @@ import javax.xml.bind.JAXBException;
 
 public class UiDataManager implements DataManager {
 
-    private BackDataManager bDM;
+    private BackDataManager bDM = new BackDataManager();
 
 
 
@@ -30,12 +30,16 @@ public class UiDataManager implements DataManager {
 //        }
 
     }
-    public boolean checkFile()
+    public boolean checkFile(String fileName) throws ErrorUtils
     {
         boolean result = false;
+        if(!fileName.contains(".xml"))
+            throw new ErrorUtils( ErrorUtils.invalidFile("the file given doesn't end with a '.xml'."));
+        else if(fileName.contains(" "))
+            throw new ErrorUtils( ErrorUtils.invalidFile("the file given has a space in it's name."));
         try{
-            result = bDM.checkFile();
-        }catch(ErrorUtils e){e.getMessage();}
+            result = bDM.checkFile(fileName);
+        }catch(ErrorUtils e){throw e;}
         return result;
     }
     public void setUpGraph(File f) throws ErrorUtils

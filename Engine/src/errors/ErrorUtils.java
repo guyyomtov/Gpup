@@ -20,6 +20,8 @@ public class ErrorUtils extends Exception {
 
     public static String invalidTarget(){ return "No such target exists in the graph."; }
 
+    public static String invalidTarget(String err){ return "No such target exists in the graph." + "(" + err + ")"; }
+
     public static String noPathFound(){ return "No path wanted was found between the two given targets.";}
 
     public static String noPathWithLogic(){ return "A path was found between the two wanted targets, but with a different logic connection.";}

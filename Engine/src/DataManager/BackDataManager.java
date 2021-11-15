@@ -67,14 +67,6 @@ public class BackDataManager implements DataManager {
         return Arrays.asList(a, c, b, e, f);
     }
 
-    public boolean setUpGraph(GPUPDescriptor information ) throws ErrorUtils {
-        // graph = new Graph(f);
-        if(this.graph.buildMe(information))
-            return true;
-        else {
-            throw new ErrorUtils(ErrorUtils.invalidFile());
-        }
-    }
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
         String tType;
@@ -159,6 +151,10 @@ public class BackDataManager implements DataManager {
 //            }catch(ErrorUtils e){ throw e;}
         }
         return dataOfT;
+    }
+
+    private String makeToString(List<Target> targets){
+        return "";
     }
 
     @Override

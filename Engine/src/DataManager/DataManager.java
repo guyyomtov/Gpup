@@ -23,6 +23,6 @@ public interface DataManager {
     [3] = list of requires for targets.
     [4] = general information.
     */
-    public List<String> getPathFromTargets(String src, String dest, String connection) throws ErrorUtils; // connection meaning depends on required for
+    public String getPathFromTargets(String src, String dest, String connection) throws ErrorUtils; // connection meaning depends on required for
 
 }

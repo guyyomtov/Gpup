@@ -171,7 +171,7 @@ public class Menu {
         Scanner sc= new Scanner(System.in); //System.in is a standard input stream
         String[] words;
         String pathName = null, src = null, dest = null, connection = null;                     // start to null? empty?
-        List<String> tPath = new ArrayList<>();
+        String tPath;
 
         if(this.isThereGraph){
 
@@ -185,12 +185,15 @@ public class Menu {
             words = pathName.split(" ");
 
             // check the input is in the format way
+            src = words[0];
+            dest = words[1];
+            connection = words[2];
 
-
-            if(pathName != null && src != null && dest != null && connection != null) {
+            if(!pathName.isEmpty() && src != null && dest != null && connection != null) {
 
                 try {
                     tPath = this.dM.getPathFromTargets(src, dest, connection);
+                    System.out.println(tPath);
                 }
                 catch (ErrorUtils e) {
                     System.out.println(e.getMessage());

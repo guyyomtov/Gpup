@@ -48,7 +48,6 @@ public class BackDataManager implements DataManager {
 
     private List<Target> testTList(){
 
-
         Root        a = new Root("A");
         Middle      c =  new Middle("C");
         Leaf        b =  new Leaf("B");
@@ -60,7 +59,7 @@ public class BackDataManager implements DataManager {
         c.setRequiredFor(Arrays.asList(a));
         b.setRequiredFor(Arrays.asList(a));
 
-        c.setDependsOn(Arrays.asList(e));
+        c.setDependsOn(Arrays.asList(a));
 
         e.setRequiredFor(Arrays.asList(c));
 
@@ -153,13 +152,17 @@ public class BackDataManager implements DataManager {
         }
         return dataOfT;
     }
+
     private String makeToString(List<Target> targets)
     {
         return " ";
     }
 
     @Override
-    public List<String> getPathFromTargets(String src, String dest, String connection) throws ErrorUtils {
-        return null;
+    public String getPathFromTargets(String src, String dest, String connection) throws ErrorUtils {
+        if(connection.compareTo("dependsOn") == 0)
+            return this.graph.getPathFromTargets(src, dest);
+        else
+            return this.graph.getPathFromTargets(dest, src);
     }
 }

@@ -110,13 +110,13 @@ public class Tree {
 
         this.resPaths = "";
         // Call recursive utility
-        getAllPathsUtil(s, d, isVisited, pathList, resPaths);
+        getAllPathsUtil(s, d, isVisited, pathList);
 
-        return resPaths;
+        return this.resPaths;
     }
 
 
-    private void getAllPathsUtil(Integer u, Integer d, boolean[] isVisited, List<Integer> localPathList, String resPaths) {
+    private void getAllPathsUtil(Integer u, Integer d, boolean[] isVisited, List<Integer> localPathList) {
 
         if (u.equals(d)) {
             this.resPaths = this.resPaths + this.curPath(localPathList) + ",";
@@ -135,7 +135,7 @@ public class Tree {
                 // store current node
                 // in path[]
                 localPathList.add(i);
-                getAllPathsUtil(i, d, isVisited, localPathList, resPaths);
+                getAllPathsUtil(i, d, isVisited, localPathList);
 
                 // remove current node
                 // in path[]

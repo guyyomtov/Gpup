@@ -158,10 +158,6 @@ public class BackDataManager implements DataManager {
         return " ";
     }
 
-    private String makeToString(List<Target> targets){
-        return "";
-    }
-
     @Override
     public List<String> getPathFromTargets(String src, String dest, String connection) throws ErrorUtils {
         return null;

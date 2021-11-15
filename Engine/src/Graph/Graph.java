@@ -1,4 +1,5 @@
 package Graph;
+import Graph.Tree.Tree;
 import errors.ErrorUtils;
 import fileHandler.*;
 
@@ -28,9 +29,14 @@ public class Graph {
                 throw new ErrorUtils(ErrorUtils.invalidFile()); // to send more messege
             this.targets.add(tmpTarget);
         }
-        this.initializeMap();
+
         try{
             this.getFromFileDependencies(information.getGPUPTargets().getGPUPTarget());
+
+            this.initializeMap();
+
+            this.tree.startMe(this.targets.size(), this.targets);
+
             this.checkCyrcltBetweenTwoTargets();
         }catch(ErrorUtils e){throw e;}
 
@@ -140,14 +146,18 @@ public class Graph {
 
     public void checkCyrcltBetweenTwoTargets() throws ErrorUtils
     {
+
+
         for(int i = 0;i<targets.size() - 1;i++)
             for(int j = i+1;j<targets.size();j++){
-                String targetName1 = targets[i].getName();
-                String targetName2 = targets[j].getName();
-                String path1 = Tree.findAllPath(targetName1, targetName2);
-                String path2 = Tree.findAllPath(targetName2, targetName1);
-                if((targetName1+targetName2).contains.(path1) && (targetName2+targetName1).contains.(path2))
-                    throw new ErrorUtils(ErrorUtils.invalidFile("the target" + targetName1 "depends on the target " + targetName2 + "and" +targetName2 + "depends on" + targetName1));
+                String targetName1 = targets.get(i).getName();
+                String targetName2 = targets.get(j).getName();
+                try {
+                    String path1 = tree.findAllPaths(targetName1, targetName2);
+                    String path2 = tree.findAllPaths(targetName2, targetName1);
+                    if((targetName1+targetName2).contains(path1) && (targetName2+targetName1).contains(path2))
+                        throw new ErrorUtils(ErrorUtils.invalidFile("the target" + targetName1 + "depends on the target " + targetName2 + "and" +targetName2 + "depends on" + targetName1));
+                }catch(ErrorUtils e){throw e;}
 
             }
 

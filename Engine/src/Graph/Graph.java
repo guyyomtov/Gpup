@@ -8,7 +8,7 @@ import java.util.*;
 public class Graph {
     private List<Target> targets = new ArrayList<Target>();
     public boolean isGood = true;
-    private Tree tree;
+    private Tree  tree = new Tree();
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
 
@@ -31,9 +31,10 @@ public class Graph {
         }
 
         try{
-            this.getFromFileDependencies(information.getGPUPTargets().getGPUPTarget());
 
             this.initializeMap();
+
+            this.getFromFileDependencies(information.getGPUPTargets().getGPUPTarget());
 
             this.tree.startMe(this.targets.size(), this.targets);
 
@@ -106,13 +107,13 @@ public class Graph {
         for(int i = 0;i<size;i++)
         {
             GPUPTargetDependencies.GPUGDependency gpupDependency = lstOfGpupDependncies.get(i);
-            if(gpupDependency.getType().compareTo("dependsOn") == 0 && !depensOnList.contains(gpupDependency.getValue()))
+            if(gpupDependency.getType().compareTo("dependsOn") == 0 /*&& !depensOnList.contains(gpupDependency.getValue())*/)
                 depensOnList.add(this.mNameToTarget.get(gpupDependency.getValue()));
 
-            else if(!requiredFor.contains(gpupDependency.getValue()))
+            else /*if(!requiredFor.contains(gpupDependency.getValue()))*/
                 requiredFor.add(this.mNameToTarget.get(gpupDependency.getValue()));
-            else
-                throw new ErrorUtils(ErrorUtils.invalidFile("The target" + gpupDependency.getValue() + "has two dependcies on the target" + currTarget.getName()));
+            /*else
+            throw new ErrorUtils(ErrorUtils.invalidFile("The target" + gpupDependency.getValue() + "has two dependcies on the target" + currTarget.getName()));*/
         }
         if(!depensOnList.isEmpty() && !requiredFor.isEmpty())
         {

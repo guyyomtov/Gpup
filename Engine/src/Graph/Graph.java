@@ -8,7 +8,7 @@ import java.util.*;
 public class Graph {
     private List<Target> targets = new ArrayList<Target>();
     public boolean isGood = true;
-    private Tree tree;
+    private Tree tree = new Tree();
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
 
@@ -147,7 +147,6 @@ public class Graph {
     public void checkCyrcltBetweenTwoTargets() throws ErrorUtils
     {
 
-
         for(int i = 0;i<targets.size() - 1;i++)
             for(int j = i+1;j<targets.size();j++){
                 String targetName1 = targets.get(i).getName();
@@ -156,7 +155,7 @@ public class Graph {
                     String path1 = tree.findAllPaths(targetName1, targetName2);
                     String path2 = tree.findAllPaths(targetName2, targetName1);
                     if((targetName1+targetName2).contains(path1) && (targetName2+targetName1).contains(path2))
-                        throw new ErrorUtils(ErrorUtils.invalidFile("the target" + targetName1 + "depends on the target " + targetName2 + "and" +targetName2 + "depends on" + targetName1));
+                        throw new ErrorUtils(ErrorUtils.invalidFile("the target " + targetName1 + "depends on the target " + targetName2 + " and" +targetName2 + " depends on " + targetName1));
                 }catch(ErrorUtils e){throw e;}
 
             }

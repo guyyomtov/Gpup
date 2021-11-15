@@ -86,13 +86,10 @@ public class UiDataManager implements DataManager {
 
     @Override
     public List<String> getInfoFromTarget(String nameOfTarget) throws ErrorUtils {
-//        if (this.bDM.findTarget(nameOfTarget)) // to do findTarget
-//            return this.bDM.getInfoFromTarget(nameOfTarget);
-//        else {
-//            throw new ErrorUtils(ErrorUtils.invalidFile());// the target doesn't exist.
-//        }
-        List<String> res = Arrays.asList("Nadav", "Guy");
-        return res;
+        try{
+            return this.bDM.getInfoFromTarget(nameOfTarget);
+        }catch (ErrorUtils e){throw e;}
+
     }
 
     //to do find target

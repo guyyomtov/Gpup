@@ -21,6 +21,7 @@ public class BackDataManager implements DataManager {
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "fileHandler";
 
     public boolean checkFile(String fileName) throws ErrorUtils {
+        boolean fileSuccses = false;
         try {
                 InputStream inputStream = new FileInputStream(new File("Engine/src/resources/"+fileName));
                 //to check if the ended file is with xml
@@ -29,14 +30,15 @@ public class BackDataManager implements DataManager {
                     throw new ErrorUtils(ErrorUtils.invalidFile("file given is empty"));
                 try{
                     this.graph.buildMe(information);
+                    fileSuccses =  true;
+                    this.mTypeToTargets = this.makeMap(this.graph.getAllTargets());
                 }catch(ErrorUtils e){throw e;}
 
             } catch (JAXBException | FileNotFoundException e) {
                  throw new ErrorUtils(ErrorUtils.invalidFile("the given file doesnt exist"));
             }
 
-
-        return false;
+        return fileSuccses;
     }
     private static GPUPDescriptor deserializeFrom(InputStream in) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
@@ -70,7 +72,6 @@ public class BackDataManager implements DataManager {
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
         String tType;
-        Set<Target> leaf, independent, middle, root = new HashSet<Target>();
 
         Map<String, Set<Target>> tmp = new HashMap<>();
         tmp.put("Independent", new HashSet<Target>() );
@@ -121,7 +122,7 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.noGraph());
         else{
 
-//            try {
+           try {
                 Target target = this.graph.getThisTarget(nameOfTarget);
 
                 String listOfDependent = "", listOfRequired = "";
@@ -148,9 +149,13 @@ public class BackDataManager implements DataManager {
                 dataOfT.add(3, listOfDependent);                // = list of requires for targets.
                 dataOfT.add(4, target.getGeneralInfo());        // = general information.
 
-//            }catch(ErrorUtils e){ throw e;}
+           }catch(ErrorUtils e){ throw e;}
         }
         return dataOfT;
+    }
+    private String makeToString(List<Target> targets)
+    {
+        return " ";
     }
 
     private String makeToString(List<Target> targets){

@@ -7,6 +7,7 @@ import java.util.*;
 public class Graph {
     private List<Target> targets = new ArrayList<Target>();
     public boolean isGood = true;
+    private Tree tree;
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
 
@@ -28,8 +29,13 @@ public class Graph {
             this.targets.add(tmpTarget);
         }
         this.initializeMap();
-        this.getFromFileDependencies(information.getGPUPTargets().getGPUPTarget());
+        try{
+            this.getFromFileDependencies(information.getGPUPTargets().getGPUPTarget());
+            this.checkCyrcltBetweenTwoTargets();
+        }catch(ErrorUtils e){throw e;}
+
     }
+
     public void initializeMap()
     {
         for(Target currT: this.targets)
@@ -73,15 +79,17 @@ public class Graph {
         }
         return result;
     }
-    public void getFromFileDependencies(List<GPUPTarget> gpupTargets)
+    public void getFromFileDependencies(List<GPUPTarget> gpupTargets) throws ErrorUtils
     {
         for(int i = 0; i<targets.size();i++)
         {
-            setDepenciesList(gpupTargets.get(i).getGPUPTargetDependencies(), targets.get(i));
+            try {
+                setDepenciesList(gpupTargets.get(i).getGPUPTargetDependencies(), targets.get(i));
+            }catch(ErrorUtils e){throw e;}
         }
     }
 
-    public void setDepenciesList(GPUPTargetDependencies gpupTargetDependencies, Target currTarget) {
+    public void setDepenciesList(GPUPTargetDependencies gpupTargetDependencies, Target currTarget) throws ErrorUtils{
         List<Target> depensOnList = new ArrayList<Target>();
         List<Target> requiredFor = new ArrayList<Target>();
         if(gpupTargetDependencies == null) // its independent target
@@ -92,10 +100,13 @@ public class Graph {
         for(int i = 0;i<size;i++)
         {
             GPUPTargetDependencies.GPUGDependency gpupDependency = lstOfGpupDependncies.get(i);
-            if(gpupDependency.getType().compareTo("dependsOn") == 0)
+            if(gpupDependency.getType().compareTo("dependsOn") == 0 && !depensOnList.contains(gpupDependency.getValue()))
                 depensOnList.add(this.mNameToTarget.get(gpupDependency.getValue()));
-            else
+
+            else if(!requiredFor.contains(gpupDependency.getValue()))
                 requiredFor.add(this.mNameToTarget.get(gpupDependency.getValue()));
+            else
+                throw new ErrorUtils(ErrorUtils.invalidFile("The target" + gpupDependency.getValue() + "has two dependcies on the target" + currTarget.getName()));
         }
         if(!depensOnList.isEmpty() && !requiredFor.isEmpty())
         {
@@ -114,9 +125,36 @@ public class Graph {
 
     }
 
-    public Target getThisTarget(String nameOfTarget) {return this.mNameToTarget.get(nameOfTarget);}
+    public Target getThisTarget(String nameOfTarget) throws ErrorUtils {
+//        try{
+//            Target currTarget = this.mNameToTarget.get(nameOfTarget);
+//        }finally{ throw new ErrorUtils(ErrorUtils.invalidTarget());}
+        Target currTarget = this.mNameToTarget.get(nameOfTarget);
+        if(currTarget == null)
+            throw new ErrorUtils(ErrorUtils.invalidTarget());
+        return currTarget;
+
+    }
 
     public List<Target> getAllTargets() {return this.targets;}
+
+    public void checkCyrcltBetweenTwoTargets() throws ErrorUtils
+    {
+        for(int i = 0;i<targets.size() - 1;i++)
+            for(int j = i+1;j<targets.size();j++){
+                String targetName1 = targets[i].getName();
+                String targetName2 = targets[j].getName();
+                String path1 = Tree.findAllPath(targetName1, targetName2);
+                String path2 = Tree.findAllPath(targetName2, targetName1);
+                if((targetName1+targetName2).contains.(path1) && (targetName2+targetName1).contains.(path2))
+                    throw new ErrorUtils(ErrorUtils.invalidFile("the target" + targetName1 "depends on the target " + targetName2 + "and" +targetName2 + "depends on" + targetName1));
+
+            }
+
+       // Map<String, List<Target>> mNameToList = new HashMap<>();
+
+
+    }
 
 
 //    public Set<Targets> getAllTargets(){ return this.targets; }

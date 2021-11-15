@@ -110,7 +110,7 @@ public class Menu {
                     case 3:
                         System.out.println("'Roots': " + String.valueOf(gData.get(i))); break;
                     case 4:
-                        System.out.println("'Independents': " + String.valueOf(gData.get(i))); break;
+                        System.out.println("'Independents': " + String.valueOf(gData.get(i)) + "\r\n"); break;
                 }
             }
         }
@@ -121,10 +121,10 @@ public class Menu {
     private void targetHandler(){
 
         Scanner sc= new Scanner(System.in); //System.in is a standard input stream
-        String tName = "";
+        String tName;
 
         if(this.isThereGraph){
-
+            System.out.println("Please enter a target name:");
             tName = sc.nextLine();          // ask user for the name of the target
 
             try {
@@ -136,7 +136,7 @@ public class Menu {
                     switch(i){
                         case 1:
                             System.out.println("Info of the wanted target: ");
-                            System.out.println("Name: "+ tarInfo.get(i)); break;
+                            System.out.println("Type: "+ tarInfo.get(i)); break;
                         case 2:
                             System.out.println("Target Role in the graph: " + tarInfo.get(i)); break;
                         case 3:

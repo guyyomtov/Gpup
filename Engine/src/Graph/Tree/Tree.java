@@ -1,6 +1,7 @@
 package Graph.Tree;
 
 import Graph.Leaf;
+import Graph.Middle;
 import Graph.Root;
 import Graph.Target;
 import errors.ErrorUtils;
@@ -30,20 +31,26 @@ public class Tree {
         // initialise vertex count
         this.v = vertices;
 
+        this.startMaps();
+
         // initialise adjacency list
         initAdjList();
+        List<Target> tmpLst;
 
         for(Target curT : targets) {
 
-            if(curT.getClass().getSimpleName() == "Middle" || curT.getClass().getSimpleName() == "Root") {
-                Root tmp = (Root)curT;
+            if(curT.getClass().getSimpleName().compareTo("Middle") == 0)
+               tmpLst = ((Middle)curT).getDependencies();
+            else if(curT.getClass().getSimpleName().compareTo("Root") == 0)
+                tmpLst = ((Root)curT).getDependencies();
+            else
+                continue;
 
-                for(Target curDep : tmp.getDependencies()) {
-                    try {
-                        this.addEdge(tmp.getName(), curDep.getName());
-                    }
-                    catch(ErrorUtils e){ throw  e; }
+            for(Target curDep : tmpLst) {
+                try {
+                    this.addEdge(curT.getName(), curDep.getName());
                 }
+                catch(ErrorUtils e){ throw  e; }
             }
         }
     }
@@ -52,7 +59,7 @@ public class Tree {
 
         int i = 0;
 
-        for(char ch = 'a'; ch <= 'z'; ch++, i++) {
+        for(char ch = 'A'; ch <= 'Z'; ch++, i++) {
 
             this.letToNum.put(String.valueOf(ch), i);
             this.numToLet.put(i, String.valueOf(ch));

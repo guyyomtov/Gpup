@@ -31,7 +31,7 @@ public class Tree {
         // initialise vertex count
         this.v = vertices;
 
-        this.startMaps();
+        this.startMaps(targets);
 
         // initialise adjacency list
         initAdjList();
@@ -55,14 +55,17 @@ public class Tree {
         }
     }
 
-    private void startMaps() {
+    private void startMaps(List<Target> targets) {
 
-        int i = 0;
+        List<String> tNames = new ArrayList<String>();
+        Integer num = 0;
 
-        for(char ch = 'A'; ch <= 'Z'; ch++, i++) {
+        for(Target curT : targets) {
 
-            this.letToNum.put(String.valueOf(ch), i);
-            this.numToLet.put(i, String.valueOf(ch));
+            this.letToNum.put(curT.getName(), num);
+            this.numToLet.put(num, curT.getName());
+
+            num++;
         }
     }
 
@@ -83,7 +86,7 @@ public class Tree {
             v = this.letToNum.get(c2);
         }
         else
-            throw new ErrorUtils(ErrorUtils.invalidTarget("The target names don't match the 'abc' letters"));
+            throw new ErrorUtils(ErrorUtils.invalidTarget("The target names don't match"));
 
         // Add v to u's list.
         adjList[u].add(v);

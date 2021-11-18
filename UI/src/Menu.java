@@ -169,7 +169,7 @@ public class Menu {
     private void pathHandler(){
 
         Scanner sc= new Scanner(System.in); //System.in is a standard input stream
-        String[] words;
+        String[] words = {"","",""};
         String pathName = null, src = null, dest = null, connection = null;                     // start to null? empty?
         String tPath;
 
@@ -177,30 +177,28 @@ public class Menu {
 
             // need to get from the user src, dest & connection
             System.out.println("Let's try to find the targets path you want!");
-            System.out.println("PLease enter path in the following format: <target source>  <target destination>  <wanted relationship>");
+            System.out.println("PLease enter path in the following format: <target source>  <target destination>  <wanted relationship (dependsOn/requiredFor)>");
             System.out.println("After that, press enter.");
 
             pathName = sc.nextLine();
 
             words = pathName.split(" ");
-
             // check the input is in the format way
-            src = words[0];
-            dest = words[1];
-            connection = words[2];
+            try {
+                src = words[0];
+                dest = words[1];
+                connection = words[2];
+            }catch (Exception e){
+                System.out.println("Please enter three values.");
+            }
 
-            if(!pathName.isEmpty() && src != null && dest != null && connection != null) {
-
-                try {
+            try {
                     tPath = this.dM.getPathFromTargets(src, dest, connection);
                     System.out.println(tPath);
-                }
-                catch (ErrorUtils e) {
-                    System.out.println(e.getMessage());
-                }
             }
-            else
-                System.out.println(ErrorUtils.invalidInput("Incorrcet format"));
+            catch (ErrorUtils e) {
+                System.out.println(e.getMessage());
+            }
         }
         else
             System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");

@@ -11,10 +11,6 @@ public class Graph {
     private Tree tree = new Tree();
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
-    private Map<String, Leaf> mNameToLeaf = new HashMap<String, Leaf>();
-    private Map<String, Root> mNameToRoot= new HashMap<String, Root>();
-    private Map<String, Middle> mNameToMiddle= new HashMap<String, Middle>();
-    private Map<String, Independent> mNameToIndependent= new HashMap<String, Independent>();
 
     public void buildMe(GPUPDescriptor information) throws ErrorUtils {
         try {
@@ -78,6 +74,7 @@ public class Graph {
     }
 
     public Target setUpTarget(GPUPDescriptor information, int index) {
+
         GPUPTarget currTarget = information.getGPUPTargets().getGPUPTarget().get(index); // get name
         String name = currTarget.getName();
         String generalInfo = currTarget.getGPUPUserData();
@@ -101,15 +98,6 @@ public class Graph {
             else
                 return new Leaf(name,generalInfo);
         }
-    }
-
-    public boolean targetExist(String currTargetName) {
-        boolean result = false;
-        for (int i = 0; i < targets.size(); i++) {
-            if (targets.get(i).getName().compareTo(currTargetName) == 0)
-                return true;
-        }
-        return result;
     }
 
     public void getFromFileDependencies(List<GPUPTarget> gpupTargets) throws ErrorUtils {
@@ -207,7 +195,12 @@ public class Graph {
 
     }
 
-
+    public boolean targetExist(String name)
+    {
+        if(mNameToTarget.get(name) == null)
+            return false;
+        return true;
+    }
 
 
 

@@ -151,9 +151,15 @@ public class BackDataManager implements DataManager {
 
     @Override
     public String getPathFromTargets(String src, String dest, String connection) throws ErrorUtils {
+        if(!this.graph.targetExist(src))
+            throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + src + " doesn't exist in the graph."));
+        if(!this.graph.targetExist(dest))
+            throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + dest + " doesn't exist in the graph."));
         if(connection.compareTo("dependsOn") == 0)
             return this.graph.getPathFromTargets(src, dest);
-        else
+        else if(connection.compareTo("requiredFor") == 0)
             return this.graph.getPathFromTargets(dest, src);
+        else
+            throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in the wanted relationship 'dependsOn'/ 'requiredFor'."));
     }
 }

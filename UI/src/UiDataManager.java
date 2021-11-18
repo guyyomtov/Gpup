@@ -95,22 +95,9 @@ public class UiDataManager implements DataManager {
     //to do find target
     @Override
     public String getPathFromTargets(String src, String dest, String connection) throws ErrorUtils {
-
-//        if (this.bDM.findTarget(src) && this.bDM.findTarget(dest)) {
-//            return this.bDM.getPathFromTargets(src, dest, connection);
-//        }
-//        else if (this.bDM.findTarget(src)) {
-//            throw new ErrorUtils(ErrorUtils.invalidTarget() + "/n The Target " + dest + " doesn't exist" );
-//        }
-//         else if (this.bDM.findTarget(dest)) {
-//            throw new ErrorUtils(ErrorUtils.invalidTarget() + "The Target " + src + " doesn't exist");
-//        }
-//         else {
-//            throw new ErrorUtils(ErrorUtils.invalidTarget() +"The Targets " + src + dest + " doesn't exist");
-//        }
-//        List<String> res = Arrays.asList("A", "V");
-//        return res;
-        return this.bDM.getPathFromTargets(src, dest, connection);
+        try{
+            return this.bDM.getPathFromTargets(src, dest, connection);
+        }catch(ErrorUtils e){throw e;}
     }
 
     public void swapFiles(File newFile) throws ErrorUtils {

@@ -43,7 +43,7 @@ public class Graph {
 
             this.tree.startMe(this.targets.size(), this.targets);
 
-            this.checkCyrcletBetweenTwoTargets();
+            this.checkCircleBetweenTwoTargets();
 
         } catch (ErrorUtils e) {throw e;}
 
@@ -167,56 +167,41 @@ public class Graph {
         return this.targets;
     }
 
-    public void checkCyrcletBetweenTwoTargets() throws ErrorUtils {
+    public void checkCircleBetweenTwoTargets() throws ErrorUtils {
 
         for (Target t : targets) {
             String type = t.getClass().getSimpleName();
-            List<Target> dependsOn = new ArrayList<Target>();
-            List<Target> requireFor = new ArrayList<Target>();
-
-            if (type.compareTo("Middle") == 0) {
-                dependsOn = ((Middle) t).getDependencies();
-                requireFor = ((Middle) t).getRequired();
-            }
-
-            else if (type.compareTo("Root") == 0) // its a root
-                dependsOn = ((Root) t).getDependencies();
-
-            else if(type.compareTo("Leaf") == 0)
-               requireFor = ((Leaf) t).getRequired();
-
-            try{
-                checkCyrcleBetweenTwoTargetsHelper(t, dependsOn, true);
-                checkCyrcleBetweenTwoTargetsHelper(t, requireFor, false);
+            List<Target> dependsOn = t.getDependsOn();
+            List<Target> requireFor = t.getRequireFor();
+            try {
+                if (dependsOn != null)
+                    checkCircleBetweenTwoTargetsHelper(t, dependsOn, true);
+                if (requireFor != null)
+                    checkCircleBetweenTwoTargetsHelper(t, requireFor, false);
             }catch (ErrorUtils e){throw e;}
+
     }
 }
 
-    public void checkCyrcleBetweenTwoTargetsHelper(Target currTarget, List<Target> dependenciesLst, boolean dependsOn) throws ErrorUtils {
+    public void checkCircleBetweenTwoTargetsHelper(Target currTarget, List<Target> dependenciesLst, boolean dependsOn) throws ErrorUtils {
 
-        for(Target tR : dependenciesLst)
-        {
+        for(Target tR : dependenciesLst) {
             if(dependsOn)
             {
-                if(tR.getClass().getSimpleName().compareTo("Middle") == 0)
-
-
+                List<Target> lst = tR.getDependsOn();
+                if(lst != null)
+                    if(lst.contains(currTarget))
+                        throw new ErrorUtils(ErrorUtils.invalidFile("The target " + currTarget.getName() + "depends on the target " + tR.getName() + " and " +  tR.getName() + " depends on " + currTarget.getName()));
 
             }
-            String targetName1 = currTarget.getName();
-            String targetName2 = tR.getName();
-            try {
-                String path1;
-                String path2;
-                path1 = tree.findAllPaths(targetName1, targetName2);
-                path2 = tree.findAllPaths(targetName2, targetName1);
-                if (!path1.isEmpty() && !path2.isEmpty())
-                    if ((path1).contains(targetName1 + targetName2) && (path2).contains(targetName2 + targetName1))
-                        throw new ErrorUtils(ErrorUtils.invalidFile("the target " + targetName1 + " depends on the target " + targetName2 + " and " + targetName2 + " depends on " + targetName1));
-            } catch (ErrorUtils e) {
-                throw e;
-            }
+            else // checking required for dependency
+            {
+                List<Target> lst = tR.getRequireFor();
+                if(lst != null)
+                    if(lst.contains(currTarget))
+                        throw new ErrorUtils(ErrorUtils.invalidFile("The target " + currTarget.getName() + "require for the target " + tR.getName() + " and " +  tR.getName() + " require for " + currTarget.getName()));
 
+            }
         }
 
     }

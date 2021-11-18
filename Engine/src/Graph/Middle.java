@@ -21,11 +21,8 @@ public class Middle extends Target {
         this.requiredFor = requiredFor;
     }
 
-    public List<Target> getDependencies() {
-        return dependsOn;
-    }
+    public List<Target> getDependsOn() {return this.dependsOn;}
 
-    public List<Target> getRequired() {
-        return requiredFor;
-    }
+    public List<Target> getRequireFor() {return this.requiredFor;}
+
 }

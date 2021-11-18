@@ -7,14 +7,13 @@
 		<GPUP-Target name="A">
 			<GPUP-User-Data>freeText</GPUP-User-Data>
 			<GPUP-Target-Dependencies>
-				<GPUG-Dependency type="dependsOn">E</GPUG-Dependency>
-				<GPUG-Dependency type="requiredFor">B</GPUG-Dependency>
+				<GPUG-Dependency type="requiredFor">D</GPUG-Dependency>
 			</GPUP-Target-Dependencies>
 		</GPUP-Target>
 		<GPUP-Target name="B">
 			<GPUP-Target-Dependencies>
-				<GPUG-Dependency type="dependsOn">D</GPUG-Dependency>
-				<GPUG-Dependency type="requiredFor">A</GPUG-Dependency>
+				<GPUG-Dependency type="requiredFor">D</GPUG-Dependency>
+				<GPUG-Dependency type="requiredFor">E</GPUG-Dependency>
 			</GPUP-Target-Dependencies>
 		</GPUP-Target>
 		<GPUP-Target name="C">
@@ -22,12 +21,15 @@
 		</GPUP-Target>
 		<GPUP-Target name="D">
 			<GPUP-User-Data>freeText</GPUP-User-Data>
+			<GPUP-Target-Dependencies>
+				<GPUG-Dependency type="requiredFor">A</GPUG-Dependency>
+			</GPUP-Target-Dependencies>
 		</GPUP-Target>
 		<GPUP-Target name="E">
 			<GPUP-User-Data>freeText</GPUP-User-Data>
 			<GPUP-Target-Dependencies>
 				<GPUG-Dependency type="dependsOn">D</GPUG-Dependency>
-				<GPUG-Dependency type="dependsOn">B</GPUG-Dependency>
+				<GPUG-Dependency type="dependsOn">C</GPUG-Dependency>
 			</GPUP-Target-Dependencies>
 		</GPUP-Target>
 	</GPUP-Targets>

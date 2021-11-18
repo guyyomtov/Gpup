@@ -2,10 +2,11 @@ package Graph;
 
 import fileHandler.GPUPTargetDependencies;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class Target {
+public abstract class Target {
     private String name;
 
     private Integer countOfDependency;
@@ -47,5 +48,12 @@ public class Target {
     public void setCountOfDependency(Integer countOfDependency) {
         this.countOfDependency = countOfDependency;
     }
+
+    public abstract List<Target> getDependsOn();
+
+    public abstract List<Target> getRequiredFor();
+
+
+
 
 }

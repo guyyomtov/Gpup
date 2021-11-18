@@ -5,12 +5,12 @@ import java.util.Set;
 
 public class Middle extends Target {
 
-    private List<Target> dependsOn;
-    private List<Target> requiredFor;
     public Middle(String name,String generalInfo)
     {
         super(name,generalInfo);
     }
+    private List<Target> dependsOn;
+    private List<Target> requiredFor;
 
     public void setDependsOn(List<Target> dependsOn)
     {

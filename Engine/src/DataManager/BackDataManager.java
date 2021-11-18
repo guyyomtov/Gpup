@@ -41,33 +41,34 @@ public class BackDataManager implements DataManager {
 
         return fileSuccses;
     }
+
     private static GPUPDescriptor deserializeFrom(InputStream in) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
         Unmarshaller u = jc.createUnmarshaller();
         return (GPUPDescriptor) u.unmarshal(in);
     }
 
-    private List<Target> testTList(){
-
-        Root        a = new Root("A","");
-        Middle      c =  new Middle("C","");
-        Leaf        b =  new Leaf("B","");
-        Middle      e = new Middle("E","");
-        Independent f = new Independent("F","");
-
-        a.setDependsOn(Arrays.asList(c,b));
-
-        c.setRequiredFor(Arrays.asList(a));
-        b.setRequiredFor(Arrays.asList(a));
-
-        c.setDependsOn(Arrays.asList(a));
-
-        e.setRequiredFor(Arrays.asList(c));
-
-        e.setDependsOn(Arrays.asList(a));
-
-        return Arrays.asList(a, c, b, e, f);
-    }
+//    private List<Target> testTList(){
+//
+//        Root        a = new Root("A","");
+//        Middle      c =  new Middle("C","");
+//        Leaf        b =  new Leaf("B","");
+//        Middle      e = new Middle("E","");
+//        Independent f = new Independent("F","");
+//
+//        a.setDependsOn(Arrays.asList(c,b));
+//
+//        c.setRequiredFor(Arrays.asList(a));
+//        b.setRequiredFor(Arrays.asList(a));
+//
+//        c.setDependsOn(Arrays.asList(a));
+//
+//        e.setRequiredFor(Arrays.asList(c));
+//
+//        e.setDependsOn(Arrays.asList(a));
+//
+//        return Arrays.asList(a, c, b, e, f);
+//    }
 
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
@@ -81,7 +82,7 @@ public class BackDataManager implements DataManager {
 
         for(Target curT : targets){
 
-            tType = (curT.getClass()).getSimpleName();
+            tType = curT.getTargetType().toString();
 
             tmp.get(tType).add(curT);
         }
@@ -143,7 +144,7 @@ public class BackDataManager implements DataManager {
 
     private String makeToString(List<Target> targets)
     {
-        if(targets == null || targets.size() == 0)
+        if(targets.size() == 0)
             return "Nobody";
         else
             return targets.stream().map(t->t.getName()).collect(Collectors.joining(","));

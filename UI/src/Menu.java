@@ -66,7 +66,7 @@ public class Menu {
         System.out.println("Main Menu, PLease enter a number from the options bellow (1-6)");
         System.out.println("1) Upload to the system a new XML file with a graph. ");
         System.out.println("2) Show generic data of the graph.");
-        System.out.println("3) Show data of a specific given task.");
+        System.out.println("3) Show data of a specific given target.");
         System.out.println("4) Find path between two given targets.");
         System.out.println("5) Start the build process on the graph. ");
         System.out.println("6) Exit the system. ");
@@ -134,16 +134,16 @@ public class Menu {
                 for(int i = 0; i < tarInfo.size(); i++){
 
                     switch(i){
-                        case 1:
+                        case 0:
                             System.out.println("Info of the wanted target: ");
-                            System.out.println("Type: "+ tarInfo.get(i)); break;
+                            System.out.println("Name: "+ tarInfo.get(i)); break;
+                        case 1:
+                            System.out.println("Role in the graph: " + tarInfo.get(i)); break;
                         case 2:
-                            System.out.println("Target Role in the graph: " + tarInfo.get(i)); break;
+                            System.out.println("Names of targets which depends on him: "+ tarInfo.get(i)); break;
                         case 3:
-                            System.out.println("Names of targets which depend on him: "+ tarInfo.get(i)); break;
+                            System.out.println("Names of targets which he is required for : "+ tarInfo.get(i)); break;
                         case 4:
-                            System.out.println("Names of targets which he depends on: "+ tarInfo.get(i)); break;
-                        case 5:
                             System.out.println("General information about him: "+ tarInfo.get(i)); break;
                     }
                 }

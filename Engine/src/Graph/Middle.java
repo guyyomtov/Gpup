@@ -7,9 +7,9 @@ public class Middle extends Target {
 
     private List<Target> dependsOn;
     private List<Target> requiredFor;
-    public Middle(String name)
+    public Middle(String name,String generalInfo)
     {
-        super(name);
+        super(name,generalInfo);
     }
 
     public void setDependsOn(List<Target> dependsOn)
@@ -23,6 +23,6 @@ public class Middle extends Target {
 
     public List<Target> getDependsOn() {return this.dependsOn;}
 
-    public List<Target> getRequireFor() {return this.requiredFor;}
+    public List<Target> getRequiredFor() {return this.requiredFor;}
 
 }

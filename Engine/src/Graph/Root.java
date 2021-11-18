@@ -7,9 +7,9 @@ public class Root extends Target {
 
     private List<Target> dependsOn;
 
-    public Root(String name)
+    public Root(String name, String generalInfo )
     {
-        super(name);
+        super(name, generalInfo);
     }
 
     public void setDependsOn(List<Target> dependsOn)
@@ -19,6 +19,6 @@ public class Root extends Target {
 
     public List<Target> getDependsOn() {return dependsOn;}
 
-    public List<Target> getRequireFor() {return null;}
+    public List<Target> getRequiredFor() {return null;}
 
 }

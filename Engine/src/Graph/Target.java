@@ -11,11 +11,13 @@ public abstract class Target {
 
     private Integer countOfDependency;
 
-    private String generalInfo = "";
-    public Target(String name)
+    private String generalInfo;
+
+    public Target(String name, String generalInfo)
     {
         this.name = name;
         this.countOfDependency =0;
+        this.generalInfo = generalInfo;
     }
     public String getName() {
         return name;
@@ -51,7 +53,7 @@ public abstract class Target {
 
     public abstract List<Target> getDependsOn();
 
-    public abstract List<Target> getRequireFor();
+    public abstract List<Target> getRequiredFor();
 
 
 

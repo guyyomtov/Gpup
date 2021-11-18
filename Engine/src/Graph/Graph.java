@@ -18,20 +18,20 @@ public class Graph {
 
     public void buildMe(GPUPDescriptor information) throws ErrorUtils {
         try {
-            intilizeTargetsAndCheckDuplication(information);
+            intilizeGraphFromFile(information);
         } catch (ErrorUtils e) {
             throw e;
         }
 
     }
 
-    public void intilizeTargetsAndCheckDuplication(GPUPDescriptor information) throws ErrorUtils {
+    public void intilizeGraphFromFile(GPUPDescriptor information) throws ErrorUtils {
         int size = information.getGPUPTargets().getGPUPTarget().size();
         this.targets = new ArrayList<Target>(size);
         for (int i = 0; i < size; i++) {
             Target tmpTarget = this.setUpTarget(information, i);
             if (targetExist(tmpTarget.getName()))
-                throw new ErrorUtils(ErrorUtils.invalidFile()); // to send more messege
+                throw new ErrorUtils(ErrorUtils.invalidFile("The target " + tmpTarget.getName() + " was given twice.")); // to send more messege
             this.targets.add(tmpTarget);
         }
 
@@ -51,11 +51,11 @@ public class Graph {
 
     private List<Target> testTList() {
 
-        Root a = new Root("A");
-        Middle c = new Middle("C");
-        Leaf b = new Leaf("B");
-        Middle e = new Middle("E");
-        Independent f = new Independent("F");
+        Root a = new Root("A","");
+        Middle c = new Middle("C","");
+        Leaf b = new Leaf("B","");
+        Middle e = new Middle("E","");
+        Independent f = new Independent("F","");
 
         a.setDependsOn(Arrays.asList(c, b));
 
@@ -80,9 +80,10 @@ public class Graph {
     public Target setUpTarget(GPUPDescriptor information, int index) {
         GPUPTarget currTarget = information.getGPUPTargets().getGPUPTarget().get(index); // get name
         String name = currTarget.getName();
+        String generalInfo = currTarget.getGPUPUserData();
 
         if (currTarget.getGPUPTargetDependencies() == null) // the target is independent
-            return new Independent(name);
+            return new Independent(name,generalInfo);
         else {
             int size = currTarget.getGPUPTargetDependencies().getGPUGDependency().size();
             Boolean middle = false, root = false, leaf = false;
@@ -94,11 +95,11 @@ public class Graph {
                     leaf = true;
             }
             if (root && leaf)
-                return new Middle(name);
+                return new Middle(name,generalInfo);
             else if (root)
-                return new Root(name);
+                return new Root(name,generalInfo);
             else
-                return new Leaf(name);
+                return new Leaf(name,generalInfo);
         }
     }
 
@@ -172,12 +173,12 @@ public class Graph {
         for (Target t : targets) {
             String type = t.getClass().getSimpleName();
             List<Target> dependsOn = t.getDependsOn();
-            List<Target> requireFor = t.getRequireFor();
+            List<Target> requiredFor = t.getRequiredFor();
             try {
                 if (dependsOn != null)
                     checkCircleBetweenTwoTargetsHelper(t, dependsOn, true);
-                if (requireFor != null)
-                    checkCircleBetweenTwoTargetsHelper(t, requireFor, false);
+                if (requiredFor != null)
+                    checkCircleBetweenTwoTargetsHelper(t, requiredFor, false);
             }catch (ErrorUtils e){throw e;}
 
     }
@@ -191,15 +192,15 @@ public class Graph {
                 List<Target> lst = tR.getDependsOn();
                 if(lst != null)
                     if(lst.contains(currTarget))
-                        throw new ErrorUtils(ErrorUtils.invalidFile("The target " + currTarget.getName() + "depends on the target " + tR.getName() + " and " +  tR.getName() + " depends on " + currTarget.getName()));
+                        throw new ErrorUtils(ErrorUtils.invalidFile("The target " + currTarget.getName() + " depends on the target " + tR.getName() + " and " +  tR.getName() + " depends on " + currTarget.getName()));
 
             }
             else // checking required for dependency
             {
-                List<Target> lst = tR.getRequireFor();
+                List<Target> lst = tR.getRequiredFor();
                 if(lst != null)
                     if(lst.contains(currTarget))
-                        throw new ErrorUtils(ErrorUtils.invalidFile("The target " + currTarget.getName() + "require for the target " + tR.getName() + " and " +  tR.getName() + " require for " + currTarget.getName()));
+                        throw new ErrorUtils(ErrorUtils.invalidFile("The target " + currTarget.getName() + " required for the target " + tR.getName() + " and " +  tR.getName() + " required for " + currTarget.getName()));
 
             }
         }

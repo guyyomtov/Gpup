@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 import Graph.*;
@@ -48,11 +49,11 @@ public class BackDataManager implements DataManager {
 
     private List<Target> testTList(){
 
-        Root        a = new Root("A");
-        Middle      c =  new Middle("C");
-        Leaf        b =  new Leaf("B");
-        Middle      e = new Middle("E");
-        Independent f = new Independent("F");
+        Root        a = new Root("A","");
+        Middle      c =  new Middle("C","");
+        Leaf        b =  new Leaf("B","");
+        Middle      e = new Middle("E","");
+        Independent f = new Independent("F","");
 
         a.setDependsOn(Arrays.asList(c,b));
 
@@ -123,24 +124,11 @@ public class BackDataManager implements DataManager {
 
            try {
                 Target target = this.graph.getThisTarget(nameOfTarget);
+                List<Target> dependsOn = target.getDependsOn();
+                List<Target> requiredFor = target.getRequiredFor();
+                String listOfDependent  = makeToString(dependsOn);
+                String listOfRequired = makeToString(requiredFor);
 
-                String listOfDependent = "", listOfRequired = "";
-
-                if(target.getClass().getSimpleName() == "Leaf"){
-                    Leaf leaf = (Leaf)target;
-                    listOfRequired = this.makeToString(leaf.getRequired());
-                }
-                else if(target.getClass().getSimpleName() == "Middle"){
-
-                    Middle middle = (Middle) target;
-                    listOfRequired = this.makeToString(middle.getRequired());
-                    listOfDependent = this.makeToString(middle.getDependencies());
-                }
-                else if(target.getClass().getSimpleName() == "Root"){
-
-                    Root root = (Root) target;
-                    listOfDependent = this.makeToString(root.getDependencies());
-                }
 
                 dataOfT.add(0, target.getName());               // = target name;
                 dataOfT.add(1, target.getClass().getSimpleName());    // = location of the target.
@@ -155,7 +143,10 @@ public class BackDataManager implements DataManager {
 
     private String makeToString(List<Target> targets)
     {
-        return " ";
+        if(targets == null || targets.size() == 0)
+            return "Nobody";
+        else
+            return targets.stream().map(t->t.getName()).collect(Collectors.joining(","));
     }
 
     @Override

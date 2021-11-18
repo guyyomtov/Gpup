@@ -9,9 +9,7 @@ public class Independent extends Target {
         super(name);
     }
 
-    public List<Target> getDependsOn()
-    {
+    public List<Target> getDependsOn() {return null;}
 
-    }
-
+    public List<Target> getRequireFor() {return null;}
 }

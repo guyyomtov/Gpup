@@ -51,7 +51,7 @@ public abstract class Target {
 
     public abstract List<Target> getDependsOn();
 
-    public abstract List<Target> getRequiredFor();
+    public abstract List<Target> getRequireFor();
 
 
 

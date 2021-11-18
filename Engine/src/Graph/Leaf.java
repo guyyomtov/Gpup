@@ -13,7 +13,8 @@ public class Leaf extends Target {
     public void setRequiredFor(List<Target> requiredFor) {
         this.requiredFor = requiredFor;
     }
-    public List<Target> getRequired() {
+    public List<Target> getRequireFor() {
         return requiredFor;
     }
+    public List<Target> getDependsOn() {return null;}
 }

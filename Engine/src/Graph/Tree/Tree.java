@@ -39,18 +39,17 @@ public class Tree {
 
         for(Target curT : targets) {
 
-            if(curT.getClass().getSimpleName().compareTo("Middle") == 0)
-               tmpLst = ((Middle)curT).getDependencies();
-            else if(curT.getClass().getSimpleName().compareTo("Root") == 0)
-                tmpLst = ((Root)curT).getDependencies();
-            else
-                continue;
+            tmpLst = curT.getDependsOn();
 
-            for(Target curDep : tmpLst) {
-                try {
-                    this.addEdge(curT.getName(), curDep.getName());
+            if(tmpLst != null) {
+
+                for (Target curDep : tmpLst) {
+
+                    try {this.addEdge(curT.getName(), curDep.getName());
+                    } catch (ErrorUtils e) {
+                        throw e;
+                    }
                 }
-                catch(ErrorUtils e){ throw  e; }
             }
         }
     }

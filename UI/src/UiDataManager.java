@@ -32,6 +32,8 @@ public class UiDataManager implements DataManager {
         return result;
     }
 
+    public void startProcess()throws ErrorUtils{ this.bDM.startProcess();}
+
     public List<Integer> getInfoFromGraph() {
 
         List<Integer> infoList = new ArrayList<>();

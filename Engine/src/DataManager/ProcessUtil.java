@@ -1,6 +1,7 @@
+package DataManager;
+
 import Graph.Target;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +90,7 @@ public class ProcessUtil {
 
             runThisTask(curTask, curTarget, typeToTAndT);
         }
+        BackDataManager.processGetProcessFinished();
     }
 
     private static String targetsThatOpened(){
@@ -97,32 +99,28 @@ public class ProcessUtil {
 
     private static void runThisTask(Task curT, Target curTarget, Map<String, Map<String, Task>> typeToTAndT){
 
-        // here ui is going to have a function which gets and prints --> to ui and to file
         String status = new String(), targetName = new String(), generalTargetInfo = new String(), namesOfOpenedTargets = new String();
-
 
         if(curT.getCanRunTask()) {
 
             curT.runMe();
 
-            // print start process on specific target
             targetName = curTarget.getName();
+            BackDataManager.processGetTargetName(targetName);
 
-            // print free data on current data
             generalTargetInfo = curTarget.getGeneralInfo();
+            BackDataManager.processGetGeneralInfoFromTarget(generalTargetInfo);
 
-            // print finished current task (after time) and status Success | Warning | Failure
             status = curT.getTargetStatus();
+            BackDataManager.processGetStatusFromTask(status);
 
-            // if not failed --> get all his depends tasks and give them -1
             if(status != "Failure")
                 updateDependsCounterFor(curTarget, typeToTAndT);
 
-            // update depends on counters
-            curT.getTimeToRunOnEachT();
+            BackDataManager.processGetTimeToRunOnEachTarget(curT.getTimeToRunOnEachT());
 
-            // print if targets that depend on him got open
             namesOfOpenedTargets = targetsThatOpened(curTarget, typeToTAndT);
+            BackDataManager.processGetNamesOfOpenedTargets(namesOfOpenedTargets);
         }
     }
 

@@ -21,6 +21,18 @@ public class BackDataManager implements DataManager {
     private Map<String, Set<Target>> mTypeToTargets = new HashMap<String, Set<Target>>();
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "fileHandler";
 
+    public static String processGetTargetName(String targetName) { return targetName;}
+
+    public static String processGetGeneralInfoFromTarget(String generalTargetInfo) { return generalTargetInfo;}
+
+    public static String processGetStatusFromTask(String status) { return status;}
+
+    public static Integer processGetTimeToRunOnEachTarget(Integer timeToRunOnEachT) { return timeToRunOnEachT;}
+
+    public static String processGetNamesOfOpenedTargets(String namesOfOpenedTargets) { return namesOfOpenedTargets;}
+
+    public static String processGetProcessFinished() { return "Process Finished.";}
+
     public boolean checkFile(String fileName) throws ErrorUtils {
         boolean fileSuccess = false;
         try {
@@ -144,5 +156,13 @@ public class BackDataManager implements DataManager {
             return this.graph.getPathFromTargets(dest, src);
         else
             throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in the wanted relationship 'depends On' -> D/ 'required For' -> R."));
+    }
+
+    public void startProcess() throws ErrorUtils{
+
+        if(this.graph.getAllTargets().isEmpty())
+            throw new ErrorUtils(ErrorUtils.noGraph());
+
+         ProcessUtil.run(this.graph.getAllTargets());
     }
 }

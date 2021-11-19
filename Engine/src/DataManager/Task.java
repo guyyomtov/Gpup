@@ -1,3 +1,5 @@
+package DataManager;
+
 import Graph.Target;
 
 import java.util.Random;

@@ -96,7 +96,6 @@ public class Target {
             this.targetType = Type.LEAF;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

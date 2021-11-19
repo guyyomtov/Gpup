@@ -1,8 +1,5 @@
 package Graph.Tree;
 
-import Graph.Leaf;
-import Graph.Middle;
-import Graph.Root;
 import Graph.Target;
 import errors.ErrorUtils;
 

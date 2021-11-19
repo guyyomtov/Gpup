@@ -46,6 +46,7 @@ public class Graph {
         } catch (ErrorUtils e) {throw e;}
 
     }
+
     public void updateTypeOfTargets() { for(Target tr : targets) tr.setTargetType(); }
 
 //    private List<Target> testTList() {
@@ -113,8 +114,7 @@ public class Graph {
                  currTarget.addTargetToRequiredForList(toAdd);
                  toAdd.addTargetToDependsOnList(currTarget);
              }
-            /*else
-            throw new ErrorUtils(ErrorUtils.invalidFile("The target" + gpupDependency.getValue() + "has two dependcies on the target" + currTarget.getName()));*/
+
          }
 
 

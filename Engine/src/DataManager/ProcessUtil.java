@@ -2,20 +2,21 @@ package DataManager;
 
 import Graph.Target;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ProcessUtil {
 
-    public static void run(List<Target> targets){
+    public static Map<String,List<String>> run(List<Target> targets){
 
         //setup data
         Map<String, Target> nameToTargetMap = startTargetMap(targets);
         Map<String, Map<String, Task>> typeToTAndT = startData(nameToTargetMap); // add info
 
         // start
-        startProcess(typeToTAndT, nameToTargetMap);
+        return startProcess(typeToTAndT, nameToTargetMap);
     }
 
     private static Map<String, Target> startTargetMap(List<Target> targets) {
@@ -46,82 +47,100 @@ public class ProcessUtil {
         return resM;
     }
 
-    private static void startProcess(Map<String, Map<String,Task>> typeToTAndT, Map<String, Target> targets) {
+    private static Map<String,List<String>> startProcess(Map<String, Map<String,Task>> typeToTAndT, Map<String, Target> targets) {
 
         Map<String,Task> independents = typeToTAndT.get("Independent");
         Map<String,Task> leaves = typeToTAndT.get("Leaf");
         Map<String,Task> middles = typeToTAndT.get("Middle");
         Map<String,Task> roots = typeToTAndT.get("Root");
 
-        // go over all targets
+        Map<String,List<String>> targetNameToTaskData = new HashMap<>();
 
+        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
+        List<String> curTaskData = new ArrayList<>();
+
+        // to do --> don't give data on task that didn't work
+        // need to go over middle twice
+
+        // go over all targets
         // start with independents
         for(String indName : independents.keySet()){
+
+            targetNameToTaskData.put(indName, new ArrayList<>());
 
             Task curTask = independents.get(indName);
             Target curTarget = targets.get(indName);
 
-            runThisTask(curTask, curTarget, typeToTAndT);
+            curTaskData = runThisTask(curTask, curTarget, typeToTAndT);
         }
 
         // move to leaves
         for(String leafName : leaves.keySet()){
 
+            targetNameToTaskData.put(leafName, new ArrayList<>());
+
             Task curTask = leaves.get(leafName);
             Target curTarget = targets.get(leafName);
 
-            runThisTask(curTask, curTarget, typeToTAndT);
+            curTaskData = runThisTask(curTask, curTarget, typeToTAndT);
         }
 
         // then to middle
         for(String midName : middles.keySet()){
 
+            targetNameToTaskData.put(midName, new ArrayList<>());
+
             Task curTask = middles.get(midName);
             Target curTarget = targets.get(midName);
 
-            runThisTask(curTask, curTarget, typeToTAndT);
+            curTaskData = runThisTask(curTask, curTarget, typeToTAndT);
         }
 
         // then to root
         for(String rootName : middles.keySet()){
 
+            targetNameToTaskData.put(rootName, new ArrayList<>());
+
             Task curTask = roots.get(rootName);
             Target curTarget = targets.get(rootName);
 
-            runThisTask(curTask, curTarget, typeToTAndT);
+            curTaskData = runThisTask(curTask, curTarget, typeToTAndT);
         }
-        BackDataManager.processGetProcessFinished();
+        return targetNameToTaskData;
     }
 
     private static String targetsThatOpened(){
         return new String();
     }
 
-    private static void runThisTask(Task curT, Target curTarget, Map<String, Map<String, Task>> typeToTAndT){
+    private static List<String> runThisTask(Task curT, Target curTarget, Map<String, Map<String, Task>> typeToTAndT){
 
         String status = new String(), targetName = new String(), generalTargetInfo = new String(), namesOfOpenedTargets = new String();
+        List<String> resData = new ArrayList<>();
 
         if(curT.getCanRunTask()) {
 
             curT.runMe();
 
+            resData.add(String.valueOf(curT.getTimeToRunOnEachT()));
+
             targetName = curTarget.getName();
-            BackDataManager.processGetTargetName(targetName);
+            resData.add(targetName);
 
             generalTargetInfo = curTarget.getGeneralInfo();
-            BackDataManager.processGetGeneralInfoFromTarget(generalTargetInfo);
+            resData.add(generalTargetInfo);
 
             status = curT.getTargetStatus();
-            BackDataManager.processGetStatusFromTask(status);
+            resData.add(status);
+
 
             if(status != "Failure")
                 updateDependsCounterFor(curTarget, typeToTAndT);
 
-            BackDataManager.processGetTimeToRunOnEachTarget(curT.getTimeToRunOnEachT());
-
             namesOfOpenedTargets = targetsThatOpened(curTarget, typeToTAndT);
-            BackDataManager.processGetNamesOfOpenedTargets(namesOfOpenedTargets);
+            resData.add(namesOfOpenedTargets);
         }
+        return resData;
     }
 
     private static void updateDependsCounterFor(Target curTarget, Map<String, Map<String, Task>> typeToTAndT){

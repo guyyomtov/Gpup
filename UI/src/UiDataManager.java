@@ -3,10 +3,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import DataManager.*;
 import fileHandler.GPUPDescriptor;
@@ -18,6 +15,8 @@ public class UiDataManager implements DataManager {
     private BackDataManager bDM = new BackDataManager();
 
     public UiDataManager() {} // default ctor
+
+    public Map<String,List<String>> startProcess() throws ErrorUtils {return this.bDM.startProcess();}
 
     public boolean checkFile(String fileName) throws ErrorUtils
     {
@@ -31,8 +30,6 @@ public class UiDataManager implements DataManager {
         }catch(ErrorUtils e){throw e;}
         return result;
     }
-
-    public void startProcess()throws ErrorUtils{ this.bDM.startProcess();}
 
     public List<Integer> getInfoFromGraph() {
 

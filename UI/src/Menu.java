@@ -10,10 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Menu {
@@ -174,9 +171,15 @@ public class Menu {
             String userChoice = sc.nextLine();
             if(userChoice.toLowerCase().equals("menu"))
                 return;
-            else
-            {
-                //depends on nadav.
+            else {
+
+                // check and get data from the user
+                try{
+                    this.startAndPrintProcess();
+                }
+                catch (ErrorUtils e){
+                    System.out.println(e.getMessage());
+                }
             }
 
 
@@ -243,4 +246,24 @@ public class Menu {
     }
 
     private void exitProgram(){ System.exit(0);}
+
+    private void startAndPrintProcess() throws ErrorUtils{
+
+        Map<String,List<String>> targetNameToHisProcessData =  this.dM.startProcess();
+        List<String> curPData = new ArrayList<>();
+        Integer tToSleep;
+
+        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
+
+        // go over each target
+        for(String tName : targetNameToHisProcessData.keySet()) {
+
+            curPData = targetNameToHisProcessData.get(tName);
+            tToSleep = Integer.valueOf(curPData.get(0));
+            //print his name
+            // change from string to time --> sleep
+            //wait the time
+            // print the other data
+        }
+    }
 }

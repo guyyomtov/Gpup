@@ -105,7 +105,8 @@ public class Graph {
          for (int i = 0; i < size; i++) {
              GPUPTargetDependencies.GPUGDependency gpupDependency = lstOfGpupDependncies.get(i);
              Target toAdd = this.mNameToTarget.get(gpupDependency.getValue());
-
+             if(toAdd == null)
+                 throw new ErrorUtils("The target " + gpupDependency.getValue() + " can't include in dependencies list of any target because he doesn't exist.");
              if (gpupDependency.getType().compareTo("dependsOn") == 0) {
                  currTarget.addTargetToDependsOnList(toAdd);
                  toAdd.addTargetToRequiredForList(currTarget);

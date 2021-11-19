@@ -51,24 +51,40 @@ public class Task {
         return "FROZEN";
     }
 
+    public Integer getHowManyRequiredFor(){ return this.howManyRequiredFor; }
 
-    public Integer getTimeToRunOnEachT() {
-        return timeToRunOnEachT;
+    public void setHowManyRequiredFor(Integer newNum){
+
+        this.howManyRequiredFor = newNum;
+
+        if(this.howManyRequiredFor == 0)
+            this.canRunTask = true;
     }
 
-    public String getTargetStatus() {
-        return targetStatus;
-    }
+    public Integer getTimeToRunOnEachT() { return timeToRunOnEachT;}
+
+    public String getTargetStatus() { return targetStatus;}
 
     public void runMe(){
 
+        Random rand = new Random();
+
+        // if success
+        if((rand.nextInt(101)/100) <= this.chanceOfSuccess){
+
+            // if warning
+            if((rand.nextInt(101)/100) <= this.chanceOfWarning)
+                this.targetStatus = "Warning"; //success with warning
+            else
+                this.targetStatus = "Success";
+        }
+        else
+            this.targetStatus = "Failure";
     }
 
     public void myProcessInfo(){
 
     }
 
-    public Boolean getCanRunTask() {
-        return canRunTask;
-    }
+    public Boolean getCanRunTask() { return this.canRunTask; }
 }

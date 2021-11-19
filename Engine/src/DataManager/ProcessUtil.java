@@ -9,14 +9,14 @@ import java.util.Map;
 
 public class ProcessUtil {
 
-    public static Map<String,List<String>> run(List<Target> targets){
+    public static void run(List<Target> targets){
 
         //setup data
         Map<String, Target> nameToTargetMap = startTargetMap(targets);
         Map<String, Map<String, Task>> typeToTAndT = startData(nameToTargetMap); // add info
 
         // start
-        return startProcess(typeToTAndT, nameToTargetMap);
+        startProcess(typeToTAndT, nameToTargetMap);
     }
 
     private static Map<String, Target> startTargetMap(List<Target> targets) {
@@ -47,7 +47,7 @@ public class ProcessUtil {
         return resM;
     }
 
-    private static Map<String,List<String>> startProcess(Map<String, Map<String,Task>> typeToTAndT, Map<String, Target> targets) {
+    private static void startProcess(Map<String, Map<String,Task>> typeToTAndT, Map<String, Target> targets) {
 
         Map<String,Task> independents = typeToTAndT.get("Independent");
         Map<String,Task> leaves = typeToTAndT.get("Leaf");

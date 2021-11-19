@@ -26,7 +26,7 @@ public class Graph {
         this.targets = new ArrayList<Target>(size);
         for (int i = 0; i < size; i++) {
             Target tmpTarget = this.setUpTarget(information, i);
-            if (targetExist(tmpTarget.getName()))
+            if (targetExist(tmpTarget))
                 throw new ErrorUtils(ErrorUtils.invalidFile("The target " + tmpTarget.getName() + " was given twice.")); // to send more messege
             this.targets.add(tmpTarget);
         }
@@ -170,9 +170,16 @@ public class Graph {
 
     }
 
-    public boolean targetExist(String name)
+    public boolean targetExist(Target currTarget)
     {
-        if(mNameToTarget.get(name) == null)
+        if(targets.contains(currTarget))
+            return true;
+        return false;
+    }
+
+    public boolean targetExist(String targetName)
+    {
+        if(this.mNameToTarget.get(targetName) == null)
             return false;
         return true;
     }

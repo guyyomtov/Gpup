@@ -146,11 +146,11 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in the wanted relationship 'depends On' -> D/ 'required For' -> R."));
     }
 
-    public void startProcess() throws ErrorUtils{
+    public Map<String,List<String>> startProcess() throws ErrorUtils{
 
         if(this.graph.getAllTargets().isEmpty())
             throw new ErrorUtils(ErrorUtils.noGraph());
 
-         ProcessUtil.run(this.graph.getAllTargets());
+         return ProcessUtil.run(this.graph.getAllTargets());
     }
 }

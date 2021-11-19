@@ -17,19 +17,8 @@ public class UiDataManager implements DataManager {
 
     private BackDataManager bDM = new BackDataManager();
 
-
-
     public UiDataManager() {} // default ctor
 
-    public UiDataManager(File f) throws ErrorUtils {
-//        if (this.bDM.checkFile(f)) {
-//           // this.setUpEngine(f);
-//        }
-//    else{
-//            throw new ErrorUtils(ErrorUtils.invalidFile());
-//        }
-
-    }
     public boolean checkFile(String fileName) throws ErrorUtils
     {
         boolean result = false;
@@ -41,10 +30,6 @@ public class UiDataManager implements DataManager {
             result = bDM.checkFile(fileName);
         }catch(ErrorUtils e){throw e;}
         return result;
-    }
-    public void setUpGraph(File f) throws ErrorUtils
-    {
-        //     bDM.setUpGraph(f);
     }
 
     public List<Integer> getInfoFromGraph() {

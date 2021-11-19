@@ -150,7 +150,7 @@ public class Tree {
         String res = new String();
 
         for(Integer curT : localPathList)
-            res += this.numToLet.get(curT);
+            res += this.numToLet.get(curT) + " ";
 
         return res;
     }

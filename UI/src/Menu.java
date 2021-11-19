@@ -11,8 +11,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Menu {
 
@@ -70,15 +72,19 @@ public class Menu {
         System.out.println("4) Find path between two given targets.");
         System.out.println("5) Start the build process on the graph. ");
         System.out.println("6) Exit the system. ");
+
     }
 
     // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
 
        //System.out.println("Please write the path of the file: (example:src/resources/ex1-big.xml)");
+        System.out.println("At any time you can press 'menu' to go back to the main menu.");
         System.out.println("Please write the name of the file: (example: ex1-big.xml)");
         Scanner scan = new Scanner(System.in);
         String fileName = scan.nextLine();
+        if(fileName.toLowerCase().equals("menu"))
+            return;
         try {
             if (this.dM.checkFile(fileName)) // only check the file syntax
                 this.isThereGraph = true;
@@ -119,14 +125,15 @@ public class Menu {
     }
 
     private void targetHandler(){
-
         Scanner sc= new Scanner(System.in); //System.in is a standard input stream
         String tName;
 
         if(this.isThereGraph){
+            System.out.println("At any time you can press 'menu' to go back to the main menu.");
             System.out.println("Please enter a target name:");
             tName = sc.nextLine();          // ask user for the name of the target
-
+            if(tName.toLowerCase().equals("menu"))
+                return;
             try {
                 //if tName not null
                 List<String> tarInfo = this.dM.getInfoFromTarget(tName);
@@ -160,6 +167,18 @@ public class Menu {
     private void processHandler(){
 
         if(this.isThereGraph){
+            Scanner sc= new Scanner(System.in);
+            System.out.println("At any time you can press 'menu' to go back to the main menu.");
+            System.out.println("Lets start the process!");
+            System.out.println("If you want to chose the percent of success and the time for running om each task press '1', else press '2' and it will be done randomly.");
+            String userChoice = sc.nextLine();
+            if(userChoice.toLowerCase().equals("menu"))
+                return;
+            else
+            {
+                //depends on nadav.
+            }
+
 
         }
         else
@@ -176,13 +195,16 @@ public class Menu {
         if(this.isThereGraph){
 
             // need to get from the user src, dest & connection
+            System.out.println("At any time you can press 'menu' to go back to the main menu.");
             System.out.println("Let's try to find the targets path you want!");
-            System.out.println("PLease enter path in the following format: <target source>  <target destination>  <wanted relationship (dependsOn/requiredFor)>");
+            System.out.println("PLease enter path in the following format: <target source>  <target destination>  <wanted relationship (depends On -> D /required For -> R)>");
             System.out.println("After that, press enter.");
 
             pathName = sc.nextLine();
 
             words = pathName.split(" ");
+            if(words[0].toLowerCase().equals("menu"))
+                return;
             // check the input is in the format way
             try {
                 src = words[0];
@@ -194,7 +216,23 @@ public class Menu {
 
             try {
                     tPath = this.dM.getPathFromTargets(src, dest, connection);
-                    System.out.println(tPath);
+                    String[] allPath = tPath.split(",");
+                    if(allPath[0].length() > 2)
+                    {
+                        System.out.println("All the paths from " + src + " to " + dest  + ":");
+                        if(connection.equals("D"))
+                            Arrays.stream(allPath).map(t -> t.replace(" ", "->")).forEach(s -> System.out.println(s.substring(0, s.length() - 2 )));
+                        else
+                        {
+                            for(String s: allPath) {
+                               StringBuilder output = new StringBuilder(s).reverse();
+                               System.out.println(output.toString().replace(" ", "->").substring(2));
+                            }
+                        }
+                    }
+                    else
+                        System.out.println("There is no path between " + src + " to " + dest + ".");
+                   // System.out.println(tPath);
             }
             catch (ErrorUtils e) {
                 System.out.println(e.getMessage());

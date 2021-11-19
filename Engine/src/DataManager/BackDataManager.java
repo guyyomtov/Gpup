@@ -21,6 +21,8 @@ public class BackDataManager implements DataManager {
     private Map<String, Set<Target>> mTypeToTargets = new HashMap<String, Set<Target>>();
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "fileHandler";
 
+
+
     public static String processGetTargetName(String targetName) { return targetName;}
 
     public static String processGetGeneralInfoFromTarget(String generalTargetInfo) { return generalTargetInfo;}

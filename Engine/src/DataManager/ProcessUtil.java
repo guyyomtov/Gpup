@@ -106,6 +106,7 @@ public class ProcessUtil {
             curT.runMe();
 
             targetName = curTarget.getName();
+
             BackDataManager.processGetTargetName(targetName);
 
             generalTargetInfo = curTarget.getGeneralInfo();

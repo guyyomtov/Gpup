@@ -48,6 +48,7 @@ public class BackDataManager implements DataManager {
         return (GPUPDescriptor) u.unmarshal(in);
     }
 
+
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
         String tType;
@@ -160,4 +161,13 @@ public class BackDataManager implements DataManager {
     public void saveToFile(String fullPath){
         this.graph.saveToFile(fullPath);
     }
+
+    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils{
+
+        if(this.graph.getAllTargets().isEmpty())
+            throw new ErrorUtils(ErrorUtils.noGraph());
+
+        return ProcessUtil.run(this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning);
+    }
+
 }

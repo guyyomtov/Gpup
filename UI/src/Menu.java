@@ -202,6 +202,9 @@ public class Menu {
     // TO DO
     private void processHandler(){
 
+        Boolean isRandom = true;
+        Integer timeToRun = 0 , chancesToSucceed = 0, chancesToBeAWarning = 0;
+
         if(this.isThereGraph){
             Scanner sc= new Scanner(System.in);
             System.out.println("At any time you can press 'menu' to go back to the main menu.");
@@ -215,7 +218,7 @@ public class Menu {
 
                 // check and get data from the user
                 try{
-                    this.startAndPrintProcess();
+                    this.startAndPrintProcess(isRandom, timeToRun, chancesToSucceed, chancesToBeAWarning);
                 }
                 catch (ErrorUtils e){
                     System.out.println(e.getMessage());
@@ -289,40 +292,46 @@ public class Menu {
 
     private void exitProgram(){ System.exit(0);}
 
-    private void startAndPrintProcess() throws ErrorUtils, InterruptedException {
+    private void startAndPrintProcess(Boolean isRandom, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils, InterruptedException {
 
-        Map<String,List<String>> targetNameToHisProcessData =  this.dM.startProcess();
+        Map<String,List<String>> targetNameToHisProcessData = new HashMap<>();
+
+        if(isRandom)
+         targetNameToHisProcessData =  this.dM.startProcess();
+        else
+            targetNameToHisProcessData =  this.dM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning);
+
         List<String> curPData = new ArrayList<>();
         Integer tToSleep;
-        String targetName;
-        String status;
+        String targetName, status, generalInfo, iOpened;
 
-        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
+
+        System.out.println("Starting the process: ");
 
         // go over each target
         for(String tName : targetNameToHisProcessData.keySet()) {
 
-            curPData = targetNameToHisProcessData.get(tName);
-            tToSleep = Integer.valueOf(curPData.get(0));
-            status = curPData.get(3);
-            targetName = curPData.get(1);
-            System.out.println("Target Name: " + targetName);
-            if(status.equals("55"))
-            System.out.println("Loading.." + tToSleep + "ms");
-            while(tToSleep != 0)
-            {
-                System.out.println(tToSleep + "ms");
-                try{
-                    Thread.sleep(1000);
-                }catch(Error InterruptedException){}
-                tToSleep-=1000;
-            }
-            System.out.println("Process completed the status of this target is: " + status);
+            // get data
+            // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released
 
-            //print his name
-            // change from string to time --> sleep
-            //wait the time
-            // print the other data
+            curPData = targetNameToHisProcessData.get(tName);
+
+            tToSleep = Integer.valueOf(curPData.get(0));
+            targetName = curPData.get(1);
+            generalInfo = curPData.get(2);
+            status = curPData.get(3);
+            iOpened = curPData.get(4);
+
+            // print it
+            System.out.println("Target Name: " + targetName);
+            System.out.println("General Info: " + (generalInfo == "" ? "None" : generalInfo));
+
+            System.out.println("processing current target..");
+            Thread.sleep(tToSleep);
+
+            System.out.println("Process completed: ");
+            System.out.println("target status: " + status);
+            System.out.println("It opened up these tasks: " + (iOpened == " " ? "None" : iOpened) +"\r\n");
         }
     }
 }

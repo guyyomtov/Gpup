@@ -2,49 +2,82 @@ package DataManager;
 
 import Graph.Target;
 
-import java.util.Random;
+import java.util.*;
 
 public class Task {
 
-    private Integer timeToRunOnEachT;
-    private Integer chanceOfSuccess;
-    private Integer chanceOfWarning;
+    private Integer timeIRun;
+    private Integer chancesISucceed;
+    private Integer chancesImAWarning;
     private Boolean isChanceRandom;
     private Boolean isTimeRandom;
-    private String targetStatus = new String();
-    private Integer howManyRequiredFor; // right name?
-    private Boolean canRunTask;
-    private String targetName = new String();
+    final private String myTargetName;
+    final private String myTargetGenaralInfo;
+    private String myStatus = new String();
+    private Boolean canIRun;
+    private Boolean iAmFinished;
+    private List<String> parentsNames = new ArrayList<>();
+    private List<String> myKidsNames = new ArrayList<>();
 
 
     public Task(Target target){
 
         Random rand = new Random();
-
-        this.timeToRunOnEachT = rand.nextInt(3000); // check, did he say how much time?
-        this.chanceOfSuccess = (rand.nextInt(101)/100);
-        this.chanceOfWarning = (rand.nextInt(101)/100);
+        this.timeIRun = rand.nextInt(3000); // check, did he say how much time?
+        this.chancesISucceed = rand.nextInt(101);
+        this.chancesImAWarning = rand.nextInt(101);
         this.isChanceRandom = true;
         this.isTimeRandom = true;
-        this.targetStatus = this.myStartStatus(target.getClass().getSimpleName());;
-        this.howManyRequiredFor = target.getRequiredFor() == null ? 0 : target.getRequiredFor().size();
-        this.canRunTask = this.howManyRequiredFor > 0 ? false : true;
-        this.targetName = target.getName();
 
+        this.myStatus = this.myStartStatus(target.getTargetType().toString());
+        this.canIRun = this.myStatus == "WAITING" ? true : false;
+        this.iAmFinished = false;
+
+        this.myTargetName = target.getName();
+        this.myTargetGenaralInfo = target.getGeneralInfo();
+        this.myKidsNames = this.setMyKidsNames(target);
+        this.parentsNames = this.setMyParentsNames(target);
     }
 
-    public Task(Target target, Integer timeToRunOnEachT, Integer chancesOfSuccess, Integer chancesOfWarning){
+    public Task(Target target, Integer timeToRun, Integer chancesToSucceed, Integer chancesToBeAWarning){
 
-        this.timeToRunOnEachT = timeToRunOnEachT;
-        this.chanceOfSuccess = chancesOfSuccess;
-        this.chanceOfWarning = chancesOfWarning;
+        Random rand = new Random();
+        this.timeIRun = timeToRun;
+        this.chancesISucceed = chancesToSucceed;
+        this.chancesImAWarning = chancesToBeAWarning;
         this.isChanceRandom = false;
         this.isTimeRandom = false;
-        this.targetStatus = this.myStartStatus(target.getClass().getSimpleName());
-        this.howManyRequiredFor = target.getRequiredFor() == null ? 0 : target.getRequiredFor().size();
-        this.canRunTask = this.howManyRequiredFor > 0 ? false : true;
-        this.targetName = target.getName();
+
+        this.myStatus = this.myStartStatus(target.getTargetType().toString());
+        this.canIRun = this.myStatus == "WAITING" ? true : false;
+        this.iAmFinished = false;
+
+        this.myTargetName = target.getName();
+        this.myTargetGenaralInfo = target.getGeneralInfo();
+        this.myKidsNames = this.setMyKidsNames(target);
     }
+
+    private List<String> setMyParentsNames(Target t){
+
+        List<String> parentsNames = new ArrayList<>();
+
+        for(Target curT : t.getRequiredFor())
+            parentsNames.add(curT.getName());
+
+        return parentsNames;
+    }
+
+    private List<String> setMyKidsNames(Target t){
+
+        List<String> kidsNames = new ArrayList<>();
+
+        for(Target curT : t.getDependsOn())
+            kidsNames.add(curT.getName());
+
+        return kidsNames;
+    }
+
+    public List<String> getMyKidsNames(){ return this.myKidsNames;}
 
     private String myStartStatus(String tType){
 
@@ -53,40 +86,138 @@ public class Task {
         return "FROZEN";
     }
 
-    public Integer getHowManyRequiredFor(){ return this.howManyRequiredFor; }
+    public List<String> tryToRunMe(List<Task> myKids, Map<String,Task> allTasks){
 
-    public void setHowManyRequiredFor(Integer newNum){
+        List<String> myPData = new ArrayList<>();
 
-        this.howManyRequiredFor = newNum;
+        if(this.myStatus == "SKIPPED") // return nothing
+            return this.giveMyData();
 
-        if(this.howManyRequiredFor == 0)
-            this.canRunTask = true;
+        if(this.myStatus != "WAITING") { // i'm not a leaf\independent but maybe i can start
+
+            this.myStatus = checkStatusOfMyKidsAndUpdateMe(myKids);
+
+            myPData = this.giveMyData();
+        }
+
+        if(this.myStatus == "WAITING")
+            myPData = this.runMe(allTasks);
+
+        return myPData;
     }
 
-    public Integer getTimeToRunOnEachT() { return timeToRunOnEachT;}
+    private List<String> runMe(Map<String,Task> allTasks){
 
-    public String getTargetStatus() { return targetStatus;}
-
-    public void runMe(){
+        List<String> resData = new ArrayList<>();
+        String openedParents = new String();
 
         Random rand = new Random();
-
-        // if success
-        if((rand.nextInt(101)/100) <= this.chanceOfSuccess){
+        if((rand.nextInt(101)) <= this.chancesISucceed){
 
             // if warning
-            if((rand.nextInt(101)/100) <= this.chanceOfWarning)
-                this.targetStatus = "Warning"; //success with warning
+            if((rand.nextInt(101)) <= this.chancesImAWarning)
+                this.myStatus = "WARNING"; //success with warning
             else
-                this.targetStatus = "Success";
+                this.myStatus = "SUCCESS";
+            openedParents = this.iOpened(this.parentsNames, allTasks);
         }
         else
-            this.targetStatus = "Failure";
+            this.myStatus = "FAILURE";
+
+        this.iAmFinished = true;
+
+        resData.add(0, String.valueOf(this.timeIRun));
+        resData.add(1, this.myTargetName);
+        resData.add(2, this.myTargetGenaralInfo);
+        resData.add(3, this.myStatus);
+        resData.add(4, openedParents);
+        // add targets names the got free
+
+        return resData;
+    }
+    private String iOpened(List<String> parentsNames, Map<String,Task> allTasks){
+
+        String resNames = new String();
+        Boolean addThisDad = true;
+
+        Map<String, List<String>> dadsNamesToTheirKidsName = new HashMap<>();
+        for(String curPName : parentsNames)
+            dadsNamesToTheirKidsName.put(curPName, new ArrayList<>());
+
+        // start the map --> all relevant dads and their kids
+        for(String curDadName :  dadsNamesToTheirKidsName.keySet()){
+
+            Task curDad = allTasks.get(curDadName);
+
+            dadsNamesToTheirKidsName.get(curDadName).addAll(curDad.getMyKidsNames());
+        }
+
+        // go over all parents
+        for(String curDadName :  dadsNamesToTheirKidsName.keySet()){
+
+            addThisDad = true;
+
+            // go over each kid
+            for(String curKidName : dadsNamesToTheirKidsName.get(curDadName)){
+
+                Task curKid = allTasks.get(curKidName);
+
+                if(curKid.getMyStatus() != "SUCCESS" && curKid.getMyStatus() != "WARNING")
+                    addThisDad = false;
+            }
+            if(addThisDad)
+                resNames +=  " " + curDadName;
+        }
+        return resNames;
     }
 
-    public void myProcessInfo(){
+    private List<String> giveMyData(){
 
+        List<String> resData = new ArrayList<>();
+
+        resData.add(0, String.valueOf(this.timeIRun));
+        resData.add(1, this.myTargetName);
+        resData.add(2, this.myTargetGenaralInfo);
+        resData.add(3, this.myStatus);
+        resData.add(4, new String());
+
+        return resData;
     }
 
-    public Boolean getCanRunTask() { return this.canRunTask; }
+    public String getMyName(){return this.myTargetName;}
+
+    public String getMyStatus(){return this.myStatus;}
+
+    private String checkStatusOfMyKidsAndUpdateMe(List<Task> myKids){
+
+        String resStatus = new String();
+        Boolean iCanRun = true;
+
+        for(Task curKid : myKids) {
+
+            if (curKid.getMyStatus() == "FAILURE" || curKid.getMyStatus() == "SKIPPED") {
+
+                resStatus = "SKIPPED";
+
+                this.timeIRun = 0; this.chancesISucceed = 0; this.chancesImAWarning = 0; this.iAmFinished = true;
+
+                iCanRun = false;
+                break;
+            }
+
+            else if(curKid.getMyStatus() == "IN PROCESS" || curKid.getMyStatus() == "WAITING" || curKid.getMyStatus() == "FROZEN") {
+                resStatus = "FROZEN";
+                iCanRun = false;
+            }
+        }
+        if(iCanRun)
+            resStatus = "WAITING";
+
+        this.canIRun = iCanRun;
+
+        return resStatus;
+    }
+
+    public Boolean imFinished(){return this.iAmFinished;}
+
 }

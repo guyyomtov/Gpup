@@ -12,12 +12,34 @@ public class ProcessUtil {
     public static Map<String,List<String>> run(List<Target> targets){
 
         //setup data
-        Map<String, Target> nameToTargetMap = startTargetMap(targets);
-        Map<String, Task> namesToTasks = startTaskMap(targets);
-        Map<String, Map<String, Task>> typeOfTargetToTargetNameToHisTask = startTaskMapByTargetType(namesToTasks, nameToTargetMap);
+        Map<String, Target>             namesToTargetsMap                   = startTargetMap(targets);
+        Map<String, Task>               namesToTasks                        = startTaskMap(targets);
+        Map<String, Map<String, Task>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
 
         // start
-        return startProcess(typeOfTargetToTargetNameToHisTask, nameToTargetMap, namesToTasks);
+        return startProcess(typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);
+    }
+
+    public static Map<String,List<String>> run(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning){
+
+        //setup data
+        Map<String, Target>             namesToTargetsMap                   = startTargetMap(targets);
+        Map<String, Task>               namesToTasks                        = startTaskMap(targets, timeToRun, chancesToSucceed, chancesToBeAWarning);
+        Map<String, Map<String, Task>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
+
+        // start
+        return startProcess(typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);
+    }
+
+
+    private static Map<String, Task> startTaskMap(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning){
+
+        Map<String, Task> resM = new HashMap<String, Task>();
+
+        for(Target curTarget : targets)
+            resM.put(curTarget.getName(), new Task(curTarget, timeToRun, chancesToSucceed, chancesToBeAWarning));
+
+        return resM;
     }
 
     private static Map<String, Task> startTaskMap(List<Target> targets){
@@ -59,67 +81,76 @@ public class ProcessUtil {
         return resM;
     }
 
-
     private static  Map<String,List<String>> startProcess(Map<String, Map<String,Task>> typeOfTargetToTargetNameToHisTask, Map<String, Target> targets, Map<String, Task> namesToTasks) {
 
+        // setup data
         Map<String,Task> independents = typeOfTargetToTargetNameToHisTask.get("Independent");
         Map<String,Task> leaves = typeOfTargetToTargetNameToHisTask.get("Leaf");
         Map<String,Task> middles = typeOfTargetToTargetNameToHisTask.get("Middle");
         Map<String,Task> roots = typeOfTargetToTargetNameToHisTask.get("Root");
-
         Boolean curTasksFinished = false;
         Map<String,List<String>> targetNameToTaskData = new HashMap<>();
-
+        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released
         Map<String,List<String>> curTasksData = new HashMap<>();
-        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
 
 
-        // go over all targets
+        // start process
 
-        // start with independents
-        while(!curTasksFinished) {
+        // go over all targets:
 
-            curTasksData = runTheseTasks(new ArrayList<>(independents.values()), namesToTasks); // go over all cur tasks and get the needed data back
+        // 1) start with independents
+        if(!independents.keySet().isEmpty()) {
 
-            targetNameToTaskData.putAll(curTasksData);
+            while (!curTasksFinished) {
 
-            curTasksFinished = checkIfWeFinished(new ArrayList<>(independents.values())); // go over all cur tasks and check if finished (with get
+                curTasksData = runTheseTasks(new ArrayList<>(independents.values()), namesToTasks); // go over all cur tasks and get the needed data back
+
+                targetNameToTaskData.putAll(curTasksData);
+
+                curTasksFinished = checkIfWeFinished(new ArrayList<>(independents.values())); // go over all cur tasks and check if finished (with get
+            }
+            curTasksFinished = false;
         }
-        curTasksFinished = false;
-
         // move to leaves
-        while(!curTasksFinished) {
+        if(!leaves.keySet().isEmpty()) {
 
-            curTasksData = runTheseTasks(new ArrayList<>(leaves.values()), namesToTasks); // go over all cur tasks and get the needed data back
+            while (!curTasksFinished) {
 
-            targetNameToTaskData.putAll(curTasksData);
+                curTasksData = runTheseTasks(new ArrayList<>(leaves.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
-            curTasksFinished = checkIfWeFinished(new ArrayList<>(leaves.values())); // go over all cur tasks and check if finished (with get
+                targetNameToTaskData.putAll(curTasksData);
+
+                curTasksFinished = checkIfWeFinished(new ArrayList<>(leaves.values())); // go over all cur tasks and check if finished (with get
+            }
+            curTasksFinished = false;
         }
-        curTasksFinished = false;
 
         // then to middle
-        while(!curTasksFinished) {
+        if(!middles.keySet().isEmpty()) {
 
-            curTasksData = runTheseTasks(new ArrayList<>(middles.values()), namesToTasks); // go over all cur tasks and get the needed data back
+            while (!curTasksFinished) {
 
-            targetNameToTaskData.putAll(curTasksData);
+                curTasksData = runTheseTasks(new ArrayList<>(middles.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
-            curTasksFinished = checkIfWeFinished(new ArrayList<>(middles.values())); // go over all cur tasks and check if finished (with get
+                targetNameToTaskData.putAll(curTasksData);
+
+                curTasksFinished = checkIfWeFinished(new ArrayList<>(middles.values())); // go over all cur tasks and check if finished (with get
+            }
+            curTasksFinished = false;
         }
-        curTasksFinished = false;
 
         // then to root
-        while(!curTasksFinished) {
+        if(!roots.keySet().isEmpty()) {
 
-            curTasksData = runTheseTasks(new ArrayList<>(roots.values()), namesToTasks); // go over all cur tasks and get the needed data back
+            while (!curTasksFinished) {
 
-            targetNameToTaskData.putAll(curTasksData);
+                curTasksData = runTheseTasks(new ArrayList<>(roots.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
-            curTasksFinished = checkIfWeFinished(new ArrayList<>(roots.values())); // go over all cur tasks and check if finished (with get
+                targetNameToTaskData.putAll(curTasksData);
+
+                curTasksFinished = checkIfWeFinished(new ArrayList<>(roots.values())); // go over all cur tasks and check if finished (with get
+            }
         }
-        curTasksFinished = false;
-
 
         return targetNameToTaskData;
     }
@@ -138,22 +169,21 @@ public class ProcessUtil {
         return  finished;
     }
 
-
     private static Map<String,List<String>> runTheseTasks(List<Task> tasks, Map<String, Task> namesToTasks){
 
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
+        List<String> curTaskData = new ArrayList<>();
+        List<Task> kids = new ArrayList<Task>();
         Map<String,List<String>> resData = new HashMap<>();
         for(Task curT : tasks)
             resData.put(curT.getMyName(), new ArrayList<>());
 
-        List<String> curTaskData = new ArrayList<>();
-        List<Task> kids = new ArrayList<Task>();
 
         for(Task curT : tasks){
 
             kids = findMyKids(curT, namesToTasks);
 
-            curTaskData = curT.tryToRunMe(kids);
+            curTaskData = curT.tryToRunMe(kids, namesToTasks);
 
             if(!curTaskData.isEmpty())
                 resData.get(curT.getMyName()).addAll(curTaskData);

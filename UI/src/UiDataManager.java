@@ -101,9 +101,13 @@ public class UiDataManager implements DataManager {
 
     }
 
-    public Map<String,List<String>> startProcess() throws ErrorUtils {
-        return this.bDM.startProcess();
+    public Map<String,List<String>> startProcess() throws ErrorUtils { return this.bDM.startProcess(); }
+
+    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils {
+
+        return this.bDM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning);
     }
+
 
     public boolean checkValidTask(String taskName) {
         return false;

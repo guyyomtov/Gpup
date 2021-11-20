@@ -153,4 +153,13 @@ public class BackDataManager implements DataManager {
 
          return ProcessUtil.run(this.graph.getAllTargets());
     }
+
+    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils{
+
+        if(this.graph.getAllTargets().isEmpty())
+            throw new ErrorUtils(ErrorUtils.noGraph());
+
+        return ProcessUtil.run(this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning);
+    }
+
 }

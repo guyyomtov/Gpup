@@ -84,6 +84,18 @@ public class UiDataManager implements DataManager {
         }catch(ErrorUtils e){throw e;}
     }
 
+    public String findCircle(String targetName) throws ErrorUtils {
+        try{
+            return this.bDM.findCircle(targetName);
+        }catch (ErrorUtils e){throw e;}
+
+    }
+
+    void saveToFile(String fullPath)
+    {
+        this.bDM.saveToFile(fullPath);
+    }
+
     public void swapFiles(File newFile) throws ErrorUtils {
 //
 //        if (this.checkFile(newFile))

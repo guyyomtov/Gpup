@@ -4,9 +4,10 @@ import Graph.Tree.Tree;
 import errors.ErrorUtils;
 import fileHandler.*;
 
+import java.io.*;
 import java.util.*;
 
-public class Graph {
+public class Graph implements Serializable {
     private List<Target> targets = new ArrayList<Target>();
     public boolean isGood = true;
     private Tree tree = new Tree();
@@ -226,33 +227,55 @@ public class Graph {
             Target currTarget = mNameToTarget.get(targetName);
             if(currTarget.getTargetType().toString().equals("Middle"))
             {
-                String res = currTarget.getName();
-                findCircleHelper(currTarget,res);
-                return res;
+                List<String> res = new ArrayList<>();
+                findCircleHelper(currTarget,currTarget,res);
+                if(!res.isEmpty())
+                {
+                    return this.tree.findAllPaths(currTarget.getName(), res.get(0));
+                }
+                else return "The target" + targetName + "doesn't in circle.";
             }
-            else return "The target" + targetName + "doesnt in circle.";
+            else return "The target" + targetName + "doesn't in circle.";
         }
         else
             throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + targetName + "doesn't exist"));
 
     }
 
-    public void findCircleHelper(Target currTarget,String res)
+    public void findCircleHelper(Target currTarget,Target dest ,List<String> res)
     {
         if(currTarget.getTargetType().toString().equals("Leaf"))
             return;
-        else if(currTarget.getDependsOn().contains(currTarget)) {
-            res += " " + currTarget.getName();
+        else if(currTarget.getDependsOn().contains(dest)) {
+            res.add(currTarget.getName());
             return;
         }
         else
         {
-            List<Target> depensOnLst = currTarget.getDependsOn();
-            for(Target t: depensOnLst)
-                findCircleHelper(t, res);
+            List<Target> dependsOnLst = currTarget.getDependsOn();
+            for(Target t: dependsOnLst)
+                findCircleHelper(t,dest, res);
         }
 
     }
+
+    public void saveToFile(String fullPath)
+    {
+        try{
+        DataOutputStream dataOut = new DataOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(fullPath)));
+            for(Target t: targets) {
+                t.saveToFile(dataOut);
+            }
+            for(Target t: targets)
+            {
+                t.saveToFileDependencies(dataOut);
+            }
+        }catch (Exception e){}
+
+    }
+   // public void saveToFile(ObjectOutputStream)
 
 
 

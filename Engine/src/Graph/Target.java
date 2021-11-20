@@ -3,6 +3,7 @@ package Graph;
 import errors.ErrorUtils;
 import fileHandler.GPUPTargetDependencies;
 
+import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +108,30 @@ public class Target {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    public void saveToFile(DataOutputStream dataOut)
+    {
+        try {
+            dataOut.writeUTF(this.name);
+            dataOut.writeInt(countOfDependency);
+            dataOut.writeUTF(""); // general info to make it -->""
+        }catch (Exception e){
+            System.out.println("something went wrong with saving file --> its here only to check");
+        }
+
+    }
+
+    public void saveToFileDependencies(DataOutputStream dataOut)
+    {
+        try {
+            dataOut.writeInt(this.dependsOn.size());
+            for(Target t: this.dependsOn)
+                dataOut.writeUTF(t.getName());
+            dataOut.writeInt(this.requiredFor.size());
+            for(Target t : this.requiredFor)
+                dataOut.writeUTF(t.getName());
+        }catch (Exception e){System.out.println("somthing went wrong with saving file --> its here only to check");}
     }
 
 

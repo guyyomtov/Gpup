@@ -1,10 +1,8 @@
 package DataManager;
 import errors.ErrorUtils;
 import fileHandler.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,7 +22,7 @@ public class BackDataManager implements DataManager {
     public boolean checkFile(String fileName) throws ErrorUtils {
         boolean fileSuccess = false;
         try {
-                InputStream inputStream = new FileInputStream(new File("Engine/src/resources/"+fileName));
+                InputStream inputStream = new FileInputStream(new File(fileName));
                 //to check if the ended file is with xml
                 GPUPDescriptor information = deserializeFrom(inputStream);
                 if(information == null)
@@ -49,7 +47,6 @@ public class BackDataManager implements DataManager {
         Unmarshaller u = jc.createUnmarshaller();
         return (GPUPDescriptor) u.unmarshal(in);
     }
-
 
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
@@ -152,5 +149,15 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.noGraph());
 
          return ProcessUtil.run(this.graph.getAllTargets());
+    }
+
+    public String findCircle(String name) throws ErrorUtils {
+        try{
+            return this.graph.findCircle(name);
+        }catch (ErrorUtils e){throw e;}
+    }
+
+    public void saveToFile(String fullPath){
+        this.graph.saveToFile(fullPath);
     }
 }

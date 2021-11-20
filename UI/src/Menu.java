@@ -28,7 +28,7 @@ public class Menu {
 
         userInput = sc.next().charAt(0);
 
-        while(userInput != '6'){      // In menu until presses 6 == exit
+        while(userInput != '8'){      // In menu until presses 6 == exit
 
             switch(userInput) {
 
@@ -48,6 +48,12 @@ public class Menu {
                     this.processHandler();
                     break;
                 case '6':
+                    this.findCircle();
+                    break;
+                case '7':
+                    this.saveToFile();
+                    break;
+                case '8':
                     this.exitProgram();
                     break;
                 default: // Invalid input, not number\number isn't good
@@ -68,7 +74,39 @@ public class Menu {
         System.out.println("3) Show data of a specific given target.");
         System.out.println("4) Find path between two given targets.");
         System.out.println("5) Start the build process on the graph. ");
-        System.out.println("6) Exit the system. ");
+        System.out.println("6) Find circle. ");
+        System.out.println("7) Save data to file. ");
+        System.out.println("8) Exit the system.");
+
+    }
+    public void findCircle()
+    {
+        System.out.println("At any time you can press 'menu' to go back to the main menu.");
+        System.out.println("Lets find circle!");
+        System.out.println("Please enter name of target: ");
+        Scanner scan = new Scanner(System.in);
+        String targetName = scan.nextLine();
+        if(targetName.toLowerCase().equals("menu"))
+            return;
+        try {
+            String tPath = this.dM.findCircle(targetName);
+            String[] allPath = tPath.split(",");
+            System.out.println(allPath[0].replace(" ", "->") + targetName);
+           // Arrays.stream(allPath).map(t -> t.replace(" ", "->")).forEach(s -> System.out.println(s + targetName)); if we want to print all the circle
+        }catch (ErrorUtils e){
+            System.out.println(e.getMessage());}
+    }
+
+    public void saveToFile()
+    {
+        System.out.println("At any time you can press 'menu' to go back to the main menu.");
+        System.out.println("Please enter full path for saving Gpup to a file:");
+        Scanner scan = new Scanner(System.in);
+        String fullPath = scan.nextLine();
+        if(fullPath.toLowerCase().equals("menu"))
+            return;
+        else
+            this.dM.saveToFile(fullPath);
 
     }
 
@@ -77,7 +115,7 @@ public class Menu {
 
        //System.out.println("Please write the path of the file: (example:src/resources/ex1-big.xml)");
         System.out.println("At any time you can press 'menu' to go back to the main menu.");
-        System.out.println("Please write the name of the file: (example: ex1-big.xml)");
+        System.out.println("Please write the full path of the file: (example: C:\\Users\\guyyo\\IdeaProjects\\Gpup\\Engine\\src\\resources\\ex1-big.xml)");
         Scanner scan = new Scanner(System.in);
         String fileName = scan.nextLine();
         if(fileName.toLowerCase().equals("menu"))

@@ -16,8 +16,6 @@ public class UiDataManager implements DataManager {
 
     public UiDataManager() {} // default ctor
 
-    public Map<String,List<String>> startProcess() throws ErrorUtils {return this.bDM.startProcess();}
-
     public boolean checkFile(String fileName) throws ErrorUtils
     {
         boolean result = false;
@@ -103,8 +101,8 @@ public class UiDataManager implements DataManager {
 
     }
 
-    public void startProcess(String taskName) {
-        //engine.startTask();// or whatever it will be
+    public Map<String,List<String>> startProcess() throws ErrorUtils {
+        return this.bDM.startProcess();
     }
 
     public boolean checkValidTask(String taskName) {

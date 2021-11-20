@@ -13,10 +13,21 @@ public class ProcessUtil {
 
         //setup data
         Map<String, Target> nameToTargetMap = startTargetMap(targets);
-        Map<String, Map<String, Task>> typeToTAndT = startData(nameToTargetMap); // add info
+        Map<String, Task> namesToTasks = startTaskMap(targets);
+        Map<String, Map<String, Task>> typeOfTargetToTargetNameToHisTask = startTaskMapByTargetType(namesToTasks, nameToTargetMap);
 
         // start
-        return startProcess(typeToTAndT, nameToTargetMap);
+        return startProcess(typeOfTargetToTargetNameToHisTask, nameToTargetMap, namesToTasks);
+    }
+
+    private static Map<String, Task> startTaskMap(List<Target> targets){
+
+        Map<String, Task> resM = new HashMap<String, Task>();
+
+        for(Target curTarget : targets)
+            resM.put(curTarget.getName(), new Task(curTarget));
+
+        return resM;
     }
 
     private static Map<String, Target> startTargetMap(List<Target> targets) {
@@ -29,8 +40,9 @@ public class ProcessUtil {
         return resM;
     }
 
-    private static Map<String, Map<String,Task>> startData(Map<String, Target> tMap) {
+    private static Map<String, Map<String,Task>> startTaskMapByTargetType(Map<String, Task> namesToTasks, Map<String, Target> namesToTarget) {
 
+        String curTargetType = new String();
         Map<String, Map<String,Task>> resM = new HashMap<>();
 
         resM.put("Independent", new HashMap<>());
@@ -38,147 +50,125 @@ public class ProcessUtil {
         resM.put("Middle", new HashMap<>());
         resM.put("Root", new HashMap<>());
 
-        for(Target curT : tMap.values()){
+        for(String curTaskName : namesToTasks.keySet()){
 
-            Task curTask = new Task(curT);
+            curTargetType = namesToTarget.get(curTaskName).getTargetType().toString();
 
-            resM.get(curT.getTargetType().toString()).put(curT.getName(), curTask);
+            resM.get(curTargetType).put(curTaskName, namesToTasks.get(curTaskName));
         }
         return resM;
     }
 
-    private static  Map<String,List<String>> startProcess(Map<String, Map<String,Task>> typeToTAndT, Map<String, Target> targets) {
 
-        Map<String,Task> independents = typeToTAndT.get("Independent");
-        Map<String,Task> leaves = typeToTAndT.get("Leaf");
-        Map<String,Task> middles = typeToTAndT.get("Middle");
-        Map<String,Task> roots = typeToTAndT.get("Root");
+    private static  Map<String,List<String>> startProcess(Map<String, Map<String,Task>> typeOfTargetToTargetNameToHisTask, Map<String, Target> targets, Map<String, Task> namesToTasks) {
 
+        Map<String,Task> independents = typeOfTargetToTargetNameToHisTask.get("Independent");
+        Map<String,Task> leaves = typeOfTargetToTargetNameToHisTask.get("Leaf");
+        Map<String,Task> middles = typeOfTargetToTargetNameToHisTask.get("Middle");
+        Map<String,Task> roots = typeOfTargetToTargetNameToHisTask.get("Root");
+
+        Boolean curTasksFinished = false;
         Map<String,List<String>> targetNameToTaskData = new HashMap<>();
 
+        Map<String,List<String>> curTasksData = new HashMap<>();
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
-        List<String> curTaskData = new ArrayList<>();
 
-        // to do --> don't give data on task that didn't work
-        // need to go over middle twice
 
         // go over all targets
+
         // start with independents
-        for(String indName : independents.keySet()){
+        while(!curTasksFinished) {
 
-            targetNameToTaskData.put(indName, new ArrayList<>());
+            curTasksData = runTheseTasks(new ArrayList<>(independents.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
-            Task curTask = independents.get(indName);
-            Target curTarget = targets.get(indName);
+            targetNameToTaskData.putAll(curTasksData);
 
-            curTaskData = runThisTask(curTask, curTarget, typeToTAndT);
+            curTasksFinished = checkIfWeFinished(new ArrayList<>(independents.values())); // go over all cur tasks and check if finished (with get
         }
+        curTasksFinished = false;
 
         // move to leaves
-        for(String leafName : leaves.keySet()){
+        while(!curTasksFinished) {
 
-            targetNameToTaskData.put(leafName, new ArrayList<>());
+            curTasksData = runTheseTasks(new ArrayList<>(leaves.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
-            Task curTask = leaves.get(leafName);
-            Target curTarget = targets.get(leafName);
+            targetNameToTaskData.putAll(curTasksData);
 
-            curTaskData = runThisTask(curTask, curTarget, typeToTAndT);
+            curTasksFinished = checkIfWeFinished(new ArrayList<>(leaves.values())); // go over all cur tasks and check if finished (with get
         }
+        curTasksFinished = false;
 
         // then to middle
-        for(String midName : middles.keySet()){
+        while(!curTasksFinished) {
 
-            targetNameToTaskData.put(midName, new ArrayList<>());
+            curTasksData = runTheseTasks(new ArrayList<>(middles.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
-            Task curTask = middles.get(midName);
-            Target curTarget = targets.get(midName);
+            targetNameToTaskData.putAll(curTasksData);
 
-            curTaskData = runThisTask(curTask, curTarget, typeToTAndT);
+            curTasksFinished = checkIfWeFinished(new ArrayList<>(middles.values())); // go over all cur tasks and check if finished (with get
         }
+        curTasksFinished = false;
 
         // then to root
-        for(String rootName : middles.keySet()){
+        while(!curTasksFinished) {
 
-            targetNameToTaskData.put(rootName, new ArrayList<>());
+            curTasksData = runTheseTasks(new ArrayList<>(roots.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
-            Task curTask = roots.get(rootName);
-            Target curTarget = targets.get(rootName);
+            targetNameToTaskData.putAll(curTasksData);
 
-            curTaskData = runThisTask(curTask, curTarget, typeToTAndT);
+            curTasksFinished = checkIfWeFinished(new ArrayList<>(roots.values())); // go over all cur tasks and check if finished (with get
         }
+        curTasksFinished = false;
+
+
         return targetNameToTaskData;
     }
 
-    private static String targetsThatOpened(){
-        return new String();
+    private static Boolean checkIfWeFinished(List<Task> tasks){
+
+        Boolean finished = true;
+
+        for(Task curT : tasks){
+
+            if(!curT.imFinished()) {
+                finished = false;
+                break;
+            }
+        }
+        return  finished;
     }
 
-    private static List<String> runThisTask(Task curT, Target curTarget, Map<String, Map<String, Task>> typeToTAndT){
 
-        String status = new String(), targetName = new String(), generalTargetInfo = new String(), namesOfOpenedTargets = new String();
-        List<String> resData = new ArrayList<>();
+    private static Map<String,List<String>> runTheseTasks(List<Task> tasks, Map<String, Task> namesToTasks){
 
-        if(curT.getCanRunTask()) {
+        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
+        Map<String,List<String>> resData = new HashMap<>();
+        for(Task curT : tasks)
+            resData.put(curT.getMyName(), new ArrayList<>());
 
-            curT.runMe();
+        List<String> curTaskData = new ArrayList<>();
+        List<Task> kids = new ArrayList<Task>();
 
-            resData.add(String.valueOf(curT.getTimeToRunOnEachT()));
+        for(Task curT : tasks){
 
-            targetName = curTarget.getName();
-            resData.add(targetName);
+            kids = findMyKids(curT, namesToTasks);
 
-            generalTargetInfo = curTarget.getGeneralInfo();
-            resData.add(generalTargetInfo);
+            curTaskData = curT.tryToRunMe(kids);
 
-            status = curT.getTargetStatus();
-            resData.add(status);
-
-
-            if(status != "Failure")
-                updateDependsCounterFor(curTarget, typeToTAndT);
-
-            namesOfOpenedTargets = targetsThatOpened(curTarget, typeToTAndT);
-            resData.add(namesOfOpenedTargets);
+            if(!curTaskData.isEmpty())
+                resData.get(curT.getMyName()).addAll(curTaskData);
         }
         return resData;
     }
 
-    private static void updateDependsCounterFor(Target curTarget, Map<String, Map<String, Task>> typeToTAndT){
+    private static List<Task> findMyKids(Task curT, Map<String, Task> namesToTasks){
 
-        for(Target curTDepend : curTarget.getDependsOn()){
+        List<String> kidsNames = curT.getMyKidsNames();
+        List<Task> kids = new ArrayList<Task>();
 
-            Task tToUpdate = typeToTAndT.get(curTDepend.getTargetType().toString()).get(curTDepend.getName());
+        for(String curKidName : kidsNames)
+            kids.add(namesToTasks.get(curKidName));
 
-            tToUpdate.setHowManyRequiredFor(tToUpdate.getHowManyRequiredFor() - 1);
-        }
-    }
-
-    public static void run(List<Target> targets, Integer timeToRunOnEachT, Integer chancesOfSuccess, Integer chancesOfWarning){
-
-        // start data needed
-        // make map --> target to task
-
-        // make map --> target type to --> map <target to task
-    }
-
-    private static String targetsThatOpened(Target curTarget, Map<String, Map<String, Task>> typeToTAndT){
-
-        String targetResNames = new String();
-
-        // go over all depends on list
-        for(Target curTDepend : curTarget.getDependsOn()) {
-
-            Task taskToCheck = typeToTAndT.get(curTDepend.getTargetType().toString()).get(curTDepend.getName());
-
-            // if there task counter == 0
-            if(taskToCheck.getCanRunTask())
-                targetResNames += curTDepend.getName();
-
-        }
-        return targetResNames;
-    }
-
-    public static void getFinalReport(){
-
+        return kids;
     }
 }

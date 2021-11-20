@@ -154,6 +154,7 @@ public class Menu {
             }
             catch (ErrorUtils e){
                 System.out.println(e.getMessage());
+                this.targetHandler();
             }
         }
         else
@@ -173,13 +174,14 @@ public class Menu {
                 return;
             else {
 
+
                 // check and get data from the user
                 try{
                     this.startAndPrintProcess();
                 }
                 catch (ErrorUtils e){
                     System.out.println(e.getMessage());
-                }
+                }catch(InterruptedException e){}
             }
 
 
@@ -215,6 +217,7 @@ public class Menu {
                 connection = words[2];
             }catch (Exception e){
                 System.out.println("Please enter three values.");
+                this.pathHandler();
             }
 
             try {
@@ -239,6 +242,7 @@ public class Menu {
             }
             catch (ErrorUtils e) {
                 System.out.println(e.getMessage());
+                this.pathHandler();
             }
         }
         else
@@ -247,11 +251,13 @@ public class Menu {
 
     private void exitProgram(){ System.exit(0);}
 
-    private void startAndPrintProcess() throws ErrorUtils{
+    private void startAndPrintProcess() throws ErrorUtils, InterruptedException {
 
         Map<String,List<String>> targetNameToHisProcessData =  this.dM.startProcess();
         List<String> curPData = new ArrayList<>();
         Integer tToSleep;
+        String targetName;
+        String status;
 
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
 
@@ -260,6 +266,21 @@ public class Menu {
 
             curPData = targetNameToHisProcessData.get(tName);
             tToSleep = Integer.valueOf(curPData.get(0));
+            status = curPData.get(3);
+            targetName = curPData.get(1);
+            System.out.println("Target Name: " + targetName);
+            if(status.equals("55"))
+            System.out.println("Loading.." + tToSleep + "ms");
+            while(tToSleep != 0)
+            {
+                System.out.println(tToSleep + "ms");
+                try{
+                    Thread.sleep(1000);
+                }catch(Error InterruptedException){}
+                tToSleep-=1000;
+            }
+            System.out.println("Process completed the status of this target is: " + status);
+
             //print his name
             // change from string to time --> sleep
             //wait the time

@@ -1,4 +1,5 @@
 package Graph;
+import DataManager.LogFile;
 import Graph.Tree.Tree;
 import errors.ErrorUtils;
 import fileHandler.*;
@@ -42,6 +43,8 @@ public class Graph {
             this.tree.startMe(this.targets.size(), this.targets);
 
             this.checkCircleBetweenTwoTargets();
+
+            LogFile.gpupPath = information.getGPUPConfiguration().getGPUPWorkingDirectory();
 
         } catch (ErrorUtils e) {throw e;}
 
@@ -217,12 +220,40 @@ public class Graph {
 
     }
 
+    public String findCircle(String targetName) throws ErrorUtils {
+        if(targetExist(targetName))
+        {
+            Target currTarget = mNameToTarget.get(targetName);
+            if(currTarget.getTargetType().toString().equals("Middle"))
+            {
+                String res = currTarget.getName();
+                findCircleHelper(currTarget,res);
+                return res;
+            }
+            else return "The target" + targetName + "doesnt in circle.";
+        }
+        else
+            throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + targetName + "doesn't exist"));
 
-//    public Set<Targets> getAllTargets(){ return this.targets; }
-//    public Graph(Collection<Targets> info)
-//    {
-//        this.targets = new HashSet<Targets>(20);
-//
-//    }
+    }
+
+    public void findCircleHelper(Target currTarget,String res)
+    {
+        if(currTarget.getTargetType().toString().equals("Leaf"))
+            return;
+        else if(currTarget.getDependsOn().contains(currTarget)) {
+            res += " " + currTarget.getName();
+            return;
+        }
+        else
+        {
+            List<Target> depensOnLst = currTarget.getDependsOn();
+            for(Target t: depensOnLst)
+                findCircleHelper(t, res);
+        }
+
+    }
+
+
 
 }

@@ -31,7 +31,6 @@ public class ProcessUtil {
         return startProcess(typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);
     }
 
-
     private static Map<String, Task> startTaskMap(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning){
 
         Map<String, Task> resM = new HashMap<String, Task>();
@@ -201,4 +200,5 @@ public class ProcessUtil {
 
         return kids;
     }
+
 }

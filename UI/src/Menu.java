@@ -1,5 +1,6 @@
 // This class is responsible to print & interact with the ui
 
+import DataManager.LogFile;
 import errors.ErrorUtils;
 import fileHandler.GPUPDescriptor;
 
@@ -305,7 +306,7 @@ public class Menu {
         Integer tToSleep;
         String targetName, status, generalInfo, iOpened;
 
-
+        LogFile.makeDirectory("simulation");
         System.out.println("Starting the process: ");
 
         // go over each target
@@ -324,13 +325,18 @@ public class Menu {
 
             // print it
             System.out.println("Target Name: " + targetName);
+            try {
+                LogFile.setNameInFile(targetName);
+            }catch (Exception e){}
             System.out.println("General Info: " + (generalInfo == "" ? "None" : generalInfo));
+            LogFile.setGeneralInfo(generalInfo);
 
             System.out.println("processing current target..");
             Thread.sleep(tToSleep);
 
             System.out.println("Process completed: ");
             System.out.println("target status: " + status);
+            LogFile.setStatus(status);
             System.out.println("It opened up these tasks: " + (iOpened == " " ? "None" : iOpened) +"\r\n");
         }
     }

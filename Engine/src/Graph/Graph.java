@@ -7,7 +7,7 @@ import fileHandler.*;
 import java.io.*;
 import java.util.*;
 
-public class Graph implements Serializable {
+public class Graph {
     private List<Target> targets = new ArrayList<Target>();
     public boolean isGood = true;
     private Tree tree = new Tree();

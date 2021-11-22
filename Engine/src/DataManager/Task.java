@@ -135,6 +135,7 @@ public class Task {
 
         return resData;
     }
+
     private String iOpened(List<String> parentsNames, Map<String,Task> allTasks){
 
         String resNames = new String();

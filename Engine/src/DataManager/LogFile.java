@@ -2,7 +2,9 @@ package DataManager;
 
 import errors.ErrorUtils;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,9 +13,13 @@ import java.util.logging.Logger;
 
 public class LogFile {
 
-    public static Logger logger = Logger.getLogger("MyLog");
-
     public static String gpupPath;
+
+    public static String currPath;
+
+    public static FileWriter writer;
+
+    public static BufferedWriter currBuffer;
 
     public static void makeDirectory(String taskName)
     {
@@ -25,25 +31,47 @@ public class LogFile {
             }catch(Exception e){}
         }
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.mm.yyyy HH.MM.SS");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.mm.yyyy");
         Date date = new Date();
         String currDate = simpleDateFormat.format(date);
-        File taskDirectory = new File(gpupPath + taskName +"-" + currDate);
+        File taskDirectory = new File(gpupPath + "\\" + taskName + "-" + currDate);
         if(!taskDirectory.exists()) try{taskDirectory.mkdir();} catch(Exception e){}
+        currPath = gpupPath + "\\" + taskName + "-" + currDate;
     }
     // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
 
     public static void setNameInFile(String targetName) throws IOException {
 
-        FileHandler fh = new FileHandler("test/" + targetName +".log");
-        logger.addHandler(fh);
-        logger.info("Target name: " + targetName);
+        writer = new FileWriter(currPath + "\\" + targetName +".log");
+        currBuffer = new BufferedWriter(writer);
+        currBuffer.write("Target name: " + targetName + "\n");
+        currBuffer.close();
     }
 
-    public static void setGeneralInfo(String generalInfo)  {logger.info("General Information: " + generalInfo );}
+    public static void setGeneralInfo(String generalInfo)  {
+        try {
+            currBuffer = new BufferedWriter(writer);
+            currBuffer.write("General Information: " + generalInfo);
 
-    public static void setStatus(String status)  {logger.info("Target status: " + status );}
+            currBuffer.close();
+        }catch (IOException e){}
+    }
 
-    public static void setTargetsDependsAndGotReleased(String targetsName)  {logger.info("Targets that depends and got released: " + targetsName);}
+    public static void setStatus(String status) {
+        try {
+            currBuffer = new BufferedWriter(writer);
+            currBuffer.write("Target status: " + status);
+            currBuffer.close();
+        } catch (IOException e) {
+        }
+    }
 
+    public static void setTargetsDependsAndGotReleased(String targetsName) {
+        try {
+            currBuffer = new BufferedWriter(writer);
+            currBuffer.write("Targets that depends and got released: " + targetsName);
+            currBuffer.close();
+        } catch (IOException e) {
+        }
+    }
 }

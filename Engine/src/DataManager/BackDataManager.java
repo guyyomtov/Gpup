@@ -121,8 +121,7 @@ public class BackDataManager implements DataManager {
         return dataOfT;
     }
 
-    private String makeToString(List<Target> targets)
-    {
+    private String makeToString(List<Target> targets) {
         if(targets.size() == 0)
             return "Nobody";
         else
@@ -144,12 +143,22 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in the wanted relationship 'depends On' -> D/ 'required For' -> R."));
     }
 
-    public Map<String,List<String>> startProcess() throws ErrorUtils{
+    private Map<String, String> generateMapTaskNameToStatus(Map<String,List<String>> targetNameToHisProcessData){
 
-        if(this.graph.getAllTargets().isEmpty())
-            throw new ErrorUtils(ErrorUtils.noGraph());
+        Map<String, String> taskNameToStatus = new HashMap<>();
+        List<String> curTaskData = new ArrayList<>();
+        String curStatus = new String();
 
-         return ProcessUtil.run(this.graph.getAllTargets());
+        for(String curTaskName : targetNameToHisProcessData.keySet()) {
+
+            curTaskData = targetNameToHisProcessData.get(curTaskName);
+
+            curStatus = curTaskData.get(3);
+
+            taskNameToStatus.put(curTaskName, curStatus);
+        }
+
+        return taskNameToStatus;
     }
 
     public String findCircle(String name) throws ErrorUtils {
@@ -162,12 +171,70 @@ public class BackDataManager implements DataManager {
         this.graph.saveToFile(fullPath);
     }
 
-    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils{
+
+
+    public Map<String,List<String>> startProcess(Map<String,List<String>> oldProcessData) throws ErrorUtils{
+
+        Map<String, Task> oldNamesToTasks = new HashMap<String, Task>();
+
+        if(oldProcessData != null)
+             oldNamesToTasks = this.makeTaskMapFrom(oldProcessData, this.graph.getAllTargets());
 
         if(this.graph.getAllTargets().isEmpty())
             throw new ErrorUtils(ErrorUtils.noGraph());
 
-        return ProcessUtil.run(this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning);
+        return ProcessUtil.run(this.graph.getAllTargets(), oldNamesToTasks);
     }
 
+    private Map<String, Task> makeTaskMapFrom(Map<String,List<String>> oldProcessData, List<Target> allTargets){
+
+        Map<String, Task> oldNamesToTasks = new HashMap<String, Task>();
+        List<String> curTaskData = new ArrayList<>();
+        String curTaskStatus = new String();
+
+        // go over all targets
+        for(Target curTarget : allTargets){
+
+            curTaskData = oldProcessData.get(curTarget.getName());
+
+            curTaskStatus = curTaskData.get(3);
+
+            oldNamesToTasks.put(curTarget.getName(), new Task(curTarget, curTaskStatus));
+        }
+
+        return oldNamesToTasks;
+    }
+
+    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils{
+
+        List<Target> curTsToProcess = generateTargetListToProcess(this.graph.getAllTargets(), targetNameToHisProcessData);
+
+        if(this.graph.getAllTargets().isEmpty())
+            throw new ErrorUtils(ErrorUtils.noGraph());
+
+        return ProcessUtil.run(curTsToProcess, timeToRun, chancesToSucceed, chancesToBeAWarning);
+    }
+
+    private List<Target> generateTargetListToProcess(List<Target> allTargets, Map<String,List<String>> targetNameToHisProcessData){
+
+        // first time to run process
+        if(targetNameToHisProcessData == null)
+            return allTargets;
+
+        List<Target> processOnlyThese = new ArrayList<Target>();
+        String curTaskStatus = new String();
+        Map<String, String> taskNameToStatus = generateMapTaskNameToStatus(targetNameToHisProcessData);
+
+        // go over all targets
+        for(Target curTarget : allTargets){
+
+            curTaskStatus = taskNameToStatus.get(curTarget.getName());
+
+            // only if it's a fitting task (didn't succeed), put it in the list.
+            if(curTaskStatus == "SKIPPED" || curTaskStatus == "FAILURE")
+                processOnlyThese.add(curTarget);
+        }
+
+        return processOnlyThese;
+    }
 }

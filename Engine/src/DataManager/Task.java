@@ -11,8 +11,8 @@ public class Task {
     private Integer chancesImAWarning;
     private Boolean isChanceRandom;
     private Boolean isTimeRandom;
-    final private String myTargetName;
-    final private String myTargetGenaralInfo;
+    private String myTargetName;
+    private String myTargetGenaralInfo;
     private String myStatus = new String();
     private Boolean canIRun;
     private Boolean iAmFinished;
@@ -39,6 +39,92 @@ public class Task {
         this.parentsNames = this.setMyParentsNames(target);
     }
 
+    public Task(Target target, String oldStatus){
+
+        if(this.iSucceededLastTime(oldStatus))
+            this.startMeWithSucceeded(target, oldStatus);
+        else
+            this.genarateMeAgain(target, oldStatus);
+
+    }
+
+    private void genarateMeAgain(Target target, String oldStatus){
+
+        Random rand = new Random();
+        this.timeIRun = rand.nextInt(3000); // check, did he say how much time?
+        this.chancesISucceed = rand.nextInt(101);
+        this.chancesImAWarning = rand.nextInt(101);
+        this.isChanceRandom = true;
+        this.isTimeRandom = true;
+
+        this.myStatus = this.genarateNewStatusFrom(oldStatus,target.getTargetType().toString());
+        this.canIRun = this.myStatus == "WAITING" ? true : false;
+        this.iAmFinished = false;
+
+        this.myTargetName = target.getName();
+        this.myTargetGenaralInfo = target.getGeneralInfo();
+        this.myKidsNames = this.setMyKidsNames(target);
+        this.parentsNames = this.setMyParentsNames(target);
+    }
+
+    private void startMeWithSucceeded(Target target, String oldStatus){
+
+        this.timeIRun = 0;
+        this.chancesISucceed = 100;
+        this.chancesImAWarning = oldStatus == "WARNING" ? 100 : 0;
+        this.isChanceRandom = false;
+        this.isTimeRandom = false;
+
+        this.myStatus = oldStatus;
+        this.canIRun = true;
+        this.iAmFinished = true;
+
+        this.myTargetName = target.getName();
+        this.myTargetGenaralInfo = target.getGeneralInfo();
+        this.myKidsNames = this.setMyKidsNames(target);
+        this.parentsNames = this.setMyParentsNames(target);
+    }
+
+    private Boolean iSucceededLastTime(String oldStatus){
+
+        Boolean iSucceeded = false;
+
+        if(oldStatus == "WARNING" || oldStatus == "SUCCESS")
+            iSucceeded = true;
+
+        return iSucceeded;
+    }
+
+    private Boolean checkIfImFinishedBasedOn(String myStatus){
+
+        Boolean imFinished = false;
+
+        if(myStatus == "WARNING" || myStatus == "SUCCESS")
+            imFinished = true;
+        // else false
+
+        return  imFinished;
+    }
+
+    private String genarateNewStatusFrom(String oldStatus, String targetType){
+
+        String resStatus = new String();
+
+        if(oldStatus == "WARNING" || oldStatus == "SUCCESS")
+            resStatus = oldStatus;
+        else if(oldStatus == "SKIPPED")
+            resStatus = "FROZEN";
+        else if(oldStatus == "FAILURE"){
+
+            if(targetType == "Leaf" || targetType == "Independent")
+                resStatus = "WAITING";
+            else // middle or root
+                resStatus = "FROZEN";
+        }
+
+        return resStatus;
+    }
+
     public Task(Target target, Integer timeToRun, Integer chancesToSucceed, Integer chancesToBeAWarning){
 
         Random rand = new Random();
@@ -56,6 +142,8 @@ public class Task {
         this.myTargetGenaralInfo = target.getGeneralInfo();
         this.myKidsNames = this.setMyKidsNames(target);
     }
+
+    public String getMyTargetGenaralInfo(){ return this.myTargetGenaralInfo;}
 
     private List<String> setMyParentsNames(Target t){
 
@@ -135,6 +223,7 @@ public class Task {
 
         return resData;
     }
+
     private String iOpened(List<String> parentsNames, Map<String,Task> allTasks){
 
         String resNames = new String();

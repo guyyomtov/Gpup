@@ -103,7 +103,6 @@ public class UiDataManager implements DataManager {
 //        }
     }
 
-    //to check with aviad.
     public void setUpTask(String taskName) throws ErrorUtils {
 //        if (checkValidTask(taskName))
 //            this.startProcess(taskName);
@@ -113,11 +112,14 @@ public class UiDataManager implements DataManager {
 
     }
 
-    public Map<String,List<String>> startProcess() throws ErrorUtils { return this.bDM.startProcess(); }
+    public Map<String,List<String>> startProcess(Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
 
-    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils {
+        return this.bDM.startProcess(targetNameToHisProcessData);
+    }
 
-        return this.bDM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning);
+    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
+
+        return this.bDM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
     }
 
 

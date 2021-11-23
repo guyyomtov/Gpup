@@ -202,14 +202,22 @@ public class Menu {
     // TO DO
     private void processHandler(){
 
-        Boolean isRandom = true;
+        Boolean heWantsRandom = true;
+        String userInput = new String();
         Integer timeToRun = 0 , chancesToSucceed = 0, chancesToBeAWarning = 0;
 
         if(this.isThereGraph){
+
             Scanner sc= new Scanner(System.in);
             System.out.println("At any time you can press 'menu' to go back to the main menu.");
             System.out.println("Lets start the process!");
-            System.out.println("If you want to chose the percent of success and the time for running om each task press '1', else press '2' and it will be done randomly.");
+
+            heWantsRandom = this.askUserIfRandom();
+
+            if(!heWantsRandom) {
+
+                // get input numbers from user
+            }
             String userChoice = sc.nextLine();
             if(userChoice.toLowerCase().equals("menu"))
                 return;
@@ -218,7 +226,7 @@ public class Menu {
 
                 // check and get data from the user
                 try{
-                    this.startAndPrintProcess(isRandom, timeToRun, chancesToSucceed, chancesToBeAWarning);
+                    this.startAndPrintProcess(heWantsRandom, timeToRun, chancesToSucceed, chancesToBeAWarning);
                 }
                 catch (ErrorUtils e){
                     System.out.println(e.getMessage());
@@ -295,11 +303,95 @@ public class Menu {
     private void startAndPrintProcess(Boolean isRandom, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils, InterruptedException {
 
         Map<String,List<String>> targetNameToHisProcessData = new HashMap<>();
+        Boolean heWantsAgain = true;
+        Boolean heWantsRandom = isRandom;
+        Integer counter = 0;
 
-        if(isRandom)
-         targetNameToHisProcessData =  this.dM.startProcess();
+        // first process:
+        if(heWantsRandom)
+            targetNameToHisProcessData =  this.dM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning, null);
         else
-            targetNameToHisProcessData =  this.dM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning);
+            targetNameToHisProcessData =  this.dM.startProcess(null);
+
+        this.printThisProcess(targetNameToHisProcessData);
+        System.out.println("\r\nCongrats! first process is done.");
+
+
+        while(!targetNameToHisProcessData.isEmpty() && heWantsAgain == true){
+
+            // first time == counter == 0
+            if(counter != 0) {
+
+                // run some kind of process
+//                if (heWantsRandom)
+//                    targetNameToHisProcessData = this.dM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
+//                else
+                    targetNameToHisProcessData = this.dM.startProcess(targetNameToHisProcessData);
+
+                // print it
+                this.printThisProcess(targetNameToHisProcessData);
+            }
+
+            // check if he wants again
+            heWantsAgain = this.askUserToProcessAgain();
+            if(heWantsAgain) {
+
+                heWantsRandom = this.askUserIfRandom();
+
+                if(heWantsRandom) {
+                    // get input from user for default values
+                }
+            }
+            counter++;
+        }
+        System.out.println("Well that's that!");
+    }
+
+    private Boolean askUserToProcessAgain(){
+
+        Scanner sc= new Scanner(System.in);
+        Boolean heWantsAgain = false;
+
+        System.out.println("If you'd like the process to run again (on the targets which didn't succeed), please press - 'Y'. If not press 'N'.");
+
+        String userChoice = sc.nextLine();
+
+        if(userChoice.toLowerCase().equals("y"))
+            heWantsAgain = true;
+        else if(userChoice.toLowerCase().equals("n"))
+            heWantsAgain = false;
+        else if(userChoice.toLowerCase().equals("menu"))
+            this.printMenu();
+        else
+            System.out.println(ErrorUtils.invalidInput("Please enter: 'Y', 'N'  or 'menu'"));
+
+        return heWantsAgain;
+    }
+
+    private Boolean askUserIfRandom(){
+
+        Scanner sc= new Scanner(System.in);
+        Boolean wantRandom = false;
+
+        System.out.println("If you want to chose the percent of success and the time for running om each task press 'Y', else press 'N' and it will be done randomly.");
+
+        String userChoice = sc.nextLine();
+
+        if(userChoice.toLowerCase().equals("y"))
+            wantRandom = true;
+        else if(userChoice.toLowerCase().equals("n"))
+            wantRandom = false;
+        else if(userChoice.toLowerCase().equals("menu"))
+            this.printMenu();
+        else
+            System.out.println(ErrorUtils.invalidInput("Please enter: 'Y', 'N'  or 'menu'"));
+
+
+        return wantRandom;
+    }
+
+
+    private void printThisProcess(Map<String,List<String>> targetNameToHisProcessData) throws InterruptedException {
 
         List<String> curPData = new ArrayList<>();
         Integer tToSleep;
@@ -333,5 +425,6 @@ public class Menu {
             System.out.println("target status: " + status);
             System.out.println("It opened up these tasks: " + (iOpened == " " ? "None" : iOpened) +"\r\n");
         }
+
     }
 }

@@ -9,6 +9,18 @@ import java.util.Map;
 
 public class ProcessUtil {
 
+
+    public static Map<String,List<String>> run(List<Target> targets, Map<String, Task> oldNamesToTasks){
+
+        //setup data
+        Map<String, Target>             namesToTargetsMap                   = startTargetMap(targets);
+        Map<String, Task>               namesToTasks                        = oldNamesToTasks.isEmpty() == true? startTaskMap(targets) : oldNamesToTasks;
+        Map<String, Map<String, Task>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
+
+        // start
+        return startProcess(typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);
+    }
+
     public static Map<String,List<String>> run(List<Target> targets){
 
         //setup data
@@ -30,7 +42,6 @@ public class ProcessUtil {
         // start
         return startProcess(typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);
     }
-
 
     private static Map<String, Task> startTaskMap(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning){
 
@@ -171,7 +182,7 @@ public class ProcessUtil {
 
     private static Map<String,List<String>> runTheseTasks(List<Task> tasks, Map<String, Task> namesToTasks){
 
-        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
+        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released
         List<String> curTaskData = new ArrayList<>();
         List<Task> kids = new ArrayList<Task>();
         Map<String,List<String>> resData = new HashMap<>();
@@ -181,13 +192,42 @@ public class ProcessUtil {
 
         for(Task curT : tasks){
 
-            kids = findMyKids(curT, namesToTasks);
+            if(iAllReadyRan(curT))
+                curTaskData = getOldDataFrom(curT);
+            else{
 
-            curTaskData = curT.tryToRunMe(kids, namesToTasks);
+                kids = findMyKids(curT, namesToTasks);
 
-            if(!curTaskData.isEmpty())
+                curTaskData = curT.tryToRunMe(kids, namesToTasks);
+            }
+
+            if (!curTaskData.isEmpty())
                 resData.get(curT.getMyName()).addAll(curTaskData);
+
         }
+        return resData;
+    }
+
+    private static Boolean iAllReadyRan(Task curT){
+
+        Boolean iRan = false;
+
+        if(curT.getMyStatus().equals("WARNING") || curT.getMyStatus().equals("SUCCESS"))
+            iRan = true;
+
+        return iRan;
+    }
+
+    private static List<String> getOldDataFrom(Task curT){
+
+        List<String> resData = new ArrayList<>();
+
+        resData.add(0, "0");
+        resData.add(1, curT.getMyName());
+        resData.add(2, curT.getMyTargetGenaralInfo());
+        resData.add(3, curT.getMyStatus());
+        resData.add(4, "");
+
         return resData;
     }
 

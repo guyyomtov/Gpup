@@ -94,30 +94,12 @@ public class UiDataManager implements DataManager {
         this.bDM.saveToFile(fullPath);
     }
 
-    public void swapFiles(File newFile) throws ErrorUtils {
-//
-//        if (this.checkFile(newFile))
-//            this.bDM = new BackDataManager(newFile);
-//        else {
-//            throw new ErrorUtils(ErrorUtils.invalidFile());
-//        }
-    }
 
-    //to check with aviad.
-    public void setUpTask(String taskName) throws ErrorUtils {
-//        if (checkValidTask(taskName))
-//            this.startProcess(taskName);
-//        else {
-//            throw new ErrorUtils(ErrorUtils.invalidTask());
-//        }
+    public Map<String,List<String>> startProcess(ConsumerUI cUI) throws ErrorUtils { return this.bDM.startProcess(cUI); }
 
-    }
+    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning, ConsumerUI cUI) throws ErrorUtils {
 
-    public Map<String,List<String>> startProcess() throws ErrorUtils { return this.bDM.startProcess(); }
-
-    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils {
-
-        return this.bDM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning);
+        return this.bDM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning, cUI);
     }
 
 

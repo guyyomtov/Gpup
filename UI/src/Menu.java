@@ -1,6 +1,5 @@
 // This class is responsible to print & interact with the ui
 
-import DataManager.LogFile;
 import errors.ErrorUtils;
 import fileHandler.GPUPDescriptor;
 
@@ -296,48 +295,49 @@ public class Menu {
     private void startAndPrintProcess(Boolean isRandom, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils, InterruptedException {
 
         Map<String,List<String>> targetNameToHisProcessData = new HashMap<>();
-
+        ConsumerUI cUI = new ConsumerUI();
+        System.out.println("Starting the process... ");
         if(isRandom)
-         targetNameToHisProcessData =  this.dM.startProcess();
+         targetNameToHisProcessData =  this.dM.startProcess(cUI);
         else
-            targetNameToHisProcessData =  this.dM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning);
+            targetNameToHisProcessData =  this.dM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning, cUI);
 
         List<String> curPData = new ArrayList<>();
         Integer tToSleep;
         String targetName, status, generalInfo, iOpened;
 
-        LogFile.makeDirectory("simulation");
-        System.out.println("Starting the process: ");
+//        LogFile.makeDirectory("simulation");
+//        System.out.println("Starting the process: ");
 
-        // go over each target
-        for(String tName : targetNameToHisProcessData.keySet()) {
-
-            // get data
+//        // go over each target
+//        for(String tName : targetNameToHisProcessData.keySet()) {
+//
+//            // get data
             // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released
 
-            curPData = targetNameToHisProcessData.get(tName);
-
-            tToSleep = Integer.valueOf(curPData.get(0));
-            targetName = curPData.get(1);
-            generalInfo = curPData.get(2);
-            status = curPData.get(3);
-            iOpened = curPData.get(4);
-
-            // print it
-            System.out.println("Target Name: " + targetName);
-            try {
-                LogFile.setNameInFile(targetName);
-            }catch (Exception e){}
-            System.out.println("General Info: " + (generalInfo == "" ? "None" : generalInfo));
-            LogFile.setGeneralInfo(generalInfo);
-
-            System.out.println("processing current target..");
-            Thread.sleep(tToSleep);
-
-            System.out.println("Process completed: ");
-            System.out.println("target status: " + status);
-            LogFile.setStatus(status);
-            System.out.println("It opened up these tasks: " + (iOpened == " " ? "None" : iOpened) +"\r\n");
-        }
+//            curPData = targetNameToHisProcessData.get(tName);
+//
+//            tToSleep = Integer.valueOf(curPData.get(0));
+//            targetName = curPData.get(1);
+//            generalInfo = curPData.get(2);
+//            status = curPData.get(3);
+//            iOpened = curPData.get(4);
+//4
+//            // print it
+//            System.out.println("Target Name: " + targetName);
+//            try {
+//                LogFile.setNameInFile(targetName);
+//            }catch (Exception e){}
+//            System.out.println("General Info: " + (generalInfo == "" ? "None" : generalInfo));
+//            LogFile.setGeneralInfo(generalInfo);
+//
+//            System.out.println("processing current target..");
+//            Thread.sleep(tToSleep);
+//
+//            System.out.println("Process completed: ");
+//            System.out.println("target status: " + status);
+//            LogFile.setStatus(status);
+//            System.out.println("It opened up these tasks: " + (iOpened == " " ? "None" : iOpened) +"\r\n");
+        //}
     }
 }

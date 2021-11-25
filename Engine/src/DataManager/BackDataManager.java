@@ -4,6 +4,7 @@ import fileHandler.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
@@ -144,12 +145,15 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in the wanted relationship 'depends On' -> D/ 'required For' -> R."));
     }
 
-    public Map<String,List<String>> startProcess() throws ErrorUtils{
+    public Map<String,List<String>> startProcess(Consumer cUI) throws ErrorUtils{
+
 
         if(this.graph.getAllTargets().isEmpty())
             throw new ErrorUtils(ErrorUtils.noGraph());
 
-         return ProcessUtil.run(this.graph.getAllTargets());
+        TaskFile taskFile = new TaskFile();
+        taskFile.makeTaskDir("simulation");
+         return ProcessUtil.run(this.graph.getAllTargets(),cUI);
     }
 
     public String findCircle(String name) throws ErrorUtils {
@@ -162,12 +166,14 @@ public class BackDataManager implements DataManager {
         this.graph.saveToFile(fullPath);
     }
 
-    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils{
+    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Consumer cUI) throws ErrorUtils{
 
         if(this.graph.getAllTargets().isEmpty())
             throw new ErrorUtils(ErrorUtils.noGraph());
 
-        return ProcessUtil.run(this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning);
+        TaskFile taskFile = new TaskFile();
+        taskFile.makeTaskDir("simulation");
+        return ProcessUtil.run(this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning,cUI);
     }
 
 }

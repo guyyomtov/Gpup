@@ -1,5 +1,5 @@
 package Graph;
-import DataManager.LogFile;
+import DataManager.TaskFile;
 import Graph.Tree.Tree;
 import errors.ErrorUtils;
 import fileHandler.*;
@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.*;
 
 public class Graph {
+
     private List<Target> targets = new ArrayList<Target>();
     public boolean isGood = true;
     private Tree tree = new Tree();
@@ -45,35 +46,13 @@ public class Graph {
 
             this.checkCircleBetweenTwoTargets();
 
-            LogFile.gpupPath = information.getGPUPConfiguration().getGPUPWorkingDirectory();
+            TaskFile.gpupPath = information.getGPUPConfiguration().getGPUPWorkingDirectory();
 
         } catch (ErrorUtils e) {throw e;}
 
     }
 
     public void updateTypeOfTargets() { for(Target tr : targets) tr.setTargetType(); }
-
-//    private List<Target> testTList() {
-//
-//        Root a = new Root("A","");
-//        Middle c = new Middle("C","");
-//        Leaf b = new Leaf("B","");
-//        Middle e = new Middle("E","");
-//        Independent f = new Independent("F","");
-//
-//        a.setDependsOn(Arrays.asList(c, b));
-//
-//        c.setRequiredFor(Arrays.asList(a));
-//        b.setRequiredFor(Arrays.asList(a));
-//
-//        c.setDependsOn(Arrays.asList(a));
-//
-//        e.setRequiredFor(Arrays.asList(c));
-//
-//        e.setDependsOn(Arrays.asList(a));
-//
-//        return Arrays.asList(a, c, b, e, f);
-//    }
 
     public void initializeMap() {
         for (Target currT : this.targets)
@@ -85,7 +64,11 @@ public class Graph {
 
         GPUPTarget currTarget = information.getGPUPTargets().getGPUPTarget().get(index); // get name
         String name = currTarget.getName();
-        String generalInfo = currTarget.getGPUPUserData();
+        String generalInfo;
+        if(currTarget.getGPUPUserData() == null)
+            generalInfo = "Nothing";
+        else
+            generalInfo = currTarget.getGPUPUserData();
         return new Target(name, generalInfo);
     }
 
@@ -189,30 +172,6 @@ public class Graph {
         return true;
     }
 
-
-
-
-
-
-
-//        for(int i = 0;i<targets.size() - 1;i++)
-//            for(int j = i+1;j<targets.size();j++){
-//                String targetName1 = targets.get(i).getName();
-//                String targetName2 = targets.get(j).getName();
-//                try {
-//                    String path1 = tree.findAllPaths(targetName1, targetName2);
-//                    String path2 = tree.findAllPaths(targetName2, targetName1);
-//                    if(!path1.isEmpty() && !path2.isEmpty())
-//                        if((targetName1+targetName2).contains(path1) && (targetName2+targetName1).contains(path2))
-//                            throw new ErrorUtils(ErrorUtils.invalidFile("the target " + targetName1 + " depends on the target " + targetName2 + " and " +targetName2 + " depends on " + targetName1));
-//                }catch(ErrorUtils e){throw e;}
-//
-//            }
-
-        // Map<String, List<Target>> mNameToList = new HashMap<>();
-
-
-
     public String getPathFromTargets(String src, String dest) throws ErrorUtils
     {
         try{
@@ -233,9 +192,9 @@ public class Graph {
                 {
                     return this.tree.findAllPaths(currTarget.getName(), res.get(0));
                 }
-                else return "The target" + targetName + "doesn't in circle.";
+                else throw new ErrorUtils("The target " + targetName + " doesn't in circle.");
             }
-            else return "The target" + targetName + "doesn't in circle.";
+            else throw new ErrorUtils("The target " + targetName + " doesn't in circle.");
         }
         else
             throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + targetName + "doesn't exist"));

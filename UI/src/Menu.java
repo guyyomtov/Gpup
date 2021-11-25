@@ -202,46 +202,89 @@ public class Menu {
     // TO DO
     private void processHandler(){
 
-        Boolean heWantsRandom = true;
-        String userInput = new String();
+        String [] ints = new String[3];
+        String userAnswer = new String();
         Integer timeToRun = 0 , chancesToSucceed = 0, chancesToBeAWarning = 0;
 
         if(this.isThereGraph){
-            Scanner sc= new Scanner(System.in);
-            System.out.println("At any time you can press 'menu' to go back to the main menu.");
-            System.out.println("Lets start the process!");
 
-            heWantsRandom = this.askUserIfRandom();
+            System.out.println("Lets start some processing!");
 
-            if(!heWantsRandom) {
+            userAnswer = this.askUserIfRandom();
 
-                // get input numbers from user
-            }
-            String userChoice = sc.nextLine();
-            if(userChoice.toLowerCase().equals("menu"))
-                return;
-            else {
+            switch (userAnswer.toLowerCase()){
 
-                // check and get data from the user
-                try{
-                    this.startAndPrintProcess(heWantsRandom, timeToRun, chancesToSucceed, chancesToBeAWarning);
+                case "menu": {
+                    break;
                 }
-                catch (ErrorUtils e){
-                    System.out.println(e.getMessage());
-                }catch(InterruptedException e){}
+                case "userWantsToGiveValues": {
+                    userAnswer = this.getValuesForRandomProcess();
+
+                    if (userAnswer.toLowerCase().equals("menu"))
+                        return;
+
+                    ints = userAnswer.split(" ", 2);
+
+                    timeToRun = Integer.valueOf(ints[0]);
+                    chancesToSucceed = Integer.valueOf(ints[1]);
+                    chancesToBeAWarning = Integer.valueOf(ints[2]);
+
+                    try { this.startAndPrintProcess(true, timeToRun, chancesToSucceed, chancesToBeAWarning); }
+                    catch (ErrorUtils e) { System.out.println(e.getMessage()); }
+
+                }
+                case "userWantsRandom": {
+
+                    try { this.startAndPrintProcess(false, -1, -1, -1);}
+                    catch (ErrorUtils e) { System.out.println(e.getMessage()); }
+                }
             }
-
-
         }
         else
             System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
     }
 
-    private Boolean askUserIfRandom() {
-        Boolean res = false;
-        System.out.println("");
+    private String getValuesForRandomProcess() {
+
+        String res = new String();
 
         return res;
+    }
+
+    private void printBackToMenu(){ System.out.println("At any time you can press 'menu' to go back to the main menu.");}
+
+    private String askUserIfRandom() {
+
+        Scanner scan = new Scanner(System.in);
+        String userAnswer = new String();
+        Boolean isValidInput = false;
+
+        while(!isValidInput) {
+
+            this.printBackToMenu();
+            System.out.println("First things first... Do you want to give me numbers for the coming process?");
+            System.out.println("If so, please press- 'Y");
+            System.out.println("If you want us to generate random numbers for you, press 'N'");
+
+            userAnswer = scan.nextLine();
+
+            if (userAnswer.toLowerCase().equals("y")) {
+                userAnswer = "userWantsToGiveValues";
+                isValidInput = true;
+            }
+            else if (userAnswer.toLowerCase().equals("n")) {
+                userAnswer = "userWantsRandom";
+                isValidInput = true;
+            }
+            else if (userAnswer.toLowerCase().equals("menu")) {
+                userAnswer = "menu";
+                isValidInput = true;
+            }
+            else{
+                System.out.println(ErrorUtils.invalidInput("PLease Choose from the options above"));
+            }
+        }
+        return userAnswer;
     }
 
     private void pathHandler(){
@@ -305,7 +348,7 @@ public class Menu {
 
     private void exitProgram(){ System.exit(0);}
 
-    private void startAndPrintProcess(Boolean isRandom, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils, InterruptedException {
+    private void startAndPrintProcess(Boolean isRandom, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils {
 
         Map<String,List<String>> targetNameToHisProcessData = new HashMap<>();
         Boolean heWantsAgain = true;
@@ -341,7 +384,7 @@ public class Menu {
             heWantsAgain = this.askUserToProcessAgain();
             if(heWantsAgain) {
 
-                heWantsRandom = this.askUserIfRandom();
+               // heWantsRandom = this.askUserIfRandom();
 
                 if(heWantsRandom) {
                     // get input from user for default values

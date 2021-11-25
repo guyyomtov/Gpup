@@ -27,7 +27,7 @@ public class FormatTask {
         + "Target Name: " + targetName + "\n"
         + "General Info: " + generalInfo + "\n"
         + "Target status: " + status + "\n"
-        +"It opened up these tasks: " + (iOpened == " " ? "None" : iOpened) +"\r\n"
+        +"It opened up these tasks: " + (iOpened == "" ? "None" : iOpened) +"\r\n"
         ;
     }
 }

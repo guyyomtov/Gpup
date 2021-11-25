@@ -79,6 +79,7 @@ public class Menu {
         System.out.println("8) Exit the system.");
 
     }
+
     public void findCircle()
     {
         System.out.println("At any time you can press 'menu' to go back to the main menu.");
@@ -97,8 +98,7 @@ public class Menu {
             System.out.println(e.getMessage());}
     }
 
-    public void saveToFile()
-    {
+    public void saveToFile() {
         System.out.println("At any time you can press 'menu' to go back to the main menu.");
         System.out.println("Please enter full path for saving Gpup to a file:");
         Scanner scan = new Scanner(System.in);
@@ -113,7 +113,6 @@ public class Menu {
     // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
 
-       //System.out.println("Please write the path of the file: (example:src/resources/ex1-big.xml)");
         System.out.println("At any time you can press 'menu' to go back to the main menu.");
         System.out.println("Please write the full path of the file: (example: C:\\Users\\guyyo\\IdeaProjects\\Gpup\\Engine\\src\\resources\\ex1-big.xml)");
         Scanner scan = new Scanner(System.in);
@@ -131,6 +130,7 @@ public class Menu {
             System.out.println(e.getMessage());}
 
     }
+
     private void graphHandler(){
 
         if(this.isThereGraph) {
@@ -222,7 +222,6 @@ public class Menu {
                 return;
             else {
 
-
                 // check and get data from the user
                 try{
                     this.startAndPrintProcess(heWantsRandom, timeToRun, chancesToSucceed, chancesToBeAWarning);
@@ -236,6 +235,13 @@ public class Menu {
         }
         else
             System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
+    }
+
+    private Boolean askUserIfRandom() {
+        Boolean res = false;
+        System.out.println("");
+
+        return res;
     }
 
     private void pathHandler(){
@@ -312,7 +318,7 @@ public class Menu {
         else
             targetNameToHisProcessData =  this.dM.startProcess(cUI ,null);
 
-        this.printThisProcess(targetNameToHisProcessData);
+       // this.printThisProcess(targetNameToHisProcessData);
         System.out.println("\r\nCongrats! first process is done.");
 
 
@@ -325,10 +331,10 @@ public class Menu {
 //                if (heWantsRandom)
 //                    targetNameToHisProcessData = this.dM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
 //                else
-                    targetNameToHisProcessData = this.dM.startProcess(targetNameToHisProcessData);
+                    targetNameToHisProcessData = this.dM.startProcess(cUI ,targetNameToHisProcessData);
 
                 // print it
-                this.printThisProcess(targetNameToHisProcessData);
+              //  this.printThisProcess(targetNameToHisProcessData);
             }
 
             // check if he wants again
@@ -355,6 +361,14 @@ public class Menu {
 
         String userChoice = sc.nextLine();
 
+        Map<String, List<String>> targetNameToHisProcessData = new HashMap<>();
+
+        ConsumerUI cUI = new ConsumerUI();
+
+        int timeToRun = 0;
+        int chancesToSucceed = 0;
+        int chancesToBeAWarning = 0;
+
         if(userChoice.toLowerCase().equals("y"))
             heWantsAgain = true;
         else if(userChoice.toLowerCase().equals("n"))
@@ -362,7 +376,14 @@ public class Menu {
         else if(userChoice.toLowerCase().equals("menu"))
             this.printMenu();
         else
-            targetNameToHisProcessData =  this.dM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning);
+        {
+            try {
+                targetNameToHisProcessData = this.dM.startProcess(cUI, timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
+            }catch (ErrorUtils e){
+                System.out.println(e.getMessage());
+            }
+        }
+
 
         List<String> curPData = new ArrayList<>();
         Integer tToSleep;
@@ -372,8 +393,10 @@ public class Menu {
         System.out.println("Starting the process: ");
 
         // go over each target
+        return heWantsAgain;
 
     }
+
     private void printThisProcess(Map<String,List<String>> targetNameToHisProcessData) throws InterruptedException {
 
         List<String> curPData = new ArrayList<>();

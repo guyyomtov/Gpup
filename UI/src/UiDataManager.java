@@ -99,9 +99,9 @@ public class UiDataManager implements DataManager {
         return this.bDM.startProcess(cUI,targetNameToHisProcessData);
     }
 
-    public Map<String,List<String>> startProcess(,ConsumerUI cUIint timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
+    public Map<String,List<String>> startProcess(ConsumerUI cUI, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
 
-        return this.bDM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
+        return this.bDM.startProcess(cUI, timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
     }
 
 

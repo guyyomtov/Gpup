@@ -12,17 +12,17 @@ import java.util.function.Consumer;
 
 public class ProcessUtil {
 
-    public static Map<String,List<String>> run(List<Target> targets, Map<String, Task> oldNamesToTasks, Consumer cUI){
+    public static Map<String,List<String>> run(Consumer cUI, List<Target> targets, Map<String, Task> oldNamesToTasks){
 
         Map<String, Target>             namesToTargetsMap                   = startTargetMap(targets);
         Map<String, Task>               namesToTasks                        = oldNamesToTasks.isEmpty() == true? startTaskMap(targets) : oldNamesToTasks;
         Map<String, Map<String, Task>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
 
         // start
-        return startProcess(typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks, cUI);
+        return startProcess(cUI, typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);
     }
 
-    public static Map<String,List<String>> run(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Consumer cUI ){
+    public static Map<String,List<String>> run(Consumer cUI, List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning ){
 
         //setup data
         Map<String, Target>             namesToTargetsMap                   = startTargetMap(targets);
@@ -30,7 +30,7 @@ public class ProcessUtil {
         Map<String, Map<String, Task>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
 
         // start
-        return startProcess(typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks, cUI);
+        return startProcess(cUI, typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);
     }
 
 
@@ -83,7 +83,7 @@ public class ProcessUtil {
         return resM;
     }
 
-    private static  Map<String,List<String>> startProcess(Map<String, Map<String,Task>> typeOfTargetToTargetNameToHisTask, Map<String, Target> targets, Map<String, Task> namesToTasks,Consumer cUI) {
+    private static  Map<String,List<String>> startProcess(Consumer cUI, Map<String, Map<String,Task>> typeOfTargetToTargetNameToHisTask, Map<String, Target> targets, Map<String, Task> namesToTasks) {
 
         // setup data
         Map<String,Task> independents = typeOfTargetToTargetNameToHisTask.get("Independent");
@@ -105,7 +105,7 @@ public class ProcessUtil {
 
             while (!curTasksFinished) {
 
-                curTasksData = runTheseTasks(new ArrayList<>(independents.values()), namesToTasks, cUI); // go over all cur tasks and get the needed data back
+                curTasksData = runTheseTasks(cUI, new ArrayList<>(independents.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
                 targetNameToTaskData.putAll(curTasksData);
 
@@ -118,7 +118,7 @@ public class ProcessUtil {
 
             while (!curTasksFinished) {
 
-                curTasksData = runTheseTasks(new ArrayList<>(leaves.values()), namesToTasks, cUI); // go over all cur tasks and get the needed data back
+                curTasksData = runTheseTasks(cUI, new ArrayList<>(leaves.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
                 targetNameToTaskData.putAll(curTasksData);
 
@@ -132,7 +132,7 @@ public class ProcessUtil {
 
             while (!curTasksFinished) {
 
-                curTasksData = runTheseTasks(new ArrayList<>(middles.values()), namesToTasks, cUI); // go over all cur tasks and get the needed data back
+                curTasksData = runTheseTasks(cUI, new ArrayList<>(middles.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
                 targetNameToTaskData.putAll(curTasksData);
 
@@ -146,7 +146,7 @@ public class ProcessUtil {
 
             while (!curTasksFinished) {
 
-                curTasksData = runTheseTasks(new ArrayList<>(roots.values()), namesToTasks, cUI); // go over all cur tasks and get the needed data back
+                curTasksData = runTheseTasks(cUI, new ArrayList<>(roots.values()), namesToTasks); // go over all cur tasks and get the needed data back
 
                 targetNameToTaskData.putAll(curTasksData);
 
@@ -171,12 +171,14 @@ public class ProcessUtil {
         return  finished;
     }
 
-    private static Map<String,List<String>> runTheseTasks(List<Task> tasks, Map<String, Task> namesToTasks, Consumer cUI){
+    private static Map<String,List<String>> runTheseTasks(Consumer cUI, List<Task> tasks, Map<String, Task> namesToTasks){
 
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
         List<String> curTaskData = new ArrayList<>();
         List<Task> kids = new ArrayList<Task>();
         Map<String,List<String>> resData = new HashMap<>();
+        ConsumerTaskInfo cE = new ConsumerTaskInfo();
+
         for(Task curT : tasks)
             resData.put(curT.getMyName(), new ArrayList<>());
 
@@ -190,12 +192,14 @@ public class ProcessUtil {
                 kids = findMyKids(curT, namesToTasks);
 
                 curTaskData = curT.tryToRunMe(kids, namesToTasks);
+                if(!curTaskData.isEmpty())
+                     cE.getData(curTaskData, cUI);
             }
 
             if(!curTaskData.isEmpty()){
                 resData.get(curT.getMyName()).addAll(curTaskData);
-                ConsumerTaskInfo cE = new ConsumerTaskInfo();
-                cE.getData(curTaskData, cUI);
+         //      if(!iAllReadyRan(curT))
+                //    cE.getData(curTaskData, cUI);
             }
         }
         return resData;

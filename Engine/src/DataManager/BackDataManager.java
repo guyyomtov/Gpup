@@ -156,7 +156,7 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.noGraph());
         TaskFile taskFile = new TaskFile();
         taskFile.makeTaskDir("simulation");
-        return ProcessUtil.run(this.graph.getAllTargets(), oldNamesToTasks);
+        return ProcessUtil.run(cUI, this.graph.getAllTargets(), oldNamesToTasks);
     }
 
     private Map<String, String> generateMapTaskNameToStatus(Map<String,List<String>> targetNameToHisProcessData){
@@ -187,7 +187,7 @@ public class BackDataManager implements DataManager {
         this.graph.saveToFile(fullPath);
     }
 
-    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData,Consumer cUI) throws ErrorUtils{
+    public Map<String,List<String>> startProcess(Consumer cUI, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils{
 
         List<Target> curTsToProcess = generateTargetListToProcess(this.graph.getAllTargets(), targetNameToHisProcessData);
 
@@ -195,7 +195,7 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.noGraph());
         TaskFile taskFile = new TaskFile();
         taskFile.makeTaskDir("simulation");
-        return ProcessUtil.run(curTsToProcess, timeToRun, chancesToSucceed, chancesToBeAWarning);
+        return ProcessUtil.run(cUI, curTsToProcess, timeToRun, chancesToSucceed, chancesToBeAWarning);
     }
 
     private Map<String, Task> makeTaskMapFrom(Map<String,List<String>> oldProcessData, List<Target> allTargets){

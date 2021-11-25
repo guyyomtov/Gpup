@@ -113,7 +113,7 @@ public class Menu {
     // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
 
-        System.out.println("At any time you can press 'menu' to go back to the main menu.");
+        this.printBackToMenu();
         System.out.println("Please write the full path of the file: (example: C:\\Users\\guyyo\\IdeaProjects\\Gpup\\Engine\\src\\resources\\ex1-big.xml)");
         Scanner scan = new Scanner(System.in);
         String fileName = scan.nextLine();

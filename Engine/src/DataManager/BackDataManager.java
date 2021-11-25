@@ -4,6 +4,7 @@ import fileHandler.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
@@ -143,6 +144,21 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in the wanted relationship 'depends On' -> D/ 'required For' -> R."));
     }
 
+    public Map<String,List<String>> startProcess(Consumer cUI, Map<String,List<String>> oldProcessData) throws ErrorUtils{
+
+
+        Map<String, Task> oldNamesToTasks = new HashMap<String, Task>();
+
+        if(oldProcessData != null)
+            oldNamesToTasks = this.makeTaskMapFrom(oldProcessData, this.graph.getAllTargets());
+
+        if(this.graph.getAllTargets().isEmpty())
+            throw new ErrorUtils(ErrorUtils.noGraph());
+        TaskFile taskFile = new TaskFile();
+        taskFile.makeTaskDir("simulation");
+        return ProcessUtil.run(this.graph.getAllTargets(), oldNamesToTasks);
+    }
+
     private Map<String, String> generateMapTaskNameToStatus(Map<String,List<String>> targetNameToHisProcessData){
 
         Map<String, String> taskNameToStatus = new HashMap<>();
@@ -171,19 +187,15 @@ public class BackDataManager implements DataManager {
         this.graph.saveToFile(fullPath);
     }
 
+    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData,Consumer cUI) throws ErrorUtils{
 
-
-    public Map<String,List<String>> startProcess(Map<String,List<String>> oldProcessData) throws ErrorUtils{
-
-        Map<String, Task> oldNamesToTasks = new HashMap<String, Task>();
-
-        if(oldProcessData != null)
-             oldNamesToTasks = this.makeTaskMapFrom(oldProcessData, this.graph.getAllTargets());
+        List<Target> curTsToProcess = generateTargetListToProcess(this.graph.getAllTargets(), targetNameToHisProcessData);
 
         if(this.graph.getAllTargets().isEmpty())
             throw new ErrorUtils(ErrorUtils.noGraph());
-
-        return ProcessUtil.run(this.graph.getAllTargets(), oldNamesToTasks);
+        TaskFile taskFile = new TaskFile();
+        taskFile.makeTaskDir("simulation");
+        return ProcessUtil.run(curTsToProcess, timeToRun, chancesToSucceed, chancesToBeAWarning);
     }
 
     private Map<String, Task> makeTaskMapFrom(Map<String,List<String>> oldProcessData, List<Target> allTargets){
@@ -203,16 +215,6 @@ public class BackDataManager implements DataManager {
         }
 
         return oldNamesToTasks;
-    }
-
-    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils{
-
-        List<Target> curTsToProcess = generateTargetListToProcess(this.graph.getAllTargets(), targetNameToHisProcessData);
-
-        if(this.graph.getAllTargets().isEmpty())
-            throw new ErrorUtils(ErrorUtils.noGraph());
-
-        return ProcessUtil.run(curTsToProcess, timeToRun, chancesToSucceed, chancesToBeAWarning);
     }
 
     private List<Target> generateTargetListToProcess(List<Target> allTargets, Map<String,List<String>> targetNameToHisProcessData){

@@ -19,7 +19,6 @@ public class Task {
     private List<String> parentsNames = new ArrayList<>();
     private List<String> myKidsNames = new ArrayList<>();
 
-
     public Task(Target target){
 
         Random rand = new Random();

@@ -94,32 +94,14 @@ public class UiDataManager implements DataManager {
         this.bDM.saveToFile(fullPath);
     }
 
-    public void swapFiles(File newFile) throws ErrorUtils {
-//
-//        if (this.checkFile(newFile))
-//            this.bDM = new BackDataManager(newFile);
-//        else {
-//            throw new ErrorUtils(ErrorUtils.invalidFile());
-//        }
+    public Map<String,List<String>> startProcess(ConsumerUI cUI,Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
+
+        return this.bDM.startProcess(cUI,targetNameToHisProcessData);
     }
 
-    public void setUpTask(String taskName) throws ErrorUtils {
-//        if (checkValidTask(taskName))
-//            this.startProcess(taskName);
-//        else {
-//            throw new ErrorUtils(ErrorUtils.invalidTask());
-//        }
+    public Map<String,List<String>> startProcess(,ConsumerUI cUIint timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
 
-    }
-
-    public Map<String,List<String>> startProcess(Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
-
-        return this.bDM.startProcess(targetNameToHisProcessData);
-    }
-
-    public Map<String,List<String>> startProcess(int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
-
-        return this.bDM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
+        return this.bDM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
     }
 
 

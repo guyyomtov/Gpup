@@ -242,4 +242,10 @@ public class BackDataManager implements DataManager {
 
         return processOnlyThese;
     }
+
+    public void loadFile(String fullPath) throws ErrorUtils {
+        try {
+            this.graph = new Graph(fullPath);
+        }catch (ErrorUtils e){throw e;}
+    }
 }

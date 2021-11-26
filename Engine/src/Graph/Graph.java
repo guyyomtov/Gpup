@@ -23,6 +23,12 @@ public class Graph implements Serializable {
         }catch(ErrorUtils e){throw e;}
     }
 
+    public Graph(String fullPath)throws ErrorUtils  {
+        try {
+            this.loadDataFromFile(fullPath);
+        }catch(ErrorUtils e){throw e;}
+    }
+
     public Target getThisTarget(String nameOfTarget) throws ErrorUtils {
         Target currTarget = this.mNameToTarget.get(nameOfTarget);
         if (currTarget == null)
@@ -108,9 +114,10 @@ public class Graph implements Serializable {
         HandlerSaveFile saveToFile = new HandlerSaveFile(this, fullPath);
     }
 
-    public void loadDataFRomFile(String fullPath)
-    {
-        HandlerLoadBinaryFile loadFile = new HandlerLoadBinaryFile(this,fullPath);
+    public void loadDataFromFile(String fullPath) throws ErrorUtils {
+        try {
+            HandlerLoadBinaryFile loadFile = new HandlerLoadBinaryFile(this, fullPath);
+        }catch(ErrorUtils e){throw e;}
     }
 
    // public void saveToFile(ObjectOutputStream)

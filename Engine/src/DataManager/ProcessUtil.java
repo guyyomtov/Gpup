@@ -3,11 +3,11 @@ package DataManager;
 import Graph.Target;
 
 import consumerData.ConsumerTaskInfo;
+import consumerData.FormatAllTask;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class ProcessUtil {
@@ -95,6 +95,9 @@ public class ProcessUtil {
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released
         Map<String,List<String>> curTasksData = new HashMap<>();
 
+        FormatAllTask.restartMap();
+
+        FormatAllTask.start = Instant.now();
 
         // start process
 
@@ -154,6 +157,9 @@ public class ProcessUtil {
             }
         }
 
+        FormatAllTask.end = Instant.now();
+        FormatAllTask.sendData(cUI);
+
         return targetNameToTaskData;
     }
 
@@ -168,6 +174,7 @@ public class ProcessUtil {
                 break;
             }
         }
+
         return  finished;
     }
 
@@ -192,8 +199,10 @@ public class ProcessUtil {
                 kids = findMyKids(curT, namesToTasks);
 
                 curTaskData = curT.tryToRunMe(kids, namesToTasks);
-                if(!curTaskData.isEmpty())
-                     cE.getData(curTaskData, cUI);
+                if(!curTaskData.isEmpty()) {
+                    cE.getData(curTaskData, cUI);
+                    FormatAllTask.updateCounter(curTaskData.get(3));// the status
+                }
             }
 
             if(!curTaskData.isEmpty()){

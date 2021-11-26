@@ -170,11 +170,12 @@ public class Simulation extends Task{
     public List<String> tryToRunMe(List<Simulation> myKids, Map<String,Simulation> allTasks){
 
         List<String> myPData = new ArrayList<>();
+        String myS = this.myStatus;
 
-        if(this.myStatus == "SKIPPED") // return nothing
-            return this.giveMyData();
-
-        if(this.myStatus != "WAITING") { // i'm not a leaf\independent but maybe i can start
+        if(myS == "SKIPPED" || myS == "SKIPPED" || myS == "FAILURE" || myS == "WARNING" || myS == "SUCCESS") { // return nothing
+            return myPData;
+        }
+        else if(this.myStatus != "WAITING") { // i'm not a leaf\independent but maybe i can start
 
             this.myStatus = checkStatusOfMyKidsAndUpdateMe(myKids);
 
@@ -257,11 +258,14 @@ public class Simulation extends Task{
 
         List<String> resData = new ArrayList<>();
 
-        resData.add(0, String.valueOf(this.timeIRun));
-        resData.add(1, this.myTargetName);
-        resData.add(2, this.myTargetGenaralInfo);
-        resData.add(3, this.myStatus);
-        resData.add(4, new String());
+        if(this.myStatus != "WAITING" && this.myStatus != "FROZEN" && this.myStatus != "IN PROCESS") {
+
+            resData.add(0, String.valueOf(this.timeIRun));
+            resData.add(1, this.myTargetName);
+            resData.add(2, this.myTargetGenaralInfo);
+            resData.add(3, this.myStatus);
+            resData.add(4, new String());
+        }
 
         return resData;
     }

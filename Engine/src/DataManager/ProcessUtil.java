@@ -108,9 +108,9 @@ public class ProcessUtil {
 
             while (!curTasksFinished) {
 
-                curTasksData = runTheseTasks(cUI, new ArrayList<>(independents.values()), namesToTasks); // go over all cur tasks and get the needed data back
+                targetNameToTaskData = runTheseTasks(cUI, new ArrayList<>(independents.values()), namesToTasks, targetNameToTaskData); // go over all cur tasks and get the needed data back
 
-                targetNameToTaskData.putAll(curTasksData);
+                //targetNameToTaskData.putAll(curTasksData);
 
                 curTasksFinished = checkIfWeFinished(new ArrayList<>(independents.values())); // go over all cur tasks and check if finished (with get
             }
@@ -121,9 +121,9 @@ public class ProcessUtil {
 
             while (!curTasksFinished) {
 
-                curTasksData = runTheseTasks(cUI, new ArrayList<>(leaves.values()), namesToTasks); // go over all cur tasks and get the needed data back
+                targetNameToTaskData = runTheseTasks(cUI, new ArrayList<>(leaves.values()), namesToTasks, targetNameToTaskData); // go over all cur tasks and get the needed data back
 
-                targetNameToTaskData.putAll(curTasksData);
+               // targetNameToTaskData.putAll(curTasksData);
 
                 curTasksFinished = checkIfWeFinished(new ArrayList<>(leaves.values())); // go over all cur tasks and check if finished (with get
             }
@@ -135,9 +135,9 @@ public class ProcessUtil {
 
             while (!curTasksFinished) {
 
-                curTasksData = runTheseTasks(cUI, new ArrayList<>(middles.values()), namesToTasks); // go over all cur tasks and get the needed data back
+                targetNameToTaskData = runTheseTasks(cUI, new ArrayList<>(middles.values()), namesToTasks, targetNameToTaskData); // go over all cur tasks and get the needed data back
 
-                targetNameToTaskData.putAll(curTasksData);
+                //targetNameToTaskData.putAll(curTasksData);
 
                 curTasksFinished = checkIfWeFinished(new ArrayList<>(middles.values())); // go over all cur tasks and check if finished (with get
             }
@@ -149,9 +149,9 @@ public class ProcessUtil {
 
             while (!curTasksFinished) {
 
-                curTasksData = runTheseTasks(cUI, new ArrayList<>(roots.values()), namesToTasks); // go over all cur tasks and get the needed data back
+                targetNameToTaskData = runTheseTasks(cUI, new ArrayList<>(roots.values()), namesToTasks, targetNameToTaskData); // go over all cur tasks and get the needed data back
 
-                targetNameToTaskData.putAll(curTasksData);
+                //targetNameToTaskData.putAll(curTasksData);
 
                 curTasksFinished = checkIfWeFinished(new ArrayList<>(roots.values())); // go over all cur tasks and check if finished (with get
             }
@@ -178,7 +178,7 @@ public class ProcessUtil {
         return  finished;
     }
 
-    private static Map<String,List<String>> runTheseTasks(Consumer cUI, List<Simulation> tasks, Map<String, Simulation> namesToTasks){
+    private static Map<String,List<String>> runTheseTasks(Consumer cUI, List<Simulation> tasks, Map<String, Simulation> namesToTasks, Map<String,List<String>> targetNameToTaskData){
 
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
         List<String> curTaskData = new ArrayList<>();
@@ -202,16 +202,14 @@ public class ProcessUtil {
                 if(!curTaskData.isEmpty()) {
                     cE.getData(curTaskData, cUI);
                     FormatAllTask.updateCounter(curTaskData.get(3));// the status
+
+                    targetNameToTaskData.put(curT.getMyName(), curTaskData);
+
+                    resData.get(curT.getMyName()).addAll(curTaskData);
                 }
             }
-
-            if(!curTaskData.isEmpty()){
-                resData.get(curT.getMyName()).addAll(curTaskData);
-         //      if(!iAllReadyRan(curT))
-                //    cE.getData(curTaskData, cUI);
-            }
         }
-        return resData;
+        return targetNameToTaskData;
     }
 
     private static Boolean iAllReadyRan(Simulation curT){

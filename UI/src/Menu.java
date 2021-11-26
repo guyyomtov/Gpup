@@ -19,7 +19,7 @@ public class Menu {
 
         userInput = sc.next().charAt(0);
 
-        while(userInput != '8'){      // In menu until presses 6 == exit
+        while(userInput != '9'){      // In menu until presses 6 == exit
 
             switch(userInput) {
 
@@ -45,10 +45,13 @@ public class Menu {
                     this.saveToFile();
                     break;
                 case '8':
+                    this.loadFile();
+                case '9':
                     this.exitProgram();
                     break;
                 default: // Invalid input, not number\number isn't good
                     System.out.println("\r\n" + ErrorUtils.invalidInput("Please enter a number from 1-6.")+ "\r\n");
+                    break;
             }
             this.printMenu();
             userInput = sc.next().charAt(0);
@@ -67,12 +70,24 @@ public class Menu {
         System.out.println("5) Start the build process on the graph. ");
         System.out.println("6) Find circle. ");
         System.out.println("7) Save data to file. ");
-        System.out.println("8) Exit the system.");
+        System.out.println("8) Load data from file. ");
+        System.out.println("9) Exit the system.");
 
     }
 
-    public void findCircle()
+    public void loadFile()
     {
+        try{
+            this.printBackToMenu();
+            System.out.println("Please write the full path of the file: (example: C:\\Users\\guyyo\\IdeaProjects\\Gpup\\Engine\\src\\resources\\ex1-big.xml)");
+            Scanner scan = new Scanner(System.in);
+            String fullPath = scan.nextLine();
+            if(fullPath.toLowerCase().equals("menu"))
+                return;
+            this.dM.loadFile(fullPath);
+        }catch (ErrorUtils e){e.getMessage();}
+    }
+    public void findCircle() {
         System.out.println("At any time you can press 'menu' to go back to the main menu.");
         System.out.println("Lets find circle!");
         System.out.println("Please enter name of target: ");
@@ -221,12 +236,13 @@ public class Menu {
 
                     try { this.startAndPrintProcess(true, timeToRun, chancesToSucceed, chancesToBeAWarning); }
                     catch (ErrorUtils e) { System.out.println(e.getMessage()); }
-
+                    break;
                 }
                 case "userWantsRandom": {
 
                     try { this.startAndPrintProcess(false, -1, -1, -1);}
                     catch (ErrorUtils e) { System.out.println(e.getMessage()); }
+                    break;
                 }
             }
         }
@@ -395,8 +411,7 @@ public class Menu {
         Map<String,List<String>> targetNameToHisProcessData = new HashMap<>();
         Scanner sc= new Scanner(System.in);
         String userChoice = new String();
-        boolean heWantsIncremental = false;
-        boolean heWantsFromBeginning = false;
+        boolean heWantsIncremental = false, heWantesMenu = false,  heWantsFromBeginning = false;
         Boolean heWantsRandom = isRandom;
         Boolean processIsFinished = false;
         ConsumerUI cUI = new ConsumerUI();
@@ -426,7 +441,7 @@ public class Menu {
 
 
         // we keep going as long as he wants
-        while(!processIsFinished && (heWantsIncremental || heWantsFromBeginning)){
+        while(!processIsFinished && (heWantsIncremental || heWantsFromBeginning) && !heWantesMenu){
 
             if(heWantsIncremental) {
                 targetNameToHisProcessData = this.dM.startProcess(cUI, targetNameToHisProcessData);
@@ -437,6 +452,7 @@ public class Menu {
 
                 switch (userChoice){
                     case "menu":
+                        heWantesMenu = true;
                         break;
                     case "userWantsToGiveValues": {
 
@@ -453,10 +469,12 @@ public class Menu {
 
                         try { this.startAndPrintProcess(true, timeToRun, chancesToSucceed, chancesToBeAWarning); }
                         catch (ErrorUtils e) { System.out.println(e.getMessage()); }
+                        break;
                     }
                     case "userWantsRandom": {
                         try { this.startAndPrintProcess(false, -1, -1, -1);}
                         catch (ErrorUtils e) { System.out.println(e.getMessage()); }
+                        break;
                     }
                 }
             }
@@ -495,9 +513,6 @@ public class Menu {
                 }
             }
         }
-
-        // go over all tasks if one isn't warning\success --. false
-
         return iFinished;
     }
 
@@ -530,12 +545,12 @@ public class Menu {
             if (words.length == 2) {
 
                 // options
-                switch (userChoice) {
+                switch (userChoice.toLowerCase()) {
 
-                    case "Run Incremental":
+                    case "run incremental":
                         userChoice = "heWantsIncremental";
                         validInput = true; break;
-                    case "Run again":
+                    case "run again":
                         userChoice = "heWantsFromBeginning";
                         validInput = true; break;
                     case "menu":
@@ -545,7 +560,10 @@ public class Menu {
                         System.out.println(ErrorUtils.invalidInput());
                         break;
                 }
-            } else
+            }
+            else if(userChoice.toLowerCase().equals("menu"))
+                return "menu";
+            else
                 System.out.println(ErrorUtils.invalidInput());
         }
         return userChoice;

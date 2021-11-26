@@ -210,11 +210,15 @@ public class BackDataManager implements DataManager {
         // go over all targets
         for(Target curTarget : allTargets){
 
-            curTaskData = oldProcessData.get(curTarget.getName());
+            if(oldProcessData.containsKey(curTarget.getName())) {
 
-            curTaskStatus = curTaskData.get(3);
+                curTaskData = oldProcessData.get(curTarget.getName());
 
-            oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, curTaskStatus));
+                curTaskStatus = curTaskData.get(3);
+                oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, curTaskStatus));
+            }
+            else
+                oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, "SUCCESS"));
         }
 
         return oldNamesToTasks;

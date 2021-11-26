@@ -1,14 +1,8 @@
 import errors.ErrorUtils;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+
 import java.util.*;
 
 import DataManager.*;
-import fileHandler.GPUPDescriptor;
-
-import javax.xml.bind.JAXBException;
 
 public class UiDataManager implements DataManager {
 

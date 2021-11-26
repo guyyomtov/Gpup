@@ -1,4 +1,4 @@
-package DataManager;
+package fileHandler;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,6 +26,7 @@ public class TaskFile {
         }
 
     }
+
     public void makeTaskDir(String taskName)
     {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d MMM yyyy HH.mm.ss");

@@ -1,17 +1,8 @@
 // This class is responsible to print & interact with the ui
 
 import errors.ErrorUtils;
-import fileHandler.GPUPDescriptor;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Menu {
 

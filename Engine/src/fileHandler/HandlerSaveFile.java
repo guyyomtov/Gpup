@@ -13,7 +13,7 @@ public class HandlerSaveFile {
         try{
             ObjectOutputStream out =
                     new ObjectOutputStream(
-                            new FileOutputStream(fullPath + "\\Graph.dat"));
+                            new FileOutputStream(fullPath + ".bin"));
             out.writeObject(this);
             out.writeObject(TaskFile.gpupPath); // the directory path
             out.flush();

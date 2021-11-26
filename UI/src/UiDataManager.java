@@ -98,8 +98,14 @@ public class UiDataManager implements DataManager {
         return this.bDM.startProcess(cUI, timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
     }
 
-
     public boolean checkValidTask(String taskName) {
         return false;
     }
+
+    public void loadFile(String fullPath) throws ErrorUtils {
+        try {
+            this.bDM.loadFile(fullPath);
+        }catch (ErrorUtils e){throw e;}
+    }
+
 }

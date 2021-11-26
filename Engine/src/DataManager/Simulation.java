@@ -253,7 +253,6 @@ public class Simulation extends Task{
         return resNames;
     }
 
-
     private List<String> giveMyData(){
 
         List<String> resData = new ArrayList<>();

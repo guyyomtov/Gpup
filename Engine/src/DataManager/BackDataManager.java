@@ -1,6 +1,8 @@
 package DataManager;
 import errors.ErrorUtils;
-import fileHandler.*;
+import fileHandler.HandlerXmlFile;
+import fileHandler.TaskFile;
+import schemaXmlFile.*;
 
 import java.io.*;
 import java.util.*;
@@ -16,9 +18,9 @@ import javax.xml.bind.Unmarshaller;
 
 public class BackDataManager implements DataManager {
 
-    private Graph graph = new Graph();
+    private Graph graph;
     private Map<String, Set<Target>> mTypeToTargets = new HashMap<String, Set<Target>>();
-    private final static String JAXB_XML_GAME_PACKAGE_NAME = "fileHandler";
+    private final static String JAXB_XML_GAME_PACKAGE_NAME = "schemaXmlFile";
 
     public boolean checkFile(String fileName) throws ErrorUtils {
         boolean fileSuccess = false;
@@ -29,10 +31,11 @@ public class BackDataManager implements DataManager {
                 if(information == null)
                     throw new ErrorUtils(ErrorUtils.invalidFile("file given is empty"));
                 try{
-                    Graph tmpGraph = new Graph();
-                    tmpGraph.buildMe(information);
+                   // Graph tmpGraph = new Graph();
+                    HandlerXmlFile handlerFile = new HandlerXmlFile();
+                    handlerFile.buildMe(information);
                     fileSuccess =  true;
-                    this.graph = tmpGraph;
+                    this.graph = new Graph(handlerFile.getListOfTargets(),handlerFile.getMap());
                     this.mTypeToTargets = this.makeMap(this.graph.getAllTargets());
                 }catch(ErrorUtils e){throw e;}
 
@@ -147,7 +150,7 @@ public class BackDataManager implements DataManager {
     public Map<String,List<String>> startProcess(Consumer cUI, Map<String,List<String>> oldProcessData) throws ErrorUtils{
 
 
-        Map<String, Task> oldNamesToTasks = new HashMap<String, Task>();
+        Map<String, Simulation> oldNamesToTasks = new HashMap<String, Simulation>();
 
         if(oldProcessData != null)
             oldNamesToTasks = this.makeTaskMapFrom(oldProcessData, this.graph.getAllTargets());
@@ -198,9 +201,9 @@ public class BackDataManager implements DataManager {
         return ProcessUtil.run(cUI, curTsToProcess, timeToRun, chancesToSucceed, chancesToBeAWarning);
     }
 
-    private Map<String, Task> makeTaskMapFrom(Map<String,List<String>> oldProcessData, List<Target> allTargets){
+    private Map<String, Simulation> makeTaskMapFrom(Map<String,List<String>> oldProcessData, List<Target> allTargets){
 
-        Map<String, Task> oldNamesToTasks = new HashMap<String, Task>();
+        Map<String, Simulation> oldNamesToTasks = new HashMap<String, Simulation>();
         List<String> curTaskData = new ArrayList<>();
         String curTaskStatus = new String();
 
@@ -211,7 +214,7 @@ public class BackDataManager implements DataManager {
 
             curTaskStatus = curTaskData.get(3);
 
-            oldNamesToTasks.put(curTarget.getName(), new Task(curTarget, curTaskStatus));
+            oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, curTaskStatus));
         }
 
         return oldNamesToTasks;

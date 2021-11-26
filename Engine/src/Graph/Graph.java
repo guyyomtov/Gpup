@@ -1,13 +1,13 @@
 package Graph;
-import DataManager.TaskFile;
 import Graph.Tree.Tree;
 import errors.ErrorUtils;
-import fileHandler.*;
+import fileHandler.HandlerLoadBinaryFile;
+import fileHandler.HandlerSaveFile;
 
 import java.io.*;
 import java.util.*;
 
-public class Graph {
+public class Graph implements Serializable {
 
     private List<Target> targets = new ArrayList<Target>();
     public boolean isGood = true;
@@ -15,103 +15,15 @@ public class Graph {
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
 
-    public void buildMe(GPUPDescriptor information) throws ErrorUtils {
+    public Graph(List<Target> targets, Map<String, Target> mNameToTarget) throws ErrorUtils {
+        this.targets = targets;
+        this.mNameToTarget = mNameToTarget;
         try {
-            intilizeGraphFromFile(information);
-        } catch (ErrorUtils e) {
-            throw e;
-        }
-
-    }
-
-    public void intilizeGraphFromFile(GPUPDescriptor information) throws ErrorUtils {
-        int size = information.getGPUPTargets().getGPUPTarget().size();
-        this.targets = new ArrayList<Target>(size);
-        for (int i = 0; i < size; i++) {
-            Target tmpTarget = this.setUpTarget(information, i);
-            if (targetExist(tmpTarget))
-                throw new ErrorUtils(ErrorUtils.invalidFile("The target " + tmpTarget.getName() + " was given twice.")); // to send more messege
-            this.targets.add(tmpTarget);
-        }
-
-        try {
-
-            this.initializeMap();
-
-            this.getFromFileDependencies(information.getGPUPTargets().getGPUPTarget());
-
-            this.updateTypeOfTargets();
-
             this.tree.startMe(this.targets.size(), this.targets);
-
-            this.checkCircleBetweenTwoTargets();
-
-            TaskFile.gpupPath = information.getGPUPConfiguration().getGPUPWorkingDirectory();
-
-        } catch (ErrorUtils e) {throw e;}
-
-    }
-
-    public void updateTypeOfTargets() { for(Target tr : targets) tr.setTargetType(); }
-
-    public void initializeMap() {
-        for (Target currT : this.targets)
-            this.mNameToTarget.put(currT.getName(), currT);
-
-    }
-
-    public Target setUpTarget(GPUPDescriptor information, int index) {
-
-        GPUPTarget currTarget = information.getGPUPTargets().getGPUPTarget().get(index); // get name
-        String name = currTarget.getName();
-        String generalInfo;
-        if(currTarget.getGPUPUserData() == null)
-            generalInfo = "Nothing";
-        else
-            generalInfo = currTarget.getGPUPUserData();
-        return new Target(name, generalInfo);
-    }
-
-    public void getFromFileDependencies(List<GPUPTarget> gpupTargets) throws ErrorUtils {
-        for (int i = 0; i < targets.size(); i++) {
-            try {
-                setDependenciesList(gpupTargets.get(i).getGPUPTargetDependencies(), targets.get(i));
-            } catch (ErrorUtils e) {
-                throw e;
-            }
-        }
-    }
-
-    public void setDependenciesList(GPUPTargetDependencies gpupTargetDependencies, Target currTarget) throws ErrorUtils {
-
-        if (gpupTargetDependencies == null) // its independent target
-            return;
-        List<GPUPTargetDependencies.GPUGDependency> lstOfGpupDependncies = gpupTargetDependencies.getGPUGDependency();
-        int size = lstOfGpupDependncies.size();
-
-         for (int i = 0; i < size; i++) {
-             GPUPTargetDependencies.GPUGDependency gpupDependency = lstOfGpupDependncies.get(i);
-             Target toAdd = this.mNameToTarget.get(gpupDependency.getValue());
-             if(toAdd == null)
-                 throw new ErrorUtils("The target " + gpupDependency.getValue() + " can't include in dependencies list of any target because he doesn't exist.");
-             if (gpupDependency.getType().compareTo("dependsOn") == 0) {
-                 currTarget.addTargetToDependsOnList(toAdd);
-                 toAdd.addTargetToRequiredForList(currTarget);
-
-             } else /*if(!requiredFor.contains(gpupDependency.getValue()))*/ {
-                 currTarget.addTargetToRequiredForList(toAdd);
-                 toAdd.addTargetToDependsOnList(currTarget);
-             }
-
-         }
-
-
+        }catch(ErrorUtils e){throw e;}
     }
 
     public Target getThisTarget(String nameOfTarget) throws ErrorUtils {
-//        try{
-//            Target currTarget = this.mNameToTarget.get(nameOfTarget);
-//        }finally{ throw new ErrorUtils(ErrorUtils.invalidTarget());}
         Target currTarget = this.mNameToTarget.get(nameOfTarget);
         if (currTarget == null)
             throw new ErrorUtils(ErrorUtils.invalidTarget());
@@ -121,41 +33,6 @@ public class Graph {
 
     public List<Target> getAllTargets() {
         return this.targets;
-    }
-
-    public void checkCircleBetweenTwoTargets() throws ErrorUtils {
-
-        for (Target t : targets) {
-            String type = t.getClass().getSimpleName();
-            List<Target> dependsOn = t.getDependsOn();
-            List<Target> requiredFor = t.getRequiredFor();
-            try {
-                    checkCircleBetweenTwoTargetsHelper(t, dependsOn, true);
-                    checkCircleBetweenTwoTargetsHelper(t, requiredFor, false);
-            }catch (ErrorUtils e){throw e;}
-
-    }
-}
-
-    public void checkCircleBetweenTwoTargetsHelper(Target currTarget, List<Target> dependenciesLst, boolean dependsOn) throws ErrorUtils {
-
-        for(Target tR : dependenciesLst) {
-            if(dependsOn)
-            {
-                List<Target> lst = tR.getDependsOn();
-                if(lst.contains(currTarget))
-                    throw new ErrorUtils(ErrorUtils.invalidFile("The target " + currTarget.getName() + " depends on the target " + tR.getName() + " and " +  tR.getName() + " depends on " + currTarget.getName()));
-
-            }
-            else // checking required for dependency
-            {
-                List<Target> lst = tR.getRequiredFor();
-                if(lst.contains(currTarget))
-                    throw new ErrorUtils(ErrorUtils.invalidFile("The target " + currTarget.getName() + " required for the target " + tR.getName() + " and " +  tR.getName() + " required for " + currTarget.getName()));
-
-            }
-        }
-
     }
 
     public boolean targetExist(Target currTarget)
@@ -187,7 +64,10 @@ public class Graph {
             if(currTarget.getTargetType().toString().equals("Middle"))
             {
                 List<String> res = new ArrayList<>();
-                findCircleHelper(currTarget,currTarget,res);
+                Map<String, Boolean> isVisited = new HashMap<>();
+                for(Target t : targets)
+                    isVisited.put(t.getName(), false);
+                findCircleHelper(currTarget,currTarget,res, isVisited);
                 if(!res.isEmpty())
                 {
                     return this.tree.findAllPaths(currTarget.getName(), res.get(0));
@@ -201,7 +81,7 @@ public class Graph {
 
     }
 
-    public void findCircleHelper(Target currTarget,Target dest ,List<String> res)
+    public void findCircleHelper(Target currTarget,Target dest ,List<String> res,Map<String, Boolean> isVisited)
     {
         if(currTarget.getTargetType().toString().equals("Leaf"))
             return;
@@ -209,31 +89,30 @@ public class Graph {
             res.add(currTarget.getName());
             return;
         }
+        else if(isVisited.get(currTarget.getName()))
+            return;
         else
         {
+            isVisited.put(currTarget.getName(), true);
             List<Target> dependsOnLst = currTarget.getDependsOn();
-            for(Target t: dependsOnLst)
-                findCircleHelper(t,dest, res);
+            for(Target t: dependsOnLst) {
+                findCircleHelper(t, dest, res, isVisited);
+            }
+
         }
 
     }
 
     public void saveToFile(String fullPath)
     {
-        try{
-        DataOutputStream dataOut = new DataOutputStream(
-                new BufferedOutputStream(
-                        new FileOutputStream(fullPath)));
-            for(Target t: targets) {
-                t.saveToFile(dataOut);
-            }
-            for(Target t: targets)
-            {
-                t.saveToFileDependencies(dataOut);
-            }
-        }catch (Exception e){}
-
+        HandlerSaveFile saveToFile = new HandlerSaveFile(this, fullPath);
     }
+
+    public void loadDataFRomFile(String fullPath)
+    {
+        HandlerLoadBinaryFile loadFile = new HandlerLoadBinaryFile(this,fullPath);
+    }
+
    // public void saveToFile(ObjectOutputStream)
 
 

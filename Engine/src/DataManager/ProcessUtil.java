@@ -12,11 +12,11 @@ import java.util.function.Consumer;
 
 public class ProcessUtil {
 
-    public static Map<String,List<String>> run(Consumer cUI, List<Target> targets, Map<String, Task> oldNamesToTasks){
+    public static Map<String,List<String>> run(Consumer cUI, List<Target> targets, Map<String, Simulation> oldNamesToTasks){
 
         Map<String, Target>             namesToTargetsMap                   = startTargetMap(targets);
-        Map<String, Task>               namesToTasks                        = oldNamesToTasks.isEmpty() == true? startTaskMap(targets) : oldNamesToTasks;
-        Map<String, Map<String, Task>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
+        Map<String, Simulation>               namesToTasks                        = oldNamesToTasks.isEmpty() == true? startTaskMap(targets) : oldNamesToTasks;
+        Map<String, Map<String, Simulation>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
 
         // start
         return startProcess(cUI, typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);
@@ -26,30 +26,30 @@ public class ProcessUtil {
 
         //setup data
         Map<String, Target>             namesToTargetsMap                   = startTargetMap(targets);
-        Map<String, Task>               namesToTasks                        = startTaskMap(targets, timeToRun, chancesToSucceed, chancesToBeAWarning);
-        Map<String, Map<String, Task>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
+        Map<String, Simulation>               namesToTasks                        = startTaskMap(targets, timeToRun, chancesToSucceed, chancesToBeAWarning);
+        Map<String, Map<String, Simulation>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
 
         // start
         return startProcess(cUI, typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);
     }
 
 
-    private static Map<String, Task> startTaskMap(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning){
+    private static Map<String, Simulation> startTaskMap(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning){
 
-        Map<String, Task> resM = new HashMap<String, Task>();
+        Map<String, Simulation> resM = new HashMap<String, Simulation>();
 
         for(Target curTarget : targets)
-            resM.put(curTarget.getName(), new Task(curTarget, timeToRun, chancesToSucceed, chancesToBeAWarning));
+            resM.put(curTarget.getName(), new Simulation(curTarget, timeToRun, chancesToSucceed, chancesToBeAWarning));
 
         return resM;
     }
 
-    private static Map<String, Task> startTaskMap(List<Target> targets){
+    private static Map<String, Simulation> startTaskMap(List<Target> targets){
 
-        Map<String, Task> resM = new HashMap<String, Task>();
+        Map<String, Simulation> resM = new HashMap<String, Simulation>();
 
         for(Target curTarget : targets)
-            resM.put(curTarget.getName(), new Task(curTarget));
+            resM.put(curTarget.getName(), new Simulation(curTarget));
 
         return resM;
     }
@@ -64,10 +64,10 @@ public class ProcessUtil {
         return resM;
     }
 
-    private static Map<String, Map<String,Task>> startTaskMapByTargetType(Map<String, Task> namesToTasks, Map<String, Target> namesToTarget) {
+    private static Map<String, Map<String,Simulation>> startTaskMapByTargetType(Map<String, Simulation> namesToTasks, Map<String, Target> namesToTarget) {
 
         String curTargetType = new String();
-        Map<String, Map<String,Task>> resM = new HashMap<>();
+        Map<String, Map<String,Simulation>> resM = new HashMap<>();
 
         resM.put("Independent", new HashMap<>());
         resM.put("Leaf", new HashMap<>());
@@ -83,13 +83,13 @@ public class ProcessUtil {
         return resM;
     }
 
-    private static  Map<String,List<String>> startProcess(Consumer cUI, Map<String, Map<String,Task>> typeOfTargetToTargetNameToHisTask, Map<String, Target> targets, Map<String, Task> namesToTasks) {
+    private static  Map<String,List<String>> startProcess(Consumer cUI, Map<String, Map<String,Simulation>> typeOfTargetToTargetNameToHisTask, Map<String, Target> targets, Map<String, Simulation> namesToTasks) {
 
         // setup data
-        Map<String,Task> independents = typeOfTargetToTargetNameToHisTask.get("Independent");
-        Map<String,Task> leaves = typeOfTargetToTargetNameToHisTask.get("Leaf");
-        Map<String,Task> middles = typeOfTargetToTargetNameToHisTask.get("Middle");
-        Map<String,Task> roots = typeOfTargetToTargetNameToHisTask.get("Root");
+        Map<String,Simulation> independents = typeOfTargetToTargetNameToHisTask.get("Independent");
+        Map<String,Simulation> leaves = typeOfTargetToTargetNameToHisTask.get("Leaf");
+        Map<String,Simulation> middles = typeOfTargetToTargetNameToHisTask.get("Middle");
+        Map<String,Simulation> roots = typeOfTargetToTargetNameToHisTask.get("Root");
         Boolean curTasksFinished = false;
         Map<String,List<String>> targetNameToTaskData = new HashMap<>();
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released
@@ -157,11 +157,11 @@ public class ProcessUtil {
         return targetNameToTaskData;
     }
 
-    private static Boolean checkIfWeFinished(List<Task> tasks){
+    private static Boolean checkIfWeFinished(List<Simulation> tasks){
 
         Boolean finished = true;
 
-        for(Task curT : tasks){
+        for(Simulation curT : tasks){
 
             if(!curT.imFinished()) {
                 finished = false;
@@ -171,19 +171,19 @@ public class ProcessUtil {
         return  finished;
     }
 
-    private static Map<String,List<String>> runTheseTasks(Consumer cUI, List<Task> tasks, Map<String, Task> namesToTasks){
+    private static Map<String,List<String>> runTheseTasks(Consumer cUI, List<Simulation> tasks, Map<String, Simulation> namesToTasks){
 
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
         List<String> curTaskData = new ArrayList<>();
-        List<Task> kids = new ArrayList<Task>();
+        List<Simulation> kids = new ArrayList<Simulation>();
         Map<String,List<String>> resData = new HashMap<>();
         ConsumerTaskInfo cE = new ConsumerTaskInfo();
 
-        for(Task curT : tasks)
+        for(Simulation curT : tasks)
             resData.put(curT.getMyName(), new ArrayList<>());
 
 
-        for(Task curT : tasks){
+        for(Simulation curT : tasks){
 
             if(iAllReadyRan(curT))
                 curTaskData = getOldDataFrom(curT);
@@ -205,7 +205,7 @@ public class ProcessUtil {
         return resData;
     }
 
-    private static Boolean iAllReadyRan(Task curT){
+    private static Boolean iAllReadyRan(Simulation curT){
 
         Boolean iRan = false;
 
@@ -215,7 +215,7 @@ public class ProcessUtil {
         return iRan;
     }
 
-    private static List<String> getOldDataFrom(Task curT){
+    private static List<String> getOldDataFrom(Simulation curT){
 
         List<String> resData = new ArrayList<>();
 
@@ -228,10 +228,10 @@ public class ProcessUtil {
         return resData;
     }
 
-    private static List<Task> findMyKids(Task curT, Map<String, Task> namesToTasks){
+    private static List<Simulation> findMyKids(Simulation curT, Map<String, Simulation> namesToTasks){
 
         List<String> kidsNames = curT.getMyKidsNames();
-        List<Task> kids = new ArrayList<Task>();
+        List<Simulation> kids = new ArrayList<Simulation>();
 
         for(String curKidName : kidsNames)
             kids.add(namesToTasks.get(curKidName));

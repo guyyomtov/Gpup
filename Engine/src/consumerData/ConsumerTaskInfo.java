@@ -1,6 +1,6 @@
 package consumerData;
 
-import DataManager.TaskFile;
+import fileHandler.TaskFile;
 
 import java.util.List;
 import java.util.function.Consumer;

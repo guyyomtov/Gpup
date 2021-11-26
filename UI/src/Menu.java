@@ -203,7 +203,7 @@ public class Menu {
 
             userAnswer = this.askUserIfRandom();
 
-            switch (userAnswer.toLowerCase()){
+            switch (userAnswer){
 
                 case "menu": {
                     break;
@@ -214,7 +214,7 @@ public class Menu {
                     if (userAnswer.toLowerCase().equals("menu"))
                         return;
 
-                    ints = userAnswer.split(" ", 2);
+                    ints = userAnswer.split(" ", 3);
 
                     timeToRun = Integer.valueOf(ints[0]);
                     chancesToSucceed = Integer.valueOf(ints[1]);
@@ -237,9 +237,61 @@ public class Menu {
 
     private String getValuesForRandomProcess() {
 
-        String res = new String();
+        Scanner scan = new Scanner(System.in);
+        String userAnswer = new String();
+        Boolean isValidInput = false;
+        String [] ints = new String[3];
+        ints[0]= ""; ints[1]= ""; ints[2]= "";
 
-        return res;
+
+        while(!isValidInput) {
+
+            this.printBackToMenu();
+
+            // ask user for four inputs
+            System.out.println("Ok, so you want to be in control, no problem.");
+            System.out.println("Please enter the following numbers: Time to run on each target (in ms'), The chances of success (0-100) & the chance that the success will be a warning (0-100). ");
+            System.out.println("Example format: 1500  55 66");
+
+            userAnswer = scan.nextLine();
+
+            if(userAnswer.toLowerCase().equals("menu"))
+                break;
+
+            ints = userAnswer.split(" ", 3);
+
+            if(ints.length == 3){
+
+                //check that each number is in the parameters wanted
+                if (this.isNumeric(ints[0]) && this.isNumeric(ints[1]) && this.isNumeric(ints[2])) {
+
+                    if (Integer.valueOf(ints[0]) >= 0) {
+
+                        if (Integer.valueOf(ints[1]) >= 0 && Integer.valueOf(ints[1]) <= 100 && Integer.valueOf(ints[2]) >= 0 && Integer.valueOf(ints[2]) <= 100) {
+                            isValidInput = true;
+                        }
+                    } else
+                        System.out.println(ErrorUtils.invalidInput("Time given to run is a negative number"));
+                } else
+                    System.out.println(ErrorUtils.invalidInput("input given weren't numbers."));
+            }
+            else
+                System.out.println(ErrorUtils.invalidInput());
+        }
+
+        return userAnswer;
+    }
+
+    private boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 
     private void printBackToMenu(){ System.out.println("At any time you can press 'menu' to go back to the main menu.");}
@@ -254,7 +306,7 @@ public class Menu {
 
             this.printBackToMenu();
             System.out.println("First things first... Do you want to give me numbers for the coming process?");
-            System.out.println("If so, please press- 'Y");
+            System.out.println("If so, please press- 'Y'");
             System.out.println("If you want us to generate random numbers for you, press 'N'");
 
             userAnswer = scan.nextLine();
@@ -342,129 +394,161 @@ public class Menu {
     private void startAndPrintProcess(Boolean isRandom, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils {
 
         Map<String,List<String>> targetNameToHisProcessData = new HashMap<>();
-        Boolean heWantsAgain = true;
+        Scanner sc= new Scanner(System.in);
+        String userChoice = new String();
+        boolean heWantsIncremental = false;
+        boolean heWantsFromBeginning = false;
         Boolean heWantsRandom = isRandom;
-        Integer counter = 0;
+        Boolean processIsFinished = false;
         ConsumerUI cUI = new ConsumerUI();
+        String [] ints = new String[3];
+
         // first process:
+        System.out.println("Starting the process..\r\n");
         if(heWantsRandom)
             targetNameToHisProcessData =  this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, null);
         else
             targetNameToHisProcessData =  this.dM.startProcess(cUI ,null);
-
-       // this.printThisProcess(targetNameToHisProcessData);
         System.out.println("\r\nCongrats! first process is done.");
+        processIsFinished = this.isThisFinished(targetNameToHisProcessData);
 
 
-        while(!targetNameToHisProcessData.isEmpty() && heWantsAgain == true){
+        // how to keep going?
+        userChoice = this.askUserHowToKeepGoing(processIsFinished);
 
-            // first time == counter == 0
-            if(counter != 0) {
+        switch(userChoice){
+            case "heWantsFromBeginning":
+                heWantsFromBeginning = true; break;
+            case "heWantsIncremental":
+                heWantsIncremental = true; break;
+            case "menu":
+                break;
+        }
 
-                // run some kind of process
-//                if (heWantsRandom)
-//                    targetNameToHisProcessData = this.dM.startProcess(timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
-//                else
-                    targetNameToHisProcessData = this.dM.startProcess(cUI ,targetNameToHisProcessData);
 
-                // print it
-              //  this.printThisProcess(targetNameToHisProcessData);
+        // we keep going as long as he wants
+        while(!processIsFinished && (heWantsIncremental || heWantsFromBeginning)){
+
+            if(heWantsIncremental) {
+                targetNameToHisProcessData = this.dM.startProcess(cUI, targetNameToHisProcessData);
             }
+            else if(heWantsFromBeginning){
 
-            // check if he wants again
-            heWantsAgain = this.askUserToProcessAgain();
-            if(heWantsAgain) {
+                userChoice = this.askUserIfRandom();
 
-               // heWantsRandom = this.askUserIfRandom();
+                switch (userChoice){
+                    case "menu":
+                        break;
+                    case "userWantsToGiveValues": {
 
-                if(heWantsRandom) {
-                    // get input from user for default values
+                        userChoice = this.getValuesForRandomProcess();
+
+                        if (userChoice.toLowerCase().equals("menu"))
+                            return;
+
+                        ints = userChoice.split(" ", 3);
+
+                        timeToRun = Integer.valueOf(ints[0]);
+                        chancesToSucceed = Integer.valueOf(ints[1]);
+                        chancesToBeAWarning = Integer.valueOf(ints[2]);
+
+                        try { this.startAndPrintProcess(true, timeToRun, chancesToSucceed, chancesToBeAWarning); }
+                        catch (ErrorUtils e) { System.out.println(e.getMessage()); }
+                    }
+                    case "userWantsRandom": {
+                        try { this.startAndPrintProcess(false, -1, -1, -1);}
+                        catch (ErrorUtils e) { System.out.println(e.getMessage()); }
+                    }
                 }
             }
-            counter++;
+
+            processIsFinished = this.isThisFinished(targetNameToHisProcessData);
+
+            userChoice = this.askUserHowToKeepGoing(processIsFinished);
+
+            switch(userChoice){
+
+                case "heWantsFromBeginning":
+                    heWantsFromBeginning = true; break;
+
+                case "heWantsIncremental":
+                    heWantsIncremental = true; break;
+                case "menu":
+                    break;
+            }
         }
         System.out.println("Well that's that!");
     }
 
-    private Boolean askUserToProcessAgain(){
+    private Boolean isThisFinished(Map<String,List<String>> targetNameToHisProcessData){
 
-        Scanner sc= new Scanner(System.in);
-        Boolean heWantsAgain = false;
+        Boolean iFinished = true;
 
-        System.out.println("If you'd like the process to run again (on the targets which didn't succeed), please press - 'Y'. If not press 'N'.");
+        if(!targetNameToHisProcessData.keySet().isEmpty()) {
 
-        String userChoice = sc.nextLine();
+            for (List<String> curTaskData : targetNameToHisProcessData.values()) {
 
-        Map<String, List<String>> targetNameToHisProcessData = new HashMap<>();
-
-        ConsumerUI cUI = new ConsumerUI();
-
-        int timeToRun = 0;
-        int chancesToSucceed = 0;
-        int chancesToBeAWarning = 0;
-
-        if(userChoice.toLowerCase().equals("y"))
-            heWantsAgain = true;
-        else if(userChoice.toLowerCase().equals("n"))
-            heWantsAgain = false;
-        else if(userChoice.toLowerCase().equals("menu"))
-            this.printMenu();
-        else
-        {
-            try {
-                targetNameToHisProcessData = this.dM.startProcess(cUI, timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
-            }catch (ErrorUtils e){
-                System.out.println(e.getMessage());
+                if (curTaskData != null) {
+                    if (curTaskData.get(3) != "SUCCESS" && curTaskData.get(3) != "WARNING") {
+                        iFinished = false;
+                        break;
+                    }
+                }
             }
         }
 
+        // go over all tasks if one isn't warning\success --. false
 
-        List<String> curPData = new ArrayList<>();
-        Integer tToSleep;
-        String targetName, status, generalInfo, iOpened;
-
-
-        System.out.println("Starting the process: ");
-
-        // go over each target
-        return heWantsAgain;
-
+        return iFinished;
     }
 
-    private void printThisProcess(Map<String,List<String>> targetNameToHisProcessData) throws InterruptedException {
+    private String askUserHowToKeepGoing(boolean processFinished){
 
-        List<String> curPData = new ArrayList<>();
-        Integer tToSleep;
-        String targetName, status, generalInfo, iOpened;
+        Scanner sc= new Scanner(System.in);
+        String userChoice = new String();
+        String[] words = new String[2];
+        Boolean validInput = false;
 
-
-        System.out.println("Starting the process: ");
-
-        // go over each target
-        for(String tName : targetNameToHisProcessData.keySet()) {
-
-            // get data
-            // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released
-
-            curPData = targetNameToHisProcessData.get(tName);
-
-            tToSleep = Integer.valueOf(curPData.get(0));
-            targetName = curPData.get(1);
-            generalInfo = curPData.get(2);
-            status = curPData.get(3);
-            iOpened = curPData.get(4);
-
-            // print it
-            System.out.println("Target Name: " + targetName);
-            System.out.println("General Info: " + (generalInfo == "" ? "None" : generalInfo));
-
-            System.out.println("processing current target..");
-            Thread.sleep(tToSleep);
-
-            System.out.println("Process completed: ");
-            System.out.println("target status: " + status);
-            System.out.println("It opened up these tasks: " + (iOpened == " " ? "None" : iOpened) +"\r\n");
+        if(processFinished) {
+            System.out.println("All the process finished successfully!");
+            return "menu";
         }
 
+        while(!validInput) {
+
+            // ask the use how to keep going
+            this.printBackToMenu();
+            System.out.println("How do u want to keep going?");
+            System.out.println("If you to run again (on the targets which didn't succeed), please type: 'Run Incremental'.");
+            System.out.println("If you want to start the process from the beginning, please type: 'Run again'.");
+
+
+            userChoice = sc.nextLine();
+
+            // check user input
+            words = userChoice.split(" ", 2);
+
+            if (words.length == 2) {
+
+                // options
+                switch (userChoice) {
+
+                    case "Run Incremental":
+                        userChoice = "heWantsIncremental";
+                        validInput = true; break;
+                    case "Run again":
+                        userChoice = "heWantsFromBeginning";
+                        validInput = true; break;
+                    case "menu":
+                        userChoice = "menu";
+                        validInput = true; break;
+                    default:
+                        System.out.println(ErrorUtils.invalidInput());
+                        break;
+                }
+            } else
+                System.out.println(ErrorUtils.invalidInput());
+        }
+        return userChoice;
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Target implements Serializable {
-    public enum Type {
+    public enum Type implements Serializable {
         INDEPENDENT{public String toString(){return "Independent";}}
 
         , ROOT{public String toString(){return "Root";}},

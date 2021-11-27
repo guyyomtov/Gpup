@@ -1,24 +1,24 @@
 package fileHandler;
 
-import Graph.Graph;
+import Graph.*;
+import errors.ErrorUtils;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.util.List;
+import java.util.Map;
 
 public class HandlerSaveFile {
 
-    public HandlerSaveFile(Graph graph, String fullPath)
-    {
-        try{
-            ObjectOutputStream out =
-                    new ObjectOutputStream(
-                            new FileOutputStream(fullPath + ".bin"));
-            out.writeObject(this);
+    public HandlerSaveFile(/*List<Target> targets, Map<String,Target> mNameToTarget*/Graph graph, String fullPath) {
+        try (ObjectOutputStream out =
+                     new ObjectOutputStream(
+                             new FileOutputStream(fullPath /*+ ".bin"*/))){
+            out.writeObject(graph);
             out.writeObject(TaskFile.gpupPath); // the directory path
             out.flush();
-        }catch(IOException e){}
+        }catch(IOException e){};
+        }
 
     }
 
-}
+

@@ -3,13 +3,14 @@ package Graph.Tree;
 import Graph.Target;
 import errors.ErrorUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-public class Tree {
+public class Tree implements Serializable {
 
     // No. of vertices in graph
     private int v;

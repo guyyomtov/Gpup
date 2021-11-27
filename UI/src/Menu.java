@@ -85,23 +85,29 @@ public class Menu {
             if(fullPath.toLowerCase().equals("menu"))
                 return;
             this.dM.loadFile(fullPath);
+            this.isThereGraph = true;
         }catch (ErrorUtils e){e.getMessage();}
     }
     public void findCircle() {
-        System.out.println("At any time you can press 'menu' to go back to the main menu.");
-        System.out.println("Lets find circle!");
-        System.out.println("Please enter name of target: ");
-        Scanner scan = new Scanner(System.in);
-        String targetName = scan.nextLine();
-        if(targetName.toLowerCase().equals("menu"))
-            return;
-        try {
-            String tPath = this.dM.findCircle(targetName);
-            String[] allPath = tPath.split(",");
-            System.out.println(allPath[0].replace(" ", "->") + targetName);
-           // Arrays.stream(allPath).map(t -> t.replace(" ", "->")).forEach(s -> System.out.println(s + targetName)); if we want to print all the circle
-        }catch (ErrorUtils e){
-            System.out.println(e.getMessage());}
+        if(this.isThereGraph) {
+            System.out.println("At any time you can press 'menu' to go back to the main menu.");
+            System.out.println("Lets find circle!");
+            System.out.println("Please enter name of target: ");
+            Scanner scan = new Scanner(System.in);
+            String targetName = scan.nextLine();
+            if (targetName.toLowerCase().equals("menu"))
+                return;
+            try {
+                String tPath = this.dM.findCircle(targetName);
+                String[] allPath = tPath.split(",");
+                System.out.println(allPath[0].replace(" ", "->") + targetName);
+                // Arrays.stream(allPath).map(t -> t.replace(" ", "->")).forEach(s -> System.out.println(s + targetName)); if we want to print all the circle
+            } catch (ErrorUtils e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        else
+            System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
     }
 
     public void saveToFile() {

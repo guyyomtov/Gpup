@@ -164,6 +164,23 @@ public class BackDataManager implements DataManager {
         return ProcessUtil.run(cUI, this.graph.getAllTargets(), oldNamesToTasks);
     }
 
+    public Map<String,List<String>> startProcess(Consumer cUI, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> oldProcessData) throws ErrorUtils{
+
+
+        Map<String, Simulation> oldNamesToTasks = new HashMap<String, Simulation>();
+
+        if(oldProcessData != null)
+            oldNamesToTasks = this.makeTaskMapFrom(oldProcessData, this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning);
+
+        if(this.graph.getAllTargets().isEmpty())
+            throw new ErrorUtils(ErrorUtils.noGraph());
+        TaskFile taskFile = new TaskFile();
+        taskFile.makeTaskDir("simulation");
+
+
+        return ProcessUtil.run(cUI, this.graph.getAllTargets(), oldNamesToTasks, timeToRun, chancesToSucceed, chancesToBeAWarning);
+    }
+
     private Map<String, String> generateMapTaskNameToStatus(Map<String,List<String>> targetNameToHisProcessData){
 
         Map<String, String> taskNameToStatus = new HashMap<>();
@@ -193,16 +210,40 @@ public class BackDataManager implements DataManager {
         HandlerSaveFile saveToFile = new HandlerSaveFile(/*this.graph.getTargets(), this.graph.getmNameToTarget()*/this.graph, fullPath);
     }
 
-    public Map<String,List<String>> startProcess(Consumer cUI, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils{
 
-        List<Target> curTsToProcess = generateTargetListToProcess(this.graph.getAllTargets(), targetNameToHisProcessData);
+    private Map<String, Simulation> makeTaskMapFrom(Map<String,List<String>> oldProcessData, List<Target> allTargets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning){
 
-        if(this.graph.getAllTargets().isEmpty())
-            throw new ErrorUtils(ErrorUtils.noGraph());
-        TaskFile taskFile = new TaskFile();
-        taskFile.makeTaskDir("simulation");
-        return ProcessUtil.run(cUI, curTsToProcess, timeToRun, chancesToSucceed, chancesToBeAWarning);
+        Map<String, Simulation> oldNamesToTasks = new HashMap<String, Simulation>();
+        List<String> curTaskData = new ArrayList<>();
+        String curTaskStatus = new String();
+
+        // if first time running
+        if(oldProcessData.isEmpty()){
+
+            for (Target curTarget : allTargets)
+                oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, timeToRun, chancesToSucceed, chancesToBeAWarning));
+
+        }
+        else { // ran all ready
+
+            for (Target curTarget : allTargets) {
+
+                // need this target to process
+                if (oldProcessData.containsKey(curTarget.getName())) {
+
+                    curTaskData = oldProcessData.get(curTarget.getName());
+
+                    curTaskStatus = curTaskData.get(3);
+                    oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, curTaskStatus));
+                }
+                else // don't process this target
+                    oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, "SUCCESS"));
+            }
+        }
+
+        return oldNamesToTasks;
     }
+
 
     private Map<String, Simulation> makeTaskMapFrom(Map<String,List<String>> oldProcessData, List<Target> allTargets){
 
@@ -210,18 +251,28 @@ public class BackDataManager implements DataManager {
         List<String> curTaskData = new ArrayList<>();
         String curTaskStatus = new String();
 
-        // go over all targets
-        for(Target curTarget : allTargets){
+        // if first time running
+        if(oldProcessData.isEmpty()){
 
-            if(oldProcessData.containsKey(curTarget.getName())) {
+            for (Target curTarget : allTargets)
+                oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget));
 
-                curTaskData = oldProcessData.get(curTarget.getName());
+        }
+        else { // ran all ready
 
-                curTaskStatus = curTaskData.get(3);
-                oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, curTaskStatus));
+            for (Target curTarget : allTargets) {
+
+                // need this target to process
+                if (oldProcessData.containsKey(curTarget.getName())) {
+
+                    curTaskData = oldProcessData.get(curTarget.getName());
+
+                    curTaskStatus = curTaskData.get(3);
+                    oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, curTaskStatus));
+                }
+                else // don't process this target
+                    oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, "SUCCESS"));
             }
-            else
-                oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, "SUCCESS"));
         }
 
         return oldNamesToTasks;
@@ -230,7 +281,7 @@ public class BackDataManager implements DataManager {
     private List<Target> generateTargetListToProcess(List<Target> allTargets, Map<String,List<String>> targetNameToHisProcessData){
 
         // first time to run process
-        if(targetNameToHisProcessData == null)
+        if(targetNameToHisProcessData == null || targetNameToHisProcessData.isEmpty())
             return allTargets;
 
         List<Target> processOnlyThese = new ArrayList<Target>();

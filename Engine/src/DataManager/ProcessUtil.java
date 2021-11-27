@@ -14,20 +14,20 @@ public class ProcessUtil {
 
     public static Map<String,List<String>> run(Consumer cUI, List<Target> targets, Map<String, Simulation> oldNamesToTasks){
 
-        Map<String, Target>             namesToTargetsMap                   = startTargetMap(targets);
-        Map<String, Simulation>               namesToTasks                        = oldNamesToTasks.isEmpty() == true? startTaskMap(targets) : oldNamesToTasks;
-        Map<String, Map<String, Simulation>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
+        Map<String, Target>                     namesToTargetsMap                   = startTargetMap(targets);
+        Map<String, Simulation>                 namesToTasks                        = oldNamesToTasks.isEmpty() == true? startTaskMap(targets) : oldNamesToTasks;
+        Map<String, Map<String, Simulation>>    typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
 
         // start
         return startProcess(cUI, typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);
     }
 
-    public static Map<String,List<String>> run(Consumer cUI, List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning ){
+    public static Map<String,List<String>> run(Consumer cUI, List<Target> targets,  Map<String, Simulation> oldNamesToTasks, int timeToRun, int chancesToSucceed, int chancesToBeAWarning ){
 
         //setup data
-        Map<String, Target>             namesToTargetsMap                   = startTargetMap(targets);
-        Map<String, Simulation>               namesToTasks                        = startTaskMap(targets, timeToRun, chancesToSucceed, chancesToBeAWarning);
-        Map<String, Map<String, Simulation>>  typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
+        Map<String, Target>                     namesToTargetsMap                   = startTargetMap(targets);
+        Map<String, Simulation>                 namesToTasks                        = oldNamesToTasks.isEmpty() == true? startTaskMap(targets, timeToRun, chancesToSucceed, chancesToBeAWarning) : oldNamesToTasks;
+        Map<String, Map<String, Simulation>>    typeOfTargetToTargetNameToHisTask   = startTaskMapByTargetType(namesToTasks, namesToTargetsMap);
 
         // start
         return startProcess(cUI, typeOfTargetToTargetNameToHisTask, namesToTargetsMap, namesToTasks);

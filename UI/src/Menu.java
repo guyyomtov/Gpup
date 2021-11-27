@@ -11,50 +11,41 @@ public class Menu {
 
     public void start(){
 
-        char userInput;
         Scanner sc = new Scanner(System.in);
+        String userInput = new String();
 
         System.out.println("\n" + this.welcomeMessage() + "\n");
         this.printMenu();
 
-        userInput = sc.next().charAt(0);
+        userInput = sc.nextLine();
 
-        while(userInput != '9'){      // In menu until presses 6 == exit
+        while(userInput != "9"){      // In menu until presses 6 == exit
 
             switch(userInput) {
 
-                case '1':
-                    this.fileHandler();
-                    break;
-                case '2':
-                    this.graphHandler();
-                    break;
-                case '3':
-                    this.targetHandler();
-                    break;
-                case '4':
-                    this.pathHandler();
-                    break;
-                case '5':
-                    this.processHandler();
-                    break;
-                case '6':
-                    this.findCircle();
-                    break;
-                case '7':
-                    this.saveToFile();
-                    break;
-                case '8':
-                    this.loadFile();
-                case '9':
-                    this.exitProgram();
-                    break;
+                case "1":
+                    this.fileHandler(); break;
+                case "2":
+                    this.graphHandler(); break;
+                case "3":
+                    this.targetHandler(); break;
+                case "4":
+                    this.pathHandler(); break;
+                case "5":
+                    this.processHandler(); break;
+                case "6":
+                    this.findCircle(); break;
+                case "7":
+                    this.saveToFile(); break;
+                case "8":
+                    this.loadFile(); break;
+                case "9":
+                    this.exitProgram(); break;
                 default: // Invalid input, not number\number isn't good
-                    System.out.println("\r\n" + ErrorUtils.invalidInput("Please enter a number from 1-6.")+ "\r\n");
-                    break;
+                    System.out.println("\r\n" + ErrorUtils.invalidInput("Please enter a number from 1-6.")+ "\r\n"); break;
             }
             this.printMenu();
-            userInput = sc.next().charAt(0);
+            userInput = sc.nextLine();
         }
     }
 
@@ -75,8 +66,7 @@ public class Menu {
 
     }
 
-    public void loadFile()
-    {
+    public void loadFile() {
         try{
             this.printBackToMenu();
             System.out.println("Please write the full path of the file: (example: C:\\Users\\guyyo\\IdeaProjects\\Gpup\\Engine\\src\\resources\\ex1-big.xml)");
@@ -88,7 +78,9 @@ public class Menu {
             this.isThereGraph = true;
         }catch (ErrorUtils e){e.getMessage();}
     }
+
     public void findCircle() {
+
         if(this.isThereGraph) {
             System.out.println("At any time you can press 'menu' to go back to the main menu.");
             System.out.println("Lets find circle!");
@@ -121,13 +113,15 @@ public class Menu {
             this.dM.saveToFile(fullPath);
     }
 
-    // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
+
+        Scanner scan = new Scanner(System.in);
+        String fileName = new String();
 
         this.printBackToMenu();
         System.out.println("Please write the full path of the file: (example: C:\\Users\\guyyo\\IdeaProjects\\Gpup\\Engine\\src\\resources\\ex1-big.xml)");
-        Scanner scan = new Scanner(System.in);
-        String fileName = scan.nextLine();
+        fileName = scan.nextLine();
+
         if(fileName.toLowerCase().equals("menu"))
             return;
         try {
@@ -138,8 +132,7 @@ public class Menu {
             System.out.println("You may start asking for data from the graph.\r\n ");
 
         }catch (ErrorUtils e){
-            System.out.println(e.getMessage());}
-
+            System.out.println(e.getMessage()+"\r\n");}
     }
 
     private void graphHandler(){
@@ -175,14 +168,14 @@ public class Menu {
         String tName;
 
         if(this.isThereGraph){
-            System.out.println("At any time you can press 'menu' to go back to the main menu.");
+            this.printBackToMenu();
             System.out.println("Please enter a target name:");
             tName = sc.nextLine();          // ask user for the name of the target
             if(tName.toLowerCase().equals("menu"))
                 return;
             try {
                 //if tName not null
-                List<String> tarInfo = this.dM.getInfoFromTarget(tName);
+                List<String> tarInfo = this.dM.getInfoFromTarget(tName.toUpperCase());
 
                 for(int i = 0; i < tarInfo.size(); i++){
 
@@ -197,12 +190,12 @@ public class Menu {
                         case 3:
                             System.out.println("Names of targets which he is required for : "+ tarInfo.get(i)); break;
                         case 4:
-                            System.out.println("General information about him: "+ tarInfo.get(i)); break;
+                            System.out.println("General information about him: "+ tarInfo.get(i) + "\r\n"); break;
                     }
                 }
             }
             catch (ErrorUtils e){
-                System.out.println(e.getMessage());
+                System.out.println(e.getMessage()+"\r\n");
                 this.targetHandler();
             }
         }
@@ -210,7 +203,6 @@ public class Menu {
             System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
     }
 
-    // TO DO
     private void processHandler(){
 
         String [] ints = new String[3];
@@ -315,7 +307,7 @@ public class Menu {
         return true;
     }
 
-    private void printBackToMenu(){ System.out.println("At any time you can press 'menu' to go back to the main menu.");}
+    private void printBackToMenu(){ System.out.println("\r\n *** At any time you can press 'menu' to go back to the main menu. *** ");}
 
     private String askUserIfRandom() {
 
@@ -355,13 +347,13 @@ public class Menu {
 
         Scanner sc= new Scanner(System.in); //System.in is a standard input stream
         String[] words = {"","",""};
-        String pathName = null, src = null, dest = null, connection = null;                     // start to null? empty?
+        String pathName = null, src = null, dest = null, connection = null;
         String tPath;
 
         if(this.isThereGraph){
 
             // need to get from the user src, dest & connection
-            System.out.println("At any time you can press 'menu' to go back to the main menu.");
+            this.printBackToMenu();
             System.out.println("Let's try to find the targets path you want!");
             System.out.println("PLease enter path in the following format: <target source>  <target destination>  <wanted relationship (depends On -> D /required For -> R)>");
             System.out.println("After that, press enter.");
@@ -371,23 +363,24 @@ public class Menu {
             words = pathName.split(" ");
             if(words[0].toLowerCase().equals("menu"))
                 return;
+
             // check the input is in the format way
             try {
-                src = words[0];
-                dest = words[1];
-                connection = words[2];
-            }catch (Exception e){
+                src = words[0]; dest = words[1]; connection = words[2];
+            }
+            catch (Exception e){
                 System.out.println("Please enter three values.");
                 this.pathHandler();
             }
 
             try {
-                    tPath = this.dM.getPathFromTargets(src, dest, connection);
+                    tPath = this.dM.getPathFromTargets(src.toUpperCase(), dest.toUpperCase(), connection.toUpperCase());
                     String[] allPath = tPath.split(",");
                     if(allPath[0].length() > 2)
                     {
-                        System.out.println("All the paths from " + src + " to " + dest  + ":");
-                        if(connection.equals("D"))
+                        System.out.println("All the paths from " + src.toUpperCase() + " to " + dest.toUpperCase()  + ":");
+
+                        if(connection.toLowerCase().equals("D"))
                             Arrays.stream(allPath).map(t -> t.replace(" ", "->")).forEach(s -> System.out.println(s.substring(0, s.length() - 2 )));
                         else
                         {
@@ -399,7 +392,6 @@ public class Menu {
                     }
                     else
                         System.out.println("There is no path between " + src + " to " + dest + ".");
-                   // System.out.println(tPath);
             }
             catch (ErrorUtils e) {
                 System.out.println(e.getMessage());
@@ -500,7 +492,7 @@ public class Menu {
                     break;
             }
         }
-        System.out.println("Well that's that!");
+        System.out.println("Well that's that!\r\n");
     }
 
     private Boolean isThisFinished(Map<String,List<String>> targetNameToHisProcessData){

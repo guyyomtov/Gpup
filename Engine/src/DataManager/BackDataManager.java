@@ -1,5 +1,7 @@
 package DataManager;
 import errors.ErrorUtils;
+import fileHandler.HandlerLoadFile;
+import fileHandler.HandlerSaveFile;
 import fileHandler.HandlerXmlFile;
 import fileHandler.TaskFile;
 import schemaXmlFile.*;
@@ -187,7 +189,8 @@ public class BackDataManager implements DataManager {
     }
 
     public void saveToFile(String fullPath){
-        this.graph.saveToFile(fullPath);
+
+        HandlerSaveFile saveToFile = new HandlerSaveFile(/*this.graph.getTargets(), this.graph.getmNameToTarget()*/this.graph, fullPath);
     }
 
     public Map<String,List<String>> startProcess(Consumer cUI, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils{
@@ -249,7 +252,8 @@ public class BackDataManager implements DataManager {
 
     public void loadFile(String fullPath) throws ErrorUtils {
         try {
-            this.graph = new Graph(fullPath);
+            this.graph = HandlerLoadFile.loadFile(fullPath);
+            this.mTypeToTargets = this.makeMap(this.graph.getAllTargets());
         }catch (ErrorUtils e){throw e;}
     }
 }

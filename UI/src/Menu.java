@@ -103,16 +103,21 @@ public class Menu {
     }
 
     public void saveToFile() {
-        System.out.println("At any time you can press 'menu' to go back to the main menu.");
-        System.out.println("Please enter full path for saving Gpup to a file:");
-        Scanner scan = new Scanner(System.in);
-        String fullPath = scan.nextLine();
-        if(fullPath.toLowerCase().equals("menu"))
-            return;
+        if (this.isThereGraph) {
+            System.out.println("At any time you can press 'menu' to go back to the main menu.");
+            System.out.println("Please enter full path for saving Gpup to a file:");
+            Scanner scan = new Scanner(System.in);
+            String fullPath = scan.nextLine();
+            if (fullPath.toLowerCase().equals("menu"))
+                return;
+            else
+                this.dM.saveToFile(fullPath);
+        }
         else
-            this.dM.saveToFile(fullPath);
+            System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
     }
 
+    // TO DO
     private void fileHandler(){     // Starts the engine of the system if all good.
 
         Scanner scan = new Scanner(System.in);

@@ -1,7 +1,7 @@
 package Graph;
 import Graph.Tree.Tree;
 import errors.ErrorUtils;
-import fileHandler.HandlerLoadBinaryFile;
+
 import fileHandler.HandlerSaveFile;
 
 import java.io.*;
@@ -9,9 +9,14 @@ import java.util.*;
 
 public class Graph implements Serializable {
 
+
+
+
     private List<Target> targets = new ArrayList<Target>();
     public boolean isGood = true;
     private Tree tree = new Tree();
+
+
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
 
@@ -23,11 +28,9 @@ public class Graph implements Serializable {
         }catch(ErrorUtils e){throw e;}
     }
 
-    public Graph(String fullPath)throws ErrorUtils  {
-        try {
-            this.loadDataFromFile(fullPath);
-        }catch(ErrorUtils e){throw e;}
-    }
+    public List<Target> getTargets() {return targets;}
+
+    public Map<String, Target> getmNameToTarget() {return mNameToTarget;}
 
     public Target getThisTarget(String nameOfTarget) throws ErrorUtils {
         Target currTarget = this.mNameToTarget.get(nameOfTarget);
@@ -109,16 +112,16 @@ public class Graph implements Serializable {
 
     }
 
-    public void saveToFile(String fullPath)
-    {
-        HandlerSaveFile saveToFile = new HandlerSaveFile(this, fullPath);
-    }
-
-    public void loadDataFromFile(String fullPath) throws ErrorUtils {
-        try {
-            HandlerLoadBinaryFile loadFile = new HandlerLoadBinaryFile(this, fullPath);
-        }catch(ErrorUtils e){throw e;}
-    }
+//    public void saveToFile(String fullPath)
+//    {
+//        HandlerSaveFile saveToFile = new HandlerSaveFile(this, fullPath);
+//    }
+//
+//    public void loadDataFromFile(String fullPath) throws ErrorUtils {
+//        try {
+//            HandlerLoadBinaryFile loadFile = new HandlerLoadBinaryFile(this, fullPath);
+//        }catch(ErrorUtils e){throw e;}
+//    }
 
    // public void saveToFile(ObjectOutputStream)
 

@@ -9,6 +9,8 @@ public class Menu {
 
     private UiDataManager dM = new UiDataManager();
     private Boolean isThereGraph = false;
+    private Map<String,List<String>> targetNameToHisProcessData = new HashMap<>();
+    private Boolean processIsFinished = false;
 
     public void start(){
 
@@ -77,6 +79,10 @@ public class Menu {
                 return;
             this.dM.loadFile(fullPath);
             this.isThereGraph = true;
+
+            this.targetNameToHisProcessData.clear();
+            
+            // this.targetNameToHisProcessData = Pro
         }catch (ErrorUtils e){e.getMessage();}
     }
 
@@ -214,44 +220,148 @@ public class Menu {
         String [] ints = new String[3];
         String userAnswer = new String();
         Integer timeToRun = 0 , chancesToSucceed = 0, chancesToBeAWarning = 0;
+        boolean heWantsIncremental = false, heWantesMenu = false,  heWantsFromBeginning = false;
+        ConsumerUI cUI = new ConsumerUI();
 
+        System.out.println("Lets start some processing!");
+
+        // is there graph
         if(this.isThereGraph){
 
-            System.out.println("Lets start some processing!");
+            while(heWantesMenu == false) {
 
-            userAnswer = this.askUserIfRandom();
+                // check if process finished
+                this.processIsFinished = this.isThisFinished(this.targetNameToHisProcessData);
 
-            switch (userAnswer){
+                // if finished
+                if (this.processIsFinished) {
 
-                case "menu": {
-                    break;
-                }
-                case "userWantsToGiveValues": {
-                    userAnswer = this.getValuesForRandomProcess();
+                    // clear data
+                    this.targetNameToHisProcessData.clear();
 
-                    if (userAnswer.toLowerCase().equals("menu"))
-                        return;
+                    System.out.println("\r\nLet's start the process from the beginning.\r\n");
 
-                    ints = userAnswer.split(" ", 3);
+                    // ask of he wants random
+                    userAnswer = this.askUserIfRandom();
 
-                    timeToRun = Integer.valueOf(ints[0]);
-                    chancesToSucceed = Integer.valueOf(ints[1]);
-                    chancesToBeAWarning = Integer.valueOf(ints[2]);
+                    switch (userAnswer) {
 
-                    try { this.startAndPrintProcess(true, timeToRun, chancesToSucceed, chancesToBeAWarning); }
-                    catch (ErrorUtils e) { System.out.println(e.getMessage()); }
-                    break;
-                }
-                case "userWantsRandom": {
+                        case "menu":
+                            heWantesMenu = true; break;
 
-                    try { this.startAndPrintProcess(false, -1, -1, -1);}
-                    catch (ErrorUtils e) { System.out.println(e.getMessage()); }
-                    break;
+                        case "userWantsToGiveValues": {
+
+                            userAnswer = this.getValuesForRandomProcess();
+
+                            if (userAnswer.toLowerCase().equals("menu")){
+                                heWantesMenu = true;
+                                return;
+                            }
+
+                            ints = userAnswer.split(" ", 3);
+                            timeToRun = Integer.valueOf(ints[0]);
+                            chancesToSucceed = Integer.valueOf(ints[1]);
+                            chancesToBeAWarning = Integer.valueOf(ints[2]);
+
+                            // run process
+                            try { this.targetNameToHisProcessData = this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, this.targetNameToHisProcessData);}
+                            catch (ErrorUtils e) { System.out.println(e.getMessage()); }
+                            break;
+                        }
+                        case "userWantsRandom": {
+                            try { this.targetNameToHisProcessData = this.dM.startProcess(cUI, this.targetNameToHisProcessData); }
+                            catch (ErrorUtils e) { System.out.println(e.getMessage()); }
+                            break;
+                        }
+                    }
+                } else { // last process can still be done
+
+                    userAnswer = this.askUserHowToKeepGoing(this.processIsFinished);
+
+                    switch (userAnswer) {
+                        case "heWantsFromBeginning":
+                            heWantsFromBeginning = true;
+                            break;
+                        case "heWantsIncremental":
+                            heWantsIncremental = true;
+                            break;
+                        case "menu":
+                            heWantesMenu = true; break;
+                    }
+
+                    if (heWantsIncremental) {
+
+                        userAnswer = this.askUserIfRandom();
+
+                        switch (userAnswer) {
+
+                            case "menu":
+                                heWantesMenu = true; break;
+
+                            case "userWantsToGiveValues": {
+
+                                userAnswer = this.getValuesForRandomProcess();
+
+                                if (userAnswer.toLowerCase().equals("menu")) {
+                                    heWantesMenu = true;
+                                    return;
+                                }
+
+                                ints = userAnswer.split(" ", 3);
+                                timeToRun = Integer.valueOf(ints[0]);
+                                chancesToSucceed = Integer.valueOf(ints[1]);
+                                chancesToBeAWarning = Integer.valueOf(ints[2]);
+
+                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, this.targetNameToHisProcessData);}
+                                catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
+                            }
+                            case "userWantsRandom": {
+                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI, this.targetNameToHisProcessData); }
+                                catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
+                            }
+                        }
+                        heWantsIncremental = false;
+                    }
+                    else if(heWantsFromBeginning){ // he wants from the beginning
+
+                        this.targetNameToHisProcessData.clear();
+
+                        userAnswer = this.askUserIfRandom();
+
+                        switch (userAnswer) {
+
+                            case "menu":
+                                heWantesMenu = true; break;
+
+                            case "userWantsToGiveValues": {
+
+                                userAnswer = this.getValuesForRandomProcess();
+
+                                if (userAnswer.toLowerCase().equals("menu")) {
+                                    heWantesMenu = true;
+                                    return;
+                                }
+
+                                ints = userAnswer.split(" ", 3);
+
+                                timeToRun = Integer.valueOf(ints[0]);
+                                chancesToSucceed = Integer.valueOf(ints[1]);
+                                chancesToBeAWarning = Integer.valueOf(ints[2]);
+
+                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, this.targetNameToHisProcessData);}
+                                catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
+                            }
+                            case "userWantsRandom": {
+                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI, this.targetNameToHisProcessData); }
+                                catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
+                            }
+                        }
+                    }
+                    heWantsFromBeginning = false;
                 }
             }
         }
-        else
-            System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
+        System.out.println("Well that's that!\r\n");
     }
 
     private String getValuesForRandomProcess() {
@@ -324,7 +434,7 @@ public class Menu {
         while(!isValidInput) {
 
             this.printBackToMenu();
-            System.out.println("First things first... Do you want to give me numbers for the coming process?");
+            System.out.println("Do you want to give me numbers for the coming process?");
             System.out.println("If so, please press- 'Y'");
             System.out.println("If you want us to generate random numbers for you, press 'N'");
 
@@ -409,97 +519,6 @@ public class Menu {
     }
 
     private void exitProgram(){ System.exit(0);}
-
-    private void startAndPrintProcess(Boolean isRandom, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils {
-
-        Map<String,List<String>> targetNameToHisProcessData = new HashMap<>();
-        Scanner sc= new Scanner(System.in);
-        String userChoice = new String();
-        boolean heWantsIncremental = false, heWantesMenu = false,  heWantsFromBeginning = false;
-        Boolean heWantsRandom = isRandom;
-        Boolean processIsFinished = false;
-        ConsumerUI cUI = new ConsumerUI();
-        String [] ints = new String[3];
-
-        // first process:
-        System.out.println("Starting the process..\r\n");
-        if(heWantsRandom)
-            targetNameToHisProcessData =  this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, null);
-        else
-            targetNameToHisProcessData =  this.dM.startProcess(cUI ,null);
-        System.out.println("\r\nCongrats! first process is done.");
-        processIsFinished = this.isThisFinished(targetNameToHisProcessData);
-
-
-        // how to keep going?
-        userChoice = this.askUserHowToKeepGoing(processIsFinished);
-
-        switch(userChoice){
-            case "heWantsFromBeginning":
-                heWantsFromBeginning = true; break;
-            case "heWantsIncremental":
-                heWantsIncremental = true; break;
-            case "menu":
-                break;
-        }
-
-
-        // we keep going as long as he wants
-        while(!processIsFinished && (heWantsIncremental || heWantsFromBeginning) && !heWantesMenu){
-
-            if(heWantsIncremental) {
-                targetNameToHisProcessData = this.dM.startProcess(cUI, targetNameToHisProcessData);
-            }
-            else if(heWantsFromBeginning){
-
-                userChoice = this.askUserIfRandom();
-
-                switch (userChoice){
-                    case "menu":
-                        heWantesMenu = true;
-                        break;
-                    case "userWantsToGiveValues": {
-
-                        userChoice = this.getValuesForRandomProcess();
-
-                        if (userChoice.toLowerCase().equals("menu"))
-                            return;
-
-                        ints = userChoice.split(" ", 3);
-
-                        timeToRun = Integer.valueOf(ints[0]);
-                        chancesToSucceed = Integer.valueOf(ints[1]);
-                        chancesToBeAWarning = Integer.valueOf(ints[2]);
-
-                        try { this.startAndPrintProcess(true, timeToRun, chancesToSucceed, chancesToBeAWarning); }
-                        catch (ErrorUtils e) { System.out.println(e.getMessage()); }
-                        break;
-                    }
-                    case "userWantsRandom": {
-                        try { this.startAndPrintProcess(false, -1, -1, -1);}
-                        catch (ErrorUtils e) { System.out.println(e.getMessage()); }
-                        break;
-                    }
-                }
-            }
-
-            processIsFinished = this.isThisFinished(targetNameToHisProcessData);
-
-            userChoice = this.askUserHowToKeepGoing(processIsFinished);
-
-            switch(userChoice){
-
-                case "heWantsFromBeginning":
-                    heWantsFromBeginning = true; break;
-
-                case "heWantsIncremental":
-                    heWantsIncremental = true; break;
-                case "menu":
-                    break;
-            }
-        }
-        System.out.println("Well that's that!\r\n");
-    }
 
     private Boolean isThisFinished(Map<String,List<String>> targetNameToHisProcessData){
 

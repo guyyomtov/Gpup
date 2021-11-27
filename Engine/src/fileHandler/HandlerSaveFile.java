@@ -1,6 +1,7 @@
 package fileHandler;
 
 import Graph.*;
+import consumerData.ProcessInfo;
 import errors.ErrorUtils;
 
 import java.io.*;
@@ -15,6 +16,7 @@ public class HandlerSaveFile {
                              new FileOutputStream(fullPath /*+ ".bin"*/))){
             out.writeObject(graph);
             out.writeObject(TaskFile.gpupPath); // the directory path
+            out.writeObject(ProcessInfo.getTargetNameToHisProcessData());
             out.flush();
         }catch(IOException e){};
         }

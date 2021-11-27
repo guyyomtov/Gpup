@@ -1,8 +1,14 @@
 package DataManager;
 
 import Graph.Target;
+import consumerData.ConsumerTaskInfo;
+import fileHandler.TaskFile;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Simulation extends Task{
 
@@ -167,10 +173,11 @@ public class Simulation extends Task{
         return "FROZEN";
     }
 
-    public List<String> tryToRunMe(List<Simulation> myKids, Map<String,Simulation> allTasks){
+    public List<String> tryToRunMe(List<Simulation> myKids, Map<String,Simulation> allTasks, Consumer cUI){
 
         List<String> myPData = new ArrayList<>();
         String myS = this.myStatus;
+
 
         if(myS == "SKIPPED" || myS == "SKIPPED" || myS == "FAILURE" || myS == "WARNING" || myS == "SUCCESS") { // return nothing
             return myPData;
@@ -178,20 +185,29 @@ public class Simulation extends Task{
         else if(this.myStatus != "WAITING") { // i'm not a leaf\independent but maybe i can start
 
             this.myStatus = checkStatusOfMyKidsAndUpdateMe(myKids);
-
             myPData = this.giveMyData();
         }
 
         if(this.myStatus == "WAITING")
-            myPData = this.runMe(allTasks);
+            myPData = this.runMe(allTasks,cUI);
 
         return myPData;
     }
 
-    public List<String> runMe(Map<String,Simulation> allTasks){
+    public List<String> runMe(Map<String,Simulation> allTasks, Consumer cUI)  {
 
         List<String> resData = new ArrayList<>();
         String openedParents = new String();
+        ConsumerTaskInfo cTI = new ConsumerTaskInfo(this.myTargetName);
+        cTI.getInfo(cUI, "The target " + this.myTargetName + " about to run.");
+
+        cTI.getInfo(cUI, "The system is going to sleep for: 00:00:0" + (timeIRun/1000));
+        try {
+            Thread.sleep(timeIRun);
+        }catch(InterruptedException e){}
+
+        cTI.getInfo(cUI, "The system finished the task on target " + this.myTargetName);
+      //  cUI.accept("The system finished the task on target " + this.myTargetName);
 
         Random rand = new Random();
         if((rand.nextInt(101)) <= this.chancesISucceed){
@@ -207,6 +223,12 @@ public class Simulation extends Task{
             this.myStatus = "FAILURE";
 
         this.iAmFinished = true;
+        cTI.getInfo(cUI, "the result: " + this.myStatus);
+        if(this.myStatus == "SUCCESS" || this.myStatus == "WARNING")
+            cTI.getInfo(cUI, "The targets that opened to run: " + (openedParents.isEmpty() ? "nothing": openedParents ));
+
+        cTI.getInfo(cUI, "----------------------------------------");
+
 
         resData.add(0, String.valueOf(this.timeIRun));
         resData.add(1, this.myTargetName);
@@ -214,7 +236,7 @@ public class Simulation extends Task{
         resData.add(3, this.myStatus);
         resData.add(4, openedParents);
         // add targets names the got free
-
+        TaskFile.closeFile();
         return resData;
     }
 

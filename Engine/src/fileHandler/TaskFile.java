@@ -11,7 +11,11 @@ public class TaskFile {
 
     public static String gpupPath;
 
-    private static String currPath;
+    public static String currPath;
+
+    public static  FileWriter writer;
+
+    public static BufferedWriter currBuffer;
 
     private boolean openTaskDir = false;
 
@@ -38,6 +42,26 @@ public class TaskFile {
 
         currPath = gpupPath + "\\" + taskName + "-" + currDate;
     }
+
+    public static void openFile(String targetName)
+    {
+        try {
+        writer = new FileWriter(currPath + "\\" + targetName + ".log");
+        currBuffer = new BufferedWriter(writer);
+        }catch (IOException e){}
+    }
+    public static void writeToFile(String info)
+    {
+        try {
+            currBuffer.write(info);
+        }catch (IOException e){}
+    }
+
+    public static void closeFile(){
+        try {
+            currBuffer.close();
+        }catch (IOException e){}}
+
     public static void openAndWriteToFile(String taskFormat, String targetName) throws IOException
     {
         try {

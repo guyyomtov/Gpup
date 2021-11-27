@@ -1,5 +1,6 @@
 // This class is responsible to print & interact with the ui
 
+import consumerData.ProcessInfo;
 import errors.ErrorUtils;
 
 import java.util.*;

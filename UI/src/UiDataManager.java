@@ -15,8 +15,6 @@ public class UiDataManager implements DataManager {
         boolean result = false;
         if(!fileName.contains(".xml"))
             throw new ErrorUtils( ErrorUtils.invalidFile("the file given doesn't end with a '.xml'."));
-        else if(fileName.contains(" "))
-            throw new ErrorUtils( ErrorUtils.invalidFile("the file given has a space in it's name."));
         try{
             result = bDM.checkFile(fileName);
         }catch(ErrorUtils e){throw e;}

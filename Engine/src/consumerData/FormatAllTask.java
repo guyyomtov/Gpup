@@ -5,6 +5,7 @@ import Graph.Target;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -37,7 +38,24 @@ public class FormatAllTask {
         cUI.accept("Targets that ended with 'WARNING': " + mStatusToNumber.get("WARNING"));
         cUI.accept("Targets that ended with 'FAILURE': " + mStatusToNumber.get("FAILURE"));
         cUI.accept("Targets that ended with 'SKIPPED': " + mStatusToNumber.get("SKIPPED"));
+        cUI.accept("--------------------------------------");
 
+    }
+
+    public static void sendData(Consumer cUI, Map<String, List<String>> nameToData)
+    {
+        for(List<String> data : nameToData.values())
+        {
+            Integer timeThatRun = Integer.parseInt(data.get(0));
+            String name = data.get(1);
+            String status = data.get(3);
+            cUI.accept("Target's name: " + name);
+            if(status != "SKIPPED")
+                cUI.accept("The total time that run: 00:00:0" + timeThatRun/1000);
+            cUI.accept("Target's status: " + status);
+            cUI.accept("---------------------------------");
+
+        }
     }
 
 

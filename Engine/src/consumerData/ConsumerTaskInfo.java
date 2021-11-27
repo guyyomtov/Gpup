@@ -7,6 +7,17 @@ import java.util.function.Consumer;
 
     public class ConsumerTaskInfo {
 
+        public ConsumerTaskInfo(String targetName)
+        {
+            TaskFile.openFile(targetName);
+        }
+
+        public void getInfo(Consumer cUI, String info)
+        {
+            cUI.accept(info);
+            TaskFile.writeToFile(info + '\n');
+        }
+
         public void getData(List<String> lst, Consumer cUI)
         {
             String taskFormat = new FormatTask().makeFormat(lst);
@@ -17,7 +28,7 @@ import java.util.function.Consumer;
         public void transferToUI(String taskFormat,Consumer cUI ){
             cUI.accept(taskFormat);}
 
-        public void transferToFile(String taskFormat, String targetName) {
+        public static void transferToFile(String taskFormat, String targetName) {
             try{
             TaskFile.openAndWriteToFile(taskFormat, targetName);
             }catch (Exception e){}

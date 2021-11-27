@@ -4,6 +4,7 @@ import Graph.Target;
 
 import consumerData.ConsumerTaskInfo;
 import consumerData.FormatAllTask;
+import consumerData.ProcessInfo;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -95,6 +96,7 @@ public class ProcessUtil {
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released
         Map<String,List<String>> curTasksData = new HashMap<>();
 
+
         FormatAllTask.restartMap();
 
         FormatAllTask.start = Instant.now();
@@ -159,7 +161,9 @@ public class ProcessUtil {
 
         FormatAllTask.end = Instant.now();
         FormatAllTask.sendData(cUI);
+        FormatAllTask.sendData(cUI, targetNameToTaskData);
 
+        ProcessInfo.setTargetNameToHisProcessData(targetNameToTaskData);
         return targetNameToTaskData;
     }
 
@@ -184,7 +188,7 @@ public class ProcessUtil {
         List<String> curTaskData = new ArrayList<>();
         List<Simulation> kids = new ArrayList<Simulation>();
         Map<String,List<String>> resData = new HashMap<>();
-        ConsumerTaskInfo cE = new ConsumerTaskInfo();
+
 
         for(Simulation curT : tasks)
             resData.put(curT.getMyName(), new ArrayList<>());
@@ -197,14 +201,10 @@ public class ProcessUtil {
             else{
 
                 kids = findMyKids(curT, namesToTasks);
-
-                curTaskData = curT.tryToRunMe(kids, namesToTasks);
+                curTaskData = curT.tryToRunMe(kids, namesToTasks,cUI);
                 if(!curTaskData.isEmpty()) {
-                    cE.getData(curTaskData, cUI);
                     FormatAllTask.updateCounter(curTaskData.get(3));// the status
-
                     targetNameToTaskData.put(curT.getMyName(), curTaskData);
-
                     resData.get(curT.getMyName()).addAll(curTaskData);
                 }
             }

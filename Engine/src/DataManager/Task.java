@@ -1,8 +1,10 @@
 package DataManager;
 
 import Graph.Target;
+import consumerData.ConsumerTaskInfo;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public abstract class Task {
 
@@ -32,9 +34,9 @@ public abstract class Task {
 
   //  public List<String> getMyKidsNames(){ return this.myKidsNames;}
 
-    public abstract List<String> tryToRunMe(List<Simulation> myKids, Map<String,Simulation> allTasks);
+    public abstract List<String> tryToRunMe(List<Simulation> myKids, Map<String,Simulation> allTasks, Consumer cUI);
 
-    public abstract List<String> runMe(Map<String,Simulation> allTasks);
+    public abstract List<String> runMe(Map<String,Simulation> allTasks, Consumer cUI);
 
     public String getMyStatus(){return this.myStatus;}
 

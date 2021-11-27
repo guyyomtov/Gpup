@@ -188,10 +188,7 @@ public class BackDataManager implements DataManager {
         }catch (ErrorUtils e){throw e;}
     }
 
-    public void saveToFile(String fullPath){
 
-        HandlerSaveFile saveToFile = new HandlerSaveFile(/*this.graph.getTargets(), this.graph.getmNameToTarget()*/this.graph, fullPath);
-    }
 
     public Map<String,List<String>> startProcess(Consumer cUI, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils{
 
@@ -250,10 +247,17 @@ public class BackDataManager implements DataManager {
         return processOnlyThese;
     }
 
+    public void saveToFile(String fullPath){
+
+        HandlerSaveFile saveToFile = new HandlerSaveFile(this.graph, fullPath);
+    }
+
     public void loadFile(String fullPath) throws ErrorUtils {
         try {
             this.graph = HandlerLoadFile.loadFile(fullPath);
             this.mTypeToTargets = this.makeMap(this.graph.getAllTargets());
         }catch (ErrorUtils e){throw e;}
     }
+
+
 }

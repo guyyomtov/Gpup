@@ -1,6 +1,7 @@
 package fileHandler;
 
 import Graph.*;
+import consumerData.ProcessInfo;
 import errors.ErrorUtils;
 
 import javax.imageio.IIOException;
@@ -19,6 +20,7 @@ public class HandlerLoadFile {
                              new FileInputStream(fullPath/* + ".bin"*/))) {
             Graph graph = (Graph) in.readObject();
             TaskFile.gpupPath = (String) in.readObject();
+            ProcessInfo.setTargetNameToHisProcessData((Map<String, List<String>>) in.readObject());
             return graph;
         } catch (Exception e) {
             throw new ErrorUtils(ErrorUtils.invalidFile("The File doesn't exist."));

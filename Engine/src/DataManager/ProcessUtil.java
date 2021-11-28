@@ -216,7 +216,7 @@ public class ProcessUtil {
 
         Boolean iRan = false;
 
-        if(curT.getMyStatus().equals("WARNING") || curT.getMyStatus().equals("SUCCESS"))
+        if(curT.getMyStatus().equals("WARNING") || curT.getMyStatus().equals("SUCCESS") || curT.getMyStatus().equals("SKIPPED"))
             iRan = true;
 
         return iRan;

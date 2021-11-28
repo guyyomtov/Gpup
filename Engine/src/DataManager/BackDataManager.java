@@ -231,7 +231,7 @@ public class BackDataManager implements DataManager {
                     curTaskData = oldProcessData.get(curTarget.getName());
 
                     curTaskStatus = curTaskData.get(3);
-                    oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, curTaskStatus));
+                    oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget,curTaskStatus, timeToRun, chancesToSucceed, chancesToBeAWarning));
                 }
                 else // don't process this target
                     oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, "SUCCESS"));

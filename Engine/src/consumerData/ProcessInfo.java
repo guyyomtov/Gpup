@@ -12,8 +12,8 @@ public class ProcessInfo {
         return targetNameToHisProcessData;
     }
 
-    public static void setTargetNameToHisProcessData(Map<String, List<String>> targetNameToHisProcessData) {
-        targetNameToHisProcessData = targetNameToHisProcessData;
+    public static void setTargetNameToHisProcessData(Map<String, List<String>> tmp) {
+        targetNameToHisProcessData = tmp;
     }
 
 

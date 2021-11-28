@@ -7,6 +7,7 @@ import fileHandler.TaskFile;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -47,6 +48,19 @@ public class Simulation extends Task{
         this.parentsNames = this.setMyParentsNames(target);
     }
 
+    public Simulation(Target target, String oldStatus, int timeToRun, int chancesToSucceed, int chancesToBeAWarning){
+
+
+        this.taskName = "Simulation";
+        if(this.iSucceededLastTime(oldStatus))
+            this.startMeWithSucceeded(target, oldStatus);
+        else
+            this.genarateMeAgain(target, oldStatus);
+        this.timeIRun = timeToRun;
+        this.chancesISucceed = chancesToSucceed;
+        this.chancesImAWarning = chancesToBeAWarning;
+
+    }
     public Simulation(Target target, String oldStatus){
 
         this.taskName = "Simulation";
@@ -68,12 +82,13 @@ public class Simulation extends Task{
         this.isTimeRandom = false;
 
         this.myStatus = this.myStartStatus(target.getTargetType().toString());
-        this.canIRun = this.myStatus == "WAITING" ? true : false;
+        this.canIRun = this.myStatus.equals("WAITING") ? true : false;
         this.iAmFinished = false;
 
         this.myTargetName = target.getName();
         this.myTargetGenaralInfo = target.getGeneralInfo();
         this.myKidsNames = this.setMyKidsNames(target);
+        this.parentsNames = this.setMyParentsNames(target);
     }
 
     private void genarateMeAgain(Target target, String oldStatus){
@@ -86,7 +101,7 @@ public class Simulation extends Task{
         this.isTimeRandom = true;
 
         this.myStatus = this.genarateNewStatusFrom(oldStatus,target.getTargetType().toString());
-        this.canIRun = this.myStatus == "WAITING" ? true : false;
+        this.canIRun = this.myStatus.equals("WAITING") ? true : false;
         this.iAmFinished = false;
 
         this.myTargetName = target.getName();
@@ -99,7 +114,7 @@ public class Simulation extends Task{
 
         this.timeIRun = 0;
         this.chancesISucceed = 100;
-        this.chancesImAWarning = oldStatus == "WARNING" ? 100 : 0;
+        this.chancesImAWarning = oldStatus.equals("WARNING") ? 100 : 0;
         this.isChanceRandom = false;
         this.isTimeRandom = false;
 
@@ -117,7 +132,7 @@ public class Simulation extends Task{
 
         Boolean iSucceeded = false;
 
-        if(oldStatus == "WARNING" || oldStatus == "SUCCESS")
+        if(oldStatus.equals("WARNING") || oldStatus.equals("SUCCESS"))
             iSucceeded = true;
 
         return iSucceeded;
@@ -127,13 +142,13 @@ public class Simulation extends Task{
 
         String resStatus = new String();
 
-        if(oldStatus == "WARNING" || oldStatus == "SUCCESS")
+        if(oldStatus.equals("WARNING")   || oldStatus.equals("SUCCESS") )
             resStatus = oldStatus;
-        else if(oldStatus == "SKIPPED")
+        else if(oldStatus.equals("SKIPPED"))
             resStatus = "FROZEN";
-        else if(oldStatus == "FAILURE"){
+        else if(oldStatus.equals("FAILURE") ){
 
-            if(targetType == "Leaf" || targetType == "Independent")
+            if(targetType.equals("Leaf") || targetType.equals("Independent"))
                 resStatus = "WAITING";
             else // middle or root
                 resStatus = "FROZEN";
@@ -143,26 +158,6 @@ public class Simulation extends Task{
     }
 
     public String getMyTargetGenaralInfo(){ return this.myTargetGenaralInfo;}
-
-//    private List<String> setMyParentsNames(Target t){
-//
-//        List<String> parentsNames = new ArrayList<>();
-//
-//        for(Target curT : t.getRequiredFor())
-//            parentsNames.add(curT.getName());
-//
-//        return parentsNames;
-//    }
-//
-//    private List<String> setMyKidsNames(Target t){
-//
-//        List<String> kidsNames = new ArrayList<>();
-//
-//        for(Target curT : t.getDependsOn())
-//            kidsNames.add(curT.getName());
-//
-//        return kidsNames;
-//    }
 
     public List<String> getMyKidsNames(){ return this.myKidsNames;}
 
@@ -201,7 +196,8 @@ public class Simulation extends Task{
         ConsumerTaskInfo cTI = new ConsumerTaskInfo(this.myTargetName);
         cTI.getInfo(cUI, "The target " + this.myTargetName + " about to run.");
 
-        cTI.getInfo(cUI, "The system is going to sleep for: 00:00:0" + (timeIRun/1000));
+        Duration t = Duration.ofMillis(timeIRun);
+        cTI.getInfo(cUI, "The system is going to sleep for: " + String.format("%02d:%02d:%02d" ,t.toHours(), t.toMinutes(), t.getSeconds()));
         try {
             Thread.sleep(timeIRun);
         }catch(InterruptedException e){}
@@ -224,8 +220,8 @@ public class Simulation extends Task{
 
         this.iAmFinished = true;
         cTI.getInfo(cUI, "the result: " + this.myStatus);
-        if(this.myStatus == "SUCCESS" || this.myStatus == "WARNING")
-            cTI.getInfo(cUI, "The targets that opened to run: " + (openedParents.isEmpty() ? "nothing": openedParents ));
+        if(this.myStatus.equals("SUCCESS") || this.myStatus.equals("WARNING"))
+            cTI.getInfo(cUI, "The targets that opened to run: " + (openedParents.isEmpty() ? "nobody": openedParents ));
 
         cTI.getInfo(cUI, "----------------------------------------");
 
@@ -267,7 +263,7 @@ public class Simulation extends Task{
 
                 Task curKid = allTasks.get(curKidName);
 
-                if(curKid.getMyStatus() != "SUCCESS" && curKid.getMyStatus() != "WARNING")
+                if(!curKid.getMyStatus().equals("SUCCESS") && !curKid.getMyStatus().equals("WARNING"))
                     addThisDad = false;
             }
             if(addThisDad)

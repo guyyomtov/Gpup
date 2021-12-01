@@ -205,9 +205,6 @@ public class BackDataManager implements DataManager {
         }catch (ErrorUtils e){throw e;}
     }
 
-
-
-
     private Map<String, Simulation> makeTaskMapFrom(Map<String,List<String>> oldProcessData, List<Target> allTargets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning){
 
         Map<String, Simulation> oldNamesToTasks = new HashMap<String, Simulation>();

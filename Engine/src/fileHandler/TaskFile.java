@@ -50,6 +50,7 @@ public class TaskFile {
         currBuffer = new BufferedWriter(writer);
         }catch (IOException e){}
     }
+
     public static void writeToFile(String info)
     {
         try {

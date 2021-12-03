@@ -1,9 +1,9 @@
 package DataManager;
+import consumerData.ProcessInfo;
 import errors.ErrorUtils;
 import fileHandler.HandlerLoadFile;
 import fileHandler.HandlerSaveFile;
 import fileHandler.HandlerXmlFile;
-import fileHandler.TaskFile;
 import schemaXmlFile.*;
 
 import java.io.*;
@@ -149,55 +149,25 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in the wanted relationship 'depends On' -> D/ 'required For' -> R."));
     }
 
-    public Map<String,List<String>> startProcess(Consumer cUI, Map<String,List<String>> oldProcessData) throws ErrorUtils{
 
+    public void startProcess(Consumer cUI, boolean isRandom, Boolean isIncremental,int timeToRun, int chancesToSucceed, int chancesToBeAWarning) {
 
-        Map<String, Simulation> oldNamesToTasks = new HashMap<String, Simulation>();
+        if(isIncremental) {
 
-        if(oldProcessData != null)
-            oldNamesToTasks = this.makeTaskMapFrom(oldProcessData, this.graph.getAllTargets());
+            Task oldTask = ProcessInfo.getOldTask();
 
-        if(this.graph.getAllTargets().isEmpty())
-            throw new ErrorUtils(ErrorUtils.noGraph());
-        TaskFile taskFile = new TaskFile();
-        taskFile.makeTaskDir("simulation");
-        return ProcessUtil.run(cUI, this.graph.getAllTargets(), oldNamesToTasks);
-    }
+            Task simulation = new Simulation(this.graph.getAllTargets(), oldTask, timeToRun, chancesToSucceed, chancesToBeAWarning, isRandom, cUI);
 
-    public Map<String,List<String>> startProcess(Consumer cUI, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> oldProcessData) throws ErrorUtils{
-
-
-        Map<String, Simulation> oldNamesToTasks = new HashMap<String, Simulation>();
-
-        if(oldProcessData != null)
-            oldNamesToTasks = this.makeTaskMapFrom(oldProcessData, this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning);
-
-        if(this.graph.getAllTargets().isEmpty())
-            throw new ErrorUtils(ErrorUtils.noGraph());
-        TaskFile taskFile = new TaskFile();
-        taskFile.makeTaskDir("simulation");
-
-
-        return ProcessUtil.run(cUI, this.graph.getAllTargets(), oldNamesToTasks, timeToRun, chancesToSucceed, chancesToBeAWarning);
-    }
-
-    private Map<String, String> generateMapTaskNameToStatus(Map<String,List<String>> targetNameToHisProcessData){
-
-        Map<String, String> taskNameToStatus = new HashMap<>();
-        List<String> curTaskData = new ArrayList<>();
-        String curStatus = new String();
-
-        for(String curTaskName : targetNameToHisProcessData.keySet()) {
-
-            curTaskData = targetNameToHisProcessData.get(curTaskName);
-
-            curStatus = curTaskData.get(3);
-
-            taskNameToStatus.put(curTaskName, curStatus);
+            simulation.run();
         }
+        else{ // from beginning
 
-        return taskNameToStatus;
+            Task simulation = new Simulation(this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning, isRandom, cUI);
+
+            simulation.run();
+        }
     }
+
 
     public String findCircle(String name) throws ErrorUtils {
         try{
@@ -205,95 +175,6 @@ public class BackDataManager implements DataManager {
         }catch (ErrorUtils e){throw e;}
     }
 
-    private Map<String, Simulation> makeTaskMapFrom(Map<String,List<String>> oldProcessData, List<Target> allTargets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning){
-
-        Map<String, Simulation> oldNamesToTasks = new HashMap<String, Simulation>();
-        List<String> curTaskData = new ArrayList<>();
-        String curTaskStatus = new String();
-
-        // if first time running
-        if(oldProcessData.isEmpty()){
-
-            for (Target curTarget : allTargets)
-                oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, timeToRun, chancesToSucceed, chancesToBeAWarning));
-
-        }
-        else { // ran all ready
-
-            for (Target curTarget : allTargets) {
-
-                // need this target to process
-                if (oldProcessData.containsKey(curTarget.getName())) {
-
-                    curTaskData = oldProcessData.get(curTarget.getName());
-
-                    curTaskStatus = curTaskData.get(3);
-                    oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget,curTaskStatus, timeToRun, chancesToSucceed, chancesToBeAWarning));
-                }
-                else // don't process this target
-                    oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, "SUCCESS"));
-            }
-        }
-
-        return oldNamesToTasks;
-    }
-
-
-    private Map<String, Simulation> makeTaskMapFrom(Map<String,List<String>> oldProcessData, List<Target> allTargets){
-
-        Map<String, Simulation> oldNamesToTasks = new HashMap<String, Simulation>();
-        List<String> curTaskData = new ArrayList<>();
-        String curTaskStatus = new String();
-
-        // if first time running
-        if(oldProcessData.isEmpty()){
-
-            for (Target curTarget : allTargets)
-                oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget));
-
-        }
-        else { // ran all ready
-
-            for (Target curTarget : allTargets) {
-
-                // need this target to process
-                if (oldProcessData.containsKey(curTarget.getName())) {
-
-                    curTaskData = oldProcessData.get(curTarget.getName());
-
-                    curTaskStatus = curTaskData.get(3);
-                    oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, curTaskStatus));
-                }
-                else // don't process this target
-                    oldNamesToTasks.put(curTarget.getName(), new Simulation(curTarget, "SUCCESS"));
-            }
-        }
-
-        return oldNamesToTasks;
-    }
-
-    private List<Target> generateTargetListToProcess(List<Target> allTargets, Map<String,List<String>> targetNameToHisProcessData){
-
-        // first time to run process
-        if(targetNameToHisProcessData == null || targetNameToHisProcessData.isEmpty())
-            return allTargets;
-
-        List<Target> processOnlyThese = new ArrayList<Target>();
-        String curTaskStatus = new String();
-        Map<String, String> taskNameToStatus = generateMapTaskNameToStatus(targetNameToHisProcessData);
-
-        // go over all targets
-        for(Target curTarget : allTargets){
-
-            curTaskStatus = taskNameToStatus.get(curTarget.getName());
-
-            // only if it's a fitting task (didn't succeed), put it in the list.
-            if(curTaskStatus == "SKIPPED" || curTaskStatus == "FAILURE")
-                processOnlyThese.add(curTarget);
-        }
-
-        return processOnlyThese;
-    }
 
     public void saveToFile(String fullPath){
 

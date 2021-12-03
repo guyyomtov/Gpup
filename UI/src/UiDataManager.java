@@ -1,6 +1,7 @@
 import errors.ErrorUtils;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import DataManager.*;
 
@@ -81,24 +82,29 @@ public class UiDataManager implements DataManager {
 
     }
 
-    void saveToFile(String fullPath)
-    {
+    void saveToFile(String fullPath) {
+
         this.bDM.saveToFile(fullPath);
     }
 
-    public Map<String,List<String>> startProcess(ConsumerUI cUI,Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
+    public void startProcess(Consumer cUI, boolean isRandom, Boolean isIncremental, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils {
 
-        return this.bDM.startProcess(cUI,targetNameToHisProcessData);
+        this.bDM.startProcess(cUI, isRandom, isIncremental, timeToRun, chancesToSucceed, chancesToBeAWarning);
     }
-
-    public Map<String,List<String>> startProcess(ConsumerUI cUI, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
-
-        return this.bDM.startProcess(cUI, timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
-    }
-
-    public boolean checkValidTask(String taskName) {
-        return false;
-    }
+//
+//    public Map<String,List<String>> startProcess(ConsumerUI cUI,Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
+//
+//        return this.bDM.startProcess(cUI,targetNameToHisProcessData);
+//    }
+//
+//    public Map<String,List<String>> startProcess(ConsumerUI cUI, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
+//
+//        return this.bDM.startProcess(cUI, timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
+//    }
+//
+//    public boolean checkValidTask(String taskName) {
+//        return false;
+//    }
 
     public void loadFile(String fullPath) throws ErrorUtils {
         try {

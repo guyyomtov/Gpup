@@ -1,19 +1,18 @@
 package consumerData;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import DataManager.Simulation;
+import DataManager.Task;
 
 public class ProcessInfo {
 
-    public static Map<String, List<String>> targetNameToHisProcessData = new HashMap<>();
+    private static Simulation oldTask;
 
-    public static Map<String, List<String>> getTargetNameToHisProcessData() {
-        return targetNameToHisProcessData;
+    public static Simulation getOldTask() {
+        return oldTask;
     }
 
-    public static void setTargetNameToHisProcessData(Map<String, List<String>> tmp) {
-        targetNameToHisProcessData = tmp;
+    public static void setOldTask(Simulation oldT) {
+        ProcessInfo.oldTask = oldT;
     }
 
 

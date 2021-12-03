@@ -1,5 +1,7 @@
 // This class is responsible to print & interact with the ui
 
+
+import DataManager.Task;
 import consumerData.ProcessInfo;
 import errors.ErrorUtils;
 
@@ -70,6 +72,7 @@ public class Menu {
     }
 
     public void loadFile() {
+
         try{
             this.printBackToMenu();
             System.out.println("If you want to retrieve saved data (includes a graph and the last process) from a file,");
@@ -80,12 +83,9 @@ public class Menu {
                 return;
             this.dM.loadFile(fullPath);
             this.isThereGraph = true;
-            //this.targetNameToHisProcessData.clear();)
-            this.targetNameToHisProcessData = ProcessInfo.getTargetNameToHisProcessData();
-            this.processIsFinished = this.isThisFinished(this.targetNameToHisProcessData);
             System.out.println("The file was load successfully!");
-            // this.targetNameToHisProcessData = Pro
-        }catch (ErrorUtils e){e.getMessage();}
+        }
+        catch (ErrorUtils e){e.getMessage();}
     }
 
     public void findCircle() {
@@ -112,7 +112,9 @@ public class Menu {
     }
 
     public void saveToFile() {
+
         if (this.isThereGraph) {
+
             System.out.println("At any time you can press 'menu' to go back to the main menu.");
             System.out.println("Please enter full path for saving current data to a file:");
             Scanner scan = new Scanner(System.in);
@@ -227,6 +229,11 @@ public class Menu {
         boolean heWantsIncremental = false, heWantesMenu = false,  heWantsFromBeginning = false;
         ConsumerUI cUI = new ConsumerUI();
 
+        //TODO
+        Task oldTask = ProcessInfo.getOldTask();
+
+        if(oldTask != null)
+            this.targetNameToHisProcessData = oldTask.getLastPData();
 
 
         // is there graph
@@ -236,7 +243,7 @@ public class Menu {
             while(heWantesMenu == false) {
 
                 // check if process finished
-                this.processIsFinished = this.isThisFinished(this.targetNameToHisProcessData);
+                this.processIsFinished = this.isThisFinished();
 
                 // if finished
                 if (this.processIsFinished) {
@@ -269,12 +276,12 @@ public class Menu {
                             chancesToBeAWarning = Integer.valueOf(ints[2]);
 
                             // run process
-                            try { this.targetNameToHisProcessData = this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, this.targetNameToHisProcessData);}
+                            try { this.dM.startProcess(cUI,false, false, timeToRun, chancesToSucceed, chancesToBeAWarning);}
                             catch (ErrorUtils e) { System.out.println(e.getMessage()); }
                             break;
                         }
                         case "userWantsRandom": {
-                            try { this.targetNameToHisProcessData = this.dM.startProcess(cUI, this.targetNameToHisProcessData); }
+                            try { this.dM.startProcess(cUI, true, false, -1, -1,-1); }
                             catch (ErrorUtils e) { System.out.println(e.getMessage()); }
                             break;
                         }
@@ -317,11 +324,11 @@ public class Menu {
                                 chancesToSucceed = Integer.valueOf(ints[1]);
                                 chancesToBeAWarning = Integer.valueOf(ints[2]);
 
-                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, this.targetNameToHisProcessData);}
+                                try { this.dM.startProcess(cUI,false,true,timeToRun, chancesToSucceed, chancesToBeAWarning);}
                                 catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
                             }
                             case "userWantsRandom": {
-                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI, this.targetNameToHisProcessData); }
+                                try { this.dM.startProcess(cUI, true, true,-1, -1, -1); }
                                 catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
                             }
                         }
@@ -353,11 +360,11 @@ public class Menu {
                                 chancesToSucceed = Integer.valueOf(ints[1]);
                                 chancesToBeAWarning = Integer.valueOf(ints[2]);
 
-                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, this.targetNameToHisProcessData);}
+                                try { this.dM.startProcess(cUI,false, false, timeToRun, chancesToSucceed, chancesToBeAWarning);}
                                 catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
                             }
                             case "userWantsRandom": {
-                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI, this.targetNameToHisProcessData); }
+                                try { this.dM.startProcess(cUI, true, false, -1, -1,-1); }
                                 catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
                             }
                         }
@@ -430,9 +437,9 @@ public class Menu {
             return false;
         }
         try {
-           // strNum = strNum.replaceAll("\\s","");
 
             double d = Double.parseDouble(strNum);
+
         } catch (NumberFormatException nfe) {
             return false;
         }
@@ -536,9 +543,10 @@ public class Menu {
 
     private void exitProgram(){ System.exit(0);}
 
-    private Boolean isThisFinished(Map<String,List<String>> targetNameToHisProcessData){
+    private Boolean isThisFinished(){
 
         Boolean iFinished = true;
+        this.targetNameToHisProcessData = ProcessInfo.getOldTask() == null ? targetNameToHisProcessData : ProcessInfo.getOldTask().getLastPData();
 
         if(!targetNameToHisProcessData.keySet().isEmpty()) {
 

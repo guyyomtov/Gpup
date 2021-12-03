@@ -18,21 +18,6 @@ import java.util.function.Consumer;
             TaskFile.writeToFile(info + '\n');
         }
 
-        public void getData(List<String> lst, Consumer cUI)
-        {
-            String taskFormat = new FormatTask().makeFormat(lst);
-            transferToUI(taskFormat, cUI);
-            transferToFile(taskFormat, lst.get(1));
-        }
-
-        public void transferToUI(String taskFormat,Consumer cUI ){
-            cUI.accept(taskFormat);}
-
-        public static void transferToFile(String taskFormat, String targetName) {
-            try{
-            TaskFile.openAndWriteToFile(taskFormat, targetName);
-            }catch (Exception e){}
-        }
 
     }
 

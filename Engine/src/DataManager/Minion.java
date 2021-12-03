@@ -4,14 +4,12 @@ import Graph.Target;
 import consumerData.ConsumerTaskInfo;
 import fileHandler.TaskFile;
 
+import java.io.Serializable;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Consumer;
 
-public class Minion {
+public class Minion implements Serializable {
 
     private Target target;
     private String myStatus = new String();
@@ -19,74 +17,41 @@ public class Minion {
     private Boolean iAmFinished;
     private List<String> parentsNames = new ArrayList<>();
     private List<String> myKidsNames = new ArrayList<>();
+    protected Integer timeIRun;
+    protected Integer chancesISucceed;
+    protected Integer chancesImAWarning;
 
-
-    public Minion(Target target){
+    public Minion(Target target, Integer timeIRun, Integer chancesISucceed, Integer chancesImAWarning ){
 
         this.target = target;
 
         this.myStatus = this.myStartStatus(target.getTargetType().toString());
         this.canIRun = this.myStatus.equals("WAITING") ? true : false;
         this.iAmFinished = false;
-
-        this.myKidsNames = this.setMyKidsNames(target);
-        this.parentsNames = this.setMyParentsNames(target);
+        this.timeIRun = timeIRun;
+        this.chancesISucceed = chancesISucceed;
+        this.chancesImAWarning = chancesImAWarning;
+        this.setMyKidsNames();
+        this.setMyParentsNames();
     }
 
-    private void startMeWithSucceeded(Target target, String oldStatus){
+    public void setiAmFinished(Boolean iAmFinished) { this.iAmFinished = iAmFinished; }
 
-        this.myStatus = oldStatus;
-        this.canIRun = true;
-        this.iAmFinished = true;
-        this.myKidsNames = this.setMyKidsNames(target);
-        this.parentsNames = this.setMyParentsNames(target);
-    }
+    public void setCanIRun(Boolean canIRun) { this.canIRun = canIRun;}
 
-    private Boolean iSucceededLastTime(String oldStatus){
-
-        Boolean iSucceeded = false;
-
-        if(oldStatus.equals("WARNING") || oldStatus.equals("SUCCESS"))
-            iSucceeded = true;
-
-        return iSucceeded;
-    }
-
-    private String genarateNewStatusFrom(String oldStatus, String targetType){
-
-        String resStatus = new String();
-
-        if(oldStatus.equals("WARNING")   || oldStatus.equals("SUCCESS") )
-            resStatus = oldStatus;
-        else if(oldStatus.equals("SKIPPED"))
-            resStatus = "FROZEN";
-        else if(oldStatus.equals("FAILURE") ){
-
-            if(targetType.equals("Leaf") || targetType.equals("Independent"))
-                resStatus = "WAITING";
-            else // middle or root
-                resStatus = "FROZEN";
-        }
-
-        return resStatus;
-    }
-
+    public void setMyStatus(String newS){this.myStatus = newS;}
 
     public String getName(){return target.getName();}
 
     public String getMyTargetGenaralInfo(){ return this.target.getGeneralInfo();}
 
-    public String getMyStatus(){
-        String res = new String();
+    public String getMyStatus(){ return this.myStatus; }
 
-        return res;
-    }
-
-    public List<String> getMyKidsNames(){return this.myKidsNames();}
+    public List<String> getMyKidsNames(){return this.myKidsNames;}
 
     private String myStartStatus(String tType){
 
-        if(tType == "Leaf" || tType == "Independent")
+        if(tType.equals("Leaf") || tType.equals("Independent"))
             return "WAITING";
         return "FROZEN";
     }
@@ -97,17 +62,18 @@ public class Minion {
         String myS = this.myStatus;
 
 
-        if(myS == "SKIPPED" || myS == "SKIPPED" || myS == "FAILURE" || myS == "WARNING" || myS == "SUCCESS") { // return nothing
+        if(myS.equals("SKIPPED")  || myS.equals("FAILURE")  || myS.equals("WARNING") || myS.equals("SUCCESS")) { // return nothing
             return myPData;
         }
-        else if(this.myStatus != "WAITING") { // i'm not a leaf\independent but maybe i can start
+        else if(!this.myStatus.equals("WAITING")) { // i'm not a leaf\independent but maybe i can start
 
             this.myStatus = checkStatusOfMyKidsAndUpdateMe(myKids);
             myPData = this.giveMyData();
         }
 
-        if(this.myStatus == "WAITING")
+        if(this.myStatus.equals("WAITING"))
             myPData = this.runMe(allMinions, cUI);
+
 
         return myPData;
     }
@@ -126,7 +92,7 @@ public class Minion {
             Thread.sleep(timeIRun);
         }catch(InterruptedException e){}
 
-        cTI.getInfo(cUI, "The system finished the task on target " + this.myTargetName);
+        cTI.getInfo(cUI, "The system finished the task on target " + this.getName());
         //  cUI.accept("The system finished the task on target " + this.myTargetName);
 
         Random rand = new Random();
@@ -137,7 +103,7 @@ public class Minion {
                 this.myStatus = "WARNING"; //success with warning
             else
                 this.myStatus = "SUCCESS";
-            openedParents = this.iOpened(this.parentsNames, allTasks);
+            openedParents = this.iOpened(this.parentsNames, allMinions);
         }
         else
             this.myStatus = "FAILURE";
@@ -151,8 +117,8 @@ public class Minion {
 
 
         resData.add(0, String.valueOf(this.timeIRun));
-        resData.add(1, this.myTargetName);
-        resData.add(2, this.myTargetGenaralInfo);
+        resData.add(1, this.getName());
+        resData.add(2, this.target.getGeneralInfo());
         resData.add(3, this.myStatus);
         resData.add(4, openedParents);
         // add targets names the got free
@@ -161,11 +127,101 @@ public class Minion {
     }
 
 
+    public Boolean imFinished(){return this.iAmFinished;}
 
-    public Boolean imFinished(){
+    public void setMyParentsNames(){
 
-        Boolean res = false;
+        for(Target curT : this.target.getRequiredFor())
+            this.parentsNames.add(curT.getName());
 
-        return res;
     }
+
+    public void setMyKidsNames(){
+
+        for(Target curT : this.target.getDependsOn())
+            this.myKidsNames.add(curT.getName());
+    }
+
+    private String checkStatusOfMyKidsAndUpdateMe(List<Minion> myKids){
+
+        String resStatus = new String();
+        Boolean iCanRun = true;
+
+        for(Minion curKid : myKids) {
+
+            if (curKid.getMyStatus().equals("FAILURE") || curKid.getMyStatus().equals("SKIPPED")) {
+
+                resStatus = "SKIPPED";
+                this.iAmFinished = true;
+                iCanRun = false;
+                break;
+            }
+
+            else if(curKid.getMyStatus().equals("IN PROCESS") || curKid.getMyStatus().equals("WAITING") || curKid.getMyStatus().equals("FROZEN")) {
+                resStatus = "FROZEN";
+                iCanRun = false;
+            }
+        }
+        if(iCanRun)
+            resStatus = "WAITING";
+
+        this.canIRun = iCanRun;
+
+        return resStatus;
+    }
+
+    private List<String> giveMyData(){
+
+        List<String> resData = new ArrayList<>();
+
+        if(this.myStatus != "WAITING" && this.myStatus != "FROZEN" && this.myStatus != "IN PROCESS") {
+
+            resData.add(0, String.valueOf(this.timeIRun));
+            resData.add(1, this.getName());
+            resData.add(2, this.target.getGeneralInfo());
+            resData.add(3, this.myStatus);
+            resData.add(4, new String());
+        }
+
+        return resData;
+    }
+
+    private String iOpened(List<String> parentsNames, Map<String,Minion> allMinions){
+
+        String resNames = new String();
+        Boolean addThisDad = true;
+
+        Map<String, List<String>> dadsNamesToTheirKidsName = new HashMap<>();
+        for(String curPName : parentsNames)
+            dadsNamesToTheirKidsName.put(curPName, new ArrayList<>());
+
+        // start the map --> all relevant dads and their kids
+        for(String curDadName :  dadsNamesToTheirKidsName.keySet()){
+
+            Minion curDad = allMinions.get(curDadName);
+
+            dadsNamesToTheirKidsName.get(curDadName).addAll(curDad.getMyKidsNames());
+        }
+
+        // go over all parents
+        for(String curDadName :  dadsNamesToTheirKidsName.keySet()){
+
+            addThisDad = true;
+
+            // go over each kid
+            for(String curKidName : dadsNamesToTheirKidsName.get(curDadName)){
+
+                Minion curKid = allMinions.get(curKidName);
+
+                if(!curKid.getMyStatus().equals("SUCCESS") && !curKid.getMyStatus().equals("WARNING"))
+                    addThisDad = false;
+            }
+            if(addThisDad)
+                resNames +=  " " + curDadName;
+        }
+        return resNames;
+    }
+
+    public Target getTarget(){ return this.target;}
+
 }

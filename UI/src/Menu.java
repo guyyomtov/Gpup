@@ -80,7 +80,7 @@ public class Menu {
             this.isThereGraph = true;
 
             this.targetNameToHisProcessData.clear();
-            
+
             // this.targetNameToHisProcessData = Pro
         }catch (ErrorUtils e){e.getMessage();}
     }

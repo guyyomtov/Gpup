@@ -1,5 +1,8 @@
 // This class is responsible to print & interact with the ui
 
+
+import DataManager.Task;
+import consumerData.ProcessInfo;
 import errors.ErrorUtils;
 
 import java.util.*;
@@ -69,20 +72,20 @@ public class Menu {
     }
 
     public void loadFile() {
+
         try{
             this.printBackToMenu();
-            System.out.println("Please write the full path of the file: (example: C:\\Users\\guyyo\\IdeaProjects\\Gpup\\Engine\\src\\resources\\ex1-big.xml)");
+            System.out.println("If you want to retrieve saved data (includes a graph and the last process) from a file,");
+            System.out.println("please write the full path of the file: (example: C:\\Users\\guyyo\\IdeaProjects\\Gpup\\Engine\\src\\resources\\graph)");
             Scanner scan = new Scanner(System.in);
             String fullPath = scan.nextLine();
             if(fullPath.toLowerCase().equals("menu"))
                 return;
             this.dM.loadFile(fullPath);
             this.isThereGraph = true;
-
-            this.targetNameToHisProcessData.clear();
-
-            // this.targetNameToHisProcessData = Pro
-        }catch (ErrorUtils e){e.getMessage();}
+            System.out.println("The file was load successfully!");
+        }
+        catch (ErrorUtils e){e.getMessage();}
     }
 
     public void findCircle() {
@@ -96,7 +99,7 @@ public class Menu {
             if (targetName.toLowerCase().equals("menu"))
                 return;
             try {
-                String tPath = this.dM.findCircle(targetName);
+                String tPath = this.dM.findCircle(targetName.toUpperCase());
                 String[] allPath = tPath.split(",");
                 System.out.println(allPath[0].replace(" ", "->") + targetName);
                 // Arrays.stream(allPath).map(t -> t.replace(" ", "->")).forEach(s -> System.out.println(s + targetName)); if we want to print all the circle
@@ -109,15 +112,19 @@ public class Menu {
     }
 
     public void saveToFile() {
+
         if (this.isThereGraph) {
+
             System.out.println("At any time you can press 'menu' to go back to the main menu.");
-            System.out.println("Please enter full path for saving Gpup to a file:");
+            System.out.println("Please enter full path for saving current data to a file:");
             Scanner scan = new Scanner(System.in);
             String fullPath = scan.nextLine();
             if (fullPath.toLowerCase().equals("menu"))
                 return;
-            else
+            else {
                 this.dM.saveToFile(fullPath);
+                System.out.println("G.P.U.P was saved successfully!");
+            }
         }
         else
             System.out.println("\r\n" + ErrorUtils.noGraph() + "\r\n");
@@ -222,15 +229,21 @@ public class Menu {
         boolean heWantsIncremental = false, heWantesMenu = false,  heWantsFromBeginning = false;
         ConsumerUI cUI = new ConsumerUI();
 
-        System.out.println("Lets start some processing!");
+        //TODO
+        Task oldTask = ProcessInfo.getOldTask();
+
+        if(oldTask != null)
+            this.targetNameToHisProcessData = oldTask.getLastPData();
+
 
         // is there graph
         if(this.isThereGraph){
 
+            System.out.println("Lets start some processing!");
             while(heWantesMenu == false) {
 
                 // check if process finished
-                this.processIsFinished = this.isThisFinished(this.targetNameToHisProcessData);
+                this.processIsFinished = this.isThisFinished();
 
                 // if finished
                 if (this.processIsFinished) {
@@ -263,12 +276,12 @@ public class Menu {
                             chancesToBeAWarning = Integer.valueOf(ints[2]);
 
                             // run process
-                            try { this.targetNameToHisProcessData = this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, this.targetNameToHisProcessData);}
+                            try { this.dM.startProcess(cUI,false, false, timeToRun, chancesToSucceed, chancesToBeAWarning);}
                             catch (ErrorUtils e) { System.out.println(e.getMessage()); }
                             break;
                         }
                         case "userWantsRandom": {
-                            try { this.targetNameToHisProcessData = this.dM.startProcess(cUI, this.targetNameToHisProcessData); }
+                            try { this.dM.startProcess(cUI, true, false, -1, -1,-1); }
                             catch (ErrorUtils e) { System.out.println(e.getMessage()); }
                             break;
                         }
@@ -311,11 +324,11 @@ public class Menu {
                                 chancesToSucceed = Integer.valueOf(ints[1]);
                                 chancesToBeAWarning = Integer.valueOf(ints[2]);
 
-                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, this.targetNameToHisProcessData);}
+                                try { this.dM.startProcess(cUI,false,true,timeToRun, chancesToSucceed, chancesToBeAWarning);}
                                 catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
                             }
                             case "userWantsRandom": {
-                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI, this.targetNameToHisProcessData); }
+                                try { this.dM.startProcess(cUI, true, true,-1, -1, -1); }
                                 catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
                             }
                         }
@@ -347,11 +360,11 @@ public class Menu {
                                 chancesToSucceed = Integer.valueOf(ints[1]);
                                 chancesToBeAWarning = Integer.valueOf(ints[2]);
 
-                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI,timeToRun, chancesToSucceed, chancesToBeAWarning, this.targetNameToHisProcessData);}
+                                try { this.dM.startProcess(cUI,false, false, timeToRun, chancesToSucceed, chancesToBeAWarning);}
                                 catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
                             }
                             case "userWantsRandom": {
-                                try { this.targetNameToHisProcessData = this.dM.startProcess(cUI, this.targetNameToHisProcessData); }
+                                try { this.dM.startProcess(cUI, true, false, -1, -1,-1); }
                                 catch (ErrorUtils e) { System.out.println(e.getMessage()); } break;
                             }
                         }
@@ -359,8 +372,11 @@ public class Menu {
                     heWantsFromBeginning = false;
                 }
             }
+            System.out.println("Well that's that!\r\n");
         }
-        System.out.println("Well that's that!\r\n");
+        else
+            System.out.println(ErrorUtils.noGraph());
+
     }
 
     private String getValuesForRandomProcess() {
@@ -379,7 +395,7 @@ public class Menu {
             // ask user for four inputs
             System.out.println("Ok, so you want to be in control, no problem.");
             System.out.println("Please enter the following numbers: Time to run on each target (in ms'), The chances of success (0-100) & the chance that the success will be a warning (0-100). ");
-            System.out.println("Example format: 1500  55 66");
+            System.out.println("Example format: 1500 55 66");
 
             userAnswer = scan.nextLine();
 
@@ -389,7 +405,13 @@ public class Menu {
             ints = userAnswer.split(" ", 3);
 
             if(ints.length == 3){
-
+                try{
+                    if(ints[0].contains(" ") || ints[1].contains(" ") || ints[2].contains(" "))
+                        throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in this format: 1500 55 66 and without extra spaces!"));
+                } catch (ErrorUtils errorUtils) {
+                    System.out.println(errorUtils.getMessage());
+                    this.getValuesForRandomProcess();
+                }
                 //check that each number is in the parameters wanted
                 if (this.isNumeric(ints[0]) && this.isNumeric(ints[1]) && this.isNumeric(ints[2])) {
 
@@ -415,7 +437,9 @@ public class Menu {
             return false;
         }
         try {
+
             double d = Double.parseDouble(strNum);
+
         } catch (NumberFormatException nfe) {
             return false;
         }
@@ -495,7 +519,7 @@ public class Menu {
                     {
                         System.out.println("All the paths from " + src.toUpperCase() + " to " + dest.toUpperCase()  + ":");
 
-                        if(connection.toLowerCase().equals("D"))
+                        if(connection.toUpperCase().equals("D"))
                             Arrays.stream(allPath).map(t -> t.replace(" ", "->")).forEach(s -> System.out.println(s.substring(0, s.length() - 2 )));
                         else
                         {
@@ -506,7 +530,7 @@ public class Menu {
                         }
                     }
                     else
-                        System.out.println("There is no path between " + src + " to " + dest + ".");
+                        System.out.println("There is no path between " + src.toUpperCase() + " to " + dest.toUpperCase()+ ".");
             }
             catch (ErrorUtils e) {
                 System.out.println(e.getMessage());
@@ -519,9 +543,10 @@ public class Menu {
 
     private void exitProgram(){ System.exit(0);}
 
-    private Boolean isThisFinished(Map<String,List<String>> targetNameToHisProcessData){
+    private Boolean isThisFinished(){
 
         Boolean iFinished = true;
+        this.targetNameToHisProcessData = ProcessInfo.getOldTask() == null ? targetNameToHisProcessData : ProcessInfo.getOldTask().getLastPData();
 
         if(!targetNameToHisProcessData.keySet().isEmpty()) {
 

@@ -1,6 +1,7 @@
 package fileHandler;
 
 import Graph.*;
+import consumerData.ProcessInfo;
 import errors.ErrorUtils;
 
 import java.io.*;
@@ -9,15 +10,16 @@ import java.util.Map;
 
 public class HandlerSaveFile {
 
-    public HandlerSaveFile(/*List<Target> targets, Map<String,Target> mNameToTarget*/Graph graph, String fullPath) {
+    public HandlerSaveFile(Graph graph, String fullPath) {
         try (ObjectOutputStream out =
                      new ObjectOutputStream(
-                             new FileOutputStream(fullPath /*+ ".bin"*/))){
+                             new FileOutputStream(fullPath))){
             out.writeObject(graph);
             out.writeObject(TaskFile.gpupPath); // the directory path
+            out.writeObject(ProcessInfo.getOldTask());
             out.flush();
         }catch(IOException e){};
-        }
+    }
 
     }
 

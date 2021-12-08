@@ -16,28 +16,33 @@ import java.util.function.Consumer;
 public class Simulation extends Task implements Serializable {
 
     // from beginning
-    public Simulation(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, boolean isRandom, Consumer cUI) {
+    public Simulation(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, boolean isTimeRandom, Consumer cUI) {
 
-        super(targets, timeToRun, chancesToSucceed, chancesToBeAWarning, isRandom, cUI);
+        super(targets, timeToRun, chancesToSucceed, chancesToBeAWarning, isTimeRandom, cUI);
+
         this.setName();
+
         TaskFile taskFile = new TaskFile();
         taskFile.makeTaskDir(this.taskName);
     }
 
     // incremental
-    public Simulation(List<Target> targets, Task oldTask, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, boolean isRandom, Consumer cUI) {
+    public Simulation(List<Target> targets, Task oldTask, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, boolean isTimeRandom, Consumer cUI) {
 
-        super(targets, oldTask, timeToRun, chancesToSucceed, chancesToBeAWarning, isRandom, cUI);
+        super(targets, oldTask, timeToRun, chancesToSucceed, chancesToBeAWarning, isTimeRandom, cUI);
+
         this.setName();
+
         TaskFile taskFile = new TaskFile();
         taskFile.makeTaskDir(this.taskName);
     }
 
     public void run(){
 
+
         //setup data
-        Map<String, Target> namesToTargetsMap = startTargetMap();
-        Map<String, Minion> namesToMinions     = this.startMinionMap();
+        Map<String, Target> namesToTargetsMap = Target.startTargetMap(this.targets);
+        Map<String, Minion> namesToMinions     = Minion.startMinionMapFrom(this.minions);
         Map<String, Map<String, Minion>>    typeOfTargetToTargetNameToHisTask   = this.startMinionMapByTargetType(namesToMinions, namesToTargetsMap);
 
 
@@ -73,26 +78,6 @@ public class Simulation extends Task implements Serializable {
 
         FormatAllTask.sendData(cUI, this.targetNameToSummeryProcess);
         ProcessInfo.setOldTask(this);
-    }
-
-    private Map<String, Target> startTargetMap() {
-
-        Map<String, Target> resM = new HashMap<>();
-
-        for(Target curT : this.targets)
-            resM.put(curT.getName(), curT);
-
-        return resM;
-    }
-
-    private Map<String, Minion> startMinionMap(){
-
-        Map<String, Minion> resM = new HashMap<String, Minion>();
-
-        for(Minion m : this.minions)
-            resM.put(m.getName(), m);
-
-        return resM;
     }
 
     private Map<String, Map<String,Minion>> startMinionMapByTargetType(Map<String, Minion> namesToTasks, Map<String, Target> namesToTarget) {

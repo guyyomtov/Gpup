@@ -21,18 +21,26 @@ public class Minion implements Serializable {
     protected Integer chancesISucceed;
     protected Integer chancesImAWarning;
 
-    public Minion(Target target, Integer timeIRun, Integer chancesISucceed, Integer chancesImAWarning ){
+    public Minion(Target target, Integer maxTime, Integer chancesISucceed, Integer chancesImAWarning, boolean timeIsRand ){
 
         this.target = target;
-
         this.myStatus = this.myStartStatus(target.getTargetType().toString());
         this.canIRun = this.myStatus.equals("WAITING") ? true : false;
         this.iAmFinished = false;
-        this.timeIRun = timeIRun;
         this.chancesISucceed = chancesISucceed;
         this.chancesImAWarning = chancesImAWarning;
         this.setMyKidsNames();
         this.setMyParentsNames();
+
+        if(timeIsRand){
+
+            Random rand = new Random();
+
+            this.timeIRun = rand.nextInt(maxTime); // gives a value from 0 to maxTime
+        }
+        else{
+            this.timeIRun = maxTime;
+        }
     }
 
     public void setiAmFinished(Boolean iAmFinished) { this.iAmFinished = iAmFinished; }
@@ -77,7 +85,6 @@ public class Minion implements Serializable {
 
         return myPData;
     }
-
 
     public List<String> runMe(Map<String,Minion> allMinions, Consumer cUI)  {
 
@@ -125,7 +132,6 @@ public class Minion implements Serializable {
         TaskFile.closeFile();
         return resData;
     }
-
 
     public Boolean imFinished(){return this.iAmFinished;}
 
@@ -224,4 +230,13 @@ public class Minion implements Serializable {
 
     public Target getTarget(){ return this.target;}
 
+    static public Map<String, Minion> startMinionMapFrom(List<Minion> minions){
+
+        Map<String, Minion> resM = new HashMap<String, Minion>();
+
+        for(Minion m : minions)
+            resM.put(m.getName(), m);
+
+        return resM;
+    }
 }

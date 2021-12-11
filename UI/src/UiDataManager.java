@@ -11,8 +11,7 @@ public class UiDataManager implements DataManager {
 
     public UiDataManager() {} // default ctor
 
-    public boolean checkFile(String fileName) throws ErrorUtils
-    {
+    public boolean checkFile(String fileName) throws ErrorUtils {
         boolean result = false;
         if(!fileName.contains(".xml"))
             throw new ErrorUtils( ErrorUtils.invalidFile("the file given doesn't end with a '.xml'."));
@@ -87,24 +86,10 @@ public class UiDataManager implements DataManager {
         this.bDM.saveToFile(fullPath);
     }
 
-    public void startProcess(Consumer cUI, boolean isRandom, Boolean isIncremental, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils {
+    public void startProcess(Consumer cUI, boolean isTimeRandom, boolean isIncremental, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils {
 
-        this.bDM.startProcess(cUI, isRandom, isIncremental, timeToRun, chancesToSucceed, chancesToBeAWarning);
+        this.bDM.startProcess(cUI, isTimeRandom, isIncremental, timeToRun, chancesToSucceed, chancesToBeAWarning);
     }
-//
-//    public Map<String,List<String>> startProcess(ConsumerUI cUI,Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
-//
-//        return this.bDM.startProcess(cUI,targetNameToHisProcessData);
-//    }
-//
-//    public Map<String,List<String>> startProcess(ConsumerUI cUI, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, Map<String,List<String>> targetNameToHisProcessData) throws ErrorUtils {
-//
-//        return this.bDM.startProcess(cUI, timeToRun, chancesToSucceed, chancesToBeAWarning, targetNameToHisProcessData);
-//    }
-//
-//    public boolean checkValidTask(String taskName) {
-//        return false;
-//    }
 
     public void loadFile(String fullPath) throws ErrorUtils {
         try {

@@ -56,6 +56,7 @@ public class BackDataManager implements DataManager {
         return (GPUPDescriptor) u.unmarshal(in);
     }
 
+
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
         String tType;
@@ -150,29 +151,31 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in the wanted relationship 'depends On' -> D/ 'required For' -> R."));
     }
 
-    public void startProcess(Consumer cUI, boolean isRandom, Boolean isIncremental,int timeToRun, int chancesToSucceed, int chancesToBeAWarning) {
+    public void startProcess(Consumer cUI, boolean isTimeRandom, Boolean isIncremental,int timeToRun, int chancesToSucceed, int chancesToBeAWarning) {
 
         if(isIncremental) {
 
             Task oldTask = ProcessInfo.getOldTask();
 
-            Task simulation = new Simulation(this.graph.getAllTargets(), oldTask, timeToRun, chancesToSucceed, chancesToBeAWarning, isRandom, cUI);
+            Task simulation = new Simulation(this.graph.getAllTargets(), oldTask, timeToRun, chancesToSucceed, chancesToBeAWarning, isTimeRandom, cUI);
 
             simulation.run();
         }
         else{ // from beginning
 
-            Task simulation = new Simulation(this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning, isRandom, cUI);
+            Task simulation = new Simulation(this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning, isTimeRandom, cUI);
 
             simulation.run();
         }
     }
+
 
     public String findCircle(String name) throws ErrorUtils {
         try{
             return this.graph.findCircle(name);
         }catch (ErrorUtils e){throw e;}
     }
+
 
     public void saveToFile(String fullPath){
 

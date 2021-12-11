@@ -1,9 +1,7 @@
 package Graph;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Target implements Serializable {
     public enum Type implements Serializable {
@@ -52,12 +50,12 @@ public class Target implements Serializable {
             this.requiredFor.add(toAdd);
     }
 
-    public Target(String name, String generalInfo)
-    {
+    public Target(String name, String generalInfo) {
         this.name = name;
         this.countOfDependency =0;
         this.generalInfo = generalInfo;
     }
+
     public String getName() {
         return name;
     }
@@ -106,23 +104,13 @@ public class Target implements Serializable {
         return Objects.hash(name);
     }
 
-//    public void saveToFile(DataOutputStream dataOut)
-//    {
-//
-//
-//    }
-//
-//    public void saveToFileDependencies(DataOutputStream dataOut)
-//    {
-//        try {
-//            dataOut.writeInt(this.dependsOn.size());
-//            for(Target t: this.dependsOn)
-//                dataOut.writeUTF(t.getName());
-//            dataOut.writeInt(this.requiredFor.size());
-//            for(Target t : this.requiredFor)
-//                dataOut.writeUTF(t.getName());
-//        }catch (Exception e){System.out.println("somthing went wrong with saving file --> its here only to check");}
-//    }
+    static public Map<String, Target> startTargetMap(List<Target> targets) {
 
+        Map<String, Target> resM = new HashMap<>();
 
+        for(Target curT : targets)
+            resM.put(curT.getName(), curT);
+
+        return resM;
+    }
 }

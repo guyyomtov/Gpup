@@ -1,6 +1,4 @@
-package consumerData;
-
-import Graph.Target;
+package DataManager.consumerData;
 
 import java.time.Duration;
 import java.time.Instant;

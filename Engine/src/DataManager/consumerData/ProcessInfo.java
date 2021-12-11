@@ -1,7 +1,6 @@
-package consumerData;
+package DataManager.consumerData;
 
-import DataManager.Simulation;
-import DataManager.Task;
+import Graph.process.Simulation;
 
 public class ProcessInfo {
 

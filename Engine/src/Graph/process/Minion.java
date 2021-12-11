@@ -1,7 +1,7 @@
-package DataManager;
+package Graph.process;
 
 import Graph.Target;
-import consumerData.ConsumerTaskInfo;
+import DataManager.consumerData.ConsumerTaskInfo;
 import fileHandler.TaskFile;
 
 import java.io.Serializable;

@@ -1,7 +1,6 @@
-package DataManager;
+package Graph.process;
 
 import Graph.Target;
-import fileHandler.TaskFile;
 
 import java.io.Serializable;
 import java.util.*;

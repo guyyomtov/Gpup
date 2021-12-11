@@ -1,8 +1,8 @@
 // This class is responsible to print & interact with the ui
 
 
-import DataManager.Task;
-import consumerData.ProcessInfo;
+import Graph.process.Task;
+import DataManager.consumerData.ProcessInfo;
 import errors.ErrorUtils;
 
 import java.util.*;

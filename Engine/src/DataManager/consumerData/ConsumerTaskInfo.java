@@ -1,8 +1,7 @@
-package consumerData;
+package DataManager.consumerData;
 
 import fileHandler.TaskFile;
 
-import java.util.List;
 import java.util.function.Consumer;
 
     public class ConsumerTaskInfo {

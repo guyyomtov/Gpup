@@ -1,5 +1,7 @@
 package DataManager;
-import consumerData.ProcessInfo;
+import DataManager.consumerData.ProcessInfo;
+import Graph.process.Simulation;
+import Graph.process.Task;
 import errors.ErrorUtils;
 import fileHandler.HandlerLoadFile;
 import fileHandler.HandlerSaveFile;
@@ -53,7 +55,6 @@ public class BackDataManager implements DataManager {
         Unmarshaller u = jc.createUnmarshaller();
         return (GPUPDescriptor) u.unmarshal(in);
     }
-
 
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
@@ -149,7 +150,6 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in the wanted relationship 'depends On' -> D/ 'required For' -> R."));
     }
 
-
     public void startProcess(Consumer cUI, boolean isRandom, Boolean isIncremental,int timeToRun, int chancesToSucceed, int chancesToBeAWarning) {
 
         if(isIncremental) {
@@ -168,13 +168,11 @@ public class BackDataManager implements DataManager {
         }
     }
 
-
     public String findCircle(String name) throws ErrorUtils {
         try{
             return this.graph.findCircle(name);
         }catch (ErrorUtils e){throw e;}
     }
-
 
     public void saveToFile(String fullPath){
 

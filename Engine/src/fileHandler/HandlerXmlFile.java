@@ -110,18 +110,6 @@ public class HandlerXmlFile {
 
     }
 
-//    public Target getThisTarget(String nameOfTarget) throws ErrorUtils {
-//        Target currTarget = this.mNameToTarget.get(nameOfTarget);
-//        if (currTarget == null)
-//            throw new ErrorUtils(ErrorUtils.invalidTarget());
-//        return currTarget;
-//
-//    }
-
-//  //  public List<Target> getAllTargets() {
-//        return this.targets;
-//    }
-
     public void checkCircleBetweenTwoTargets() throws ErrorUtils {
 
         for (Target t : targets) {

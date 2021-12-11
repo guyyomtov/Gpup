@@ -1,8 +1,8 @@
-package DataManager;
+package Graph.process;
 
 import Graph.Target;
-import consumerData.FormatAllTask;
-import consumerData.ProcessInfo;
+import DataManager.consumerData.FormatAllTask;
+import DataManager.consumerData.ProcessInfo;
 import fileHandler.TaskFile;
 
 import java.io.Serializable;

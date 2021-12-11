@@ -1,12 +1,9 @@
 package fileHandler;
 
 import Graph.*;
-import consumerData.ProcessInfo;
-import errors.ErrorUtils;
+import DataManager.consumerData.ProcessInfo;
 
 import java.io.*;
-import java.util.List;
-import java.util.Map;
 
 public class HandlerSaveFile {
 

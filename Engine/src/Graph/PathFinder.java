@@ -1,4 +1,4 @@
-package Graph.Tree;
+package Graph;
 
 import Graph.Target;
 import errors.ErrorUtils;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Tree implements Serializable {
+public class PathFinder implements Serializable {
 
     // No. of vertices in graph
     private int v;

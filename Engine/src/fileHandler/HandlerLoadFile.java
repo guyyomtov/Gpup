@@ -1,9 +1,8 @@
 package fileHandler;
 
-import DataManager.Simulation;
-import DataManager.Task;
+import Graph.process.Simulation;
 import Graph.*;
-import consumerData.ProcessInfo;
+import DataManager.consumerData.ProcessInfo;
 import errors.ErrorUtils;
 
 import java.io.FileInputStream;

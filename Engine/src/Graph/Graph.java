@@ -1,8 +1,5 @@
 package Graph;
-import Graph.Tree.Tree;
 import errors.ErrorUtils;
-
-import fileHandler.HandlerSaveFile;
 
 import java.io.*;
 import java.util.*;
@@ -14,7 +11,7 @@ public class Graph implements Serializable {
 
     private List<Target> targets = new ArrayList<Target>();
     public boolean isGood = true;
-    private Tree tree = new Tree();
+    private PathFinder pathFinder = new PathFinder();
 
 
     //private boolean matrixOfDependency[][];
@@ -24,7 +21,7 @@ public class Graph implements Serializable {
         this.targets = targets;
         this.mNameToTarget = mNameToTarget;
         try {
-            this.tree.startMe(this.targets.size(), this.targets);
+            this.pathFinder.startMe(this.targets.size(), this.targets);
         }catch(ErrorUtils e){throw e;}
     }
 
@@ -61,7 +58,7 @@ public class Graph implements Serializable {
     public String getPathFromTargets(String src, String dest) throws ErrorUtils
     {
         try{
-            return this.tree.findAllPaths(src, dest);
+            return this.pathFinder.findAllPaths(src, dest);
         }catch (ErrorUtils e){throw e;}
 
     }
@@ -79,7 +76,7 @@ public class Graph implements Serializable {
                 findCircleHelper(currTarget,currTarget,res, isVisited);
                 if(!res.isEmpty())
                 {
-                    return this.tree.findAllPaths(currTarget.getName(), res.get(0));
+                    return this.pathFinder.findAllPaths(currTarget.getName(), res.get(0));
                 }
                 else throw new ErrorUtils("The target " + targetName + " doesn't in circle.");
             }
@@ -111,19 +108,6 @@ public class Graph implements Serializable {
         }
 
     }
-
-//    public void saveToFile(String fullPath)
-//    {
-//        HandlerSaveFile saveToFile = new HandlerSaveFile(this, fullPath);
-//    }
-//
-//    public void loadDataFromFile(String fullPath) throws ErrorUtils {
-//        try {
-//            HandlerLoadBinaryFile loadFile = new HandlerLoadBinaryFile(this, fullPath);
-//        }catch(ErrorUtils e){throw e;}
-//    }
-
-   // public void saveToFile(ObjectOutputStream)
 
 
 

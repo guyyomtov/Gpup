@@ -1,5 +1,5 @@
 
-package schemaXmlFile;
+package fileHandler.schemaXmlFile;
 
 import java.util.ArrayList;
 import java.util.List;

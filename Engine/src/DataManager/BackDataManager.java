@@ -1,4 +1,5 @@
 package DataManager;
+
 import DataManager.consumerData.ProcessInfo;
 import Graph.process.Simulation;
 import Graph.process.Task;
@@ -6,7 +7,7 @@ import errors.ErrorUtils;
 import fileHandler.HandlerLoadFile;
 import fileHandler.HandlerSaveFile;
 import fileHandler.HandlerXmlFile;
-import schemaXmlFile.*;
+import fileHandler.schemaXmlFile.*;
 
 import java.io.*;
 import java.util.*;
@@ -24,35 +25,44 @@ public class BackDataManager implements DataManager {
 
     private Graph graph;
     private Map<String, Set<Target>> mTypeToTargets = new HashMap<String, Set<Target>>();
-    private final static String JAXB_XML_GAME_PACKAGE_NAME = "schemaXmlFile";
+//    private final static String JAXB_XML_GAME_PACKAGE_NAME = "schemaXmlFile";
+    private final static String JAXB_XML_GAME_PACKAGE_NAME = "GpupClassesEx2";
 
     public boolean checkFile(String fileName) throws ErrorUtils {
+
         boolean fileSuccess = false;
+
         try {
                 InputStream inputStream = new FileInputStream(new File(fileName));
                 //to check if the ended file is with xml
                 GPUPDescriptor information = deserializeFrom(inputStream);
+
                 if(information == null)
                     throw new ErrorUtils(ErrorUtils.invalidFile("file given is empty"));
                 try{
-                   // Graph tmpGraph = new Graph();
+
                     HandlerXmlFile handlerFile = new HandlerXmlFile();
+
                     handlerFile.buildMe(information);
+
                     fileSuccess =  true;
+
                     this.graph = new Graph(handlerFile.getListOfTargets(),handlerFile.getMap());
+
                     this.mTypeToTargets = this.makeMap(this.graph.getAllTargets());
+
                 }catch(ErrorUtils e){throw e;}
 
-            } catch (JAXBException | FileNotFoundException e) {
-                 throw new ErrorUtils(ErrorUtils.invalidFile("the given file doesnt exist"));
-            }
+            } catch (JAXBException | FileNotFoundException e) {throw new ErrorUtils(ErrorUtils.invalidFile("the given file doesnt exist"));}
 
         return fileSuccess;
     }
 
     private static GPUPDescriptor deserializeFrom(InputStream in) throws JAXBException {
+
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
         Unmarshaller u = jc.createUnmarshaller();
+
         return (GPUPDescriptor) u.unmarshal(in);
     }
 

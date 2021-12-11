@@ -1,5 +1,7 @@
 package errors;
 
+import jdk.nashorn.internal.codegen.ApplySpecialization;
+
 public class ErrorUtils extends Exception {
     private String ms;
     public ErrorUtils(String s)
@@ -17,6 +19,8 @@ public class ErrorUtils extends Exception {
     public static String invalidFile(){ return "The file given is invalid, please try to upload a new one.";}
 
     public static String invalidFile(String currMs){ return "The file given is invalid, please try to upload a new one " + "(" + currMs+ ")";}
+
+    public static String invalidXMLFile(String curMsg){return "The XML file given is invalid, please try to upload a new one " + "(" + curMsg+ ")";}
 
     public static String invalidTarget(){ return "No such target exists in the graph."; }
 

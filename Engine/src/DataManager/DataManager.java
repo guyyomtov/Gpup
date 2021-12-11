@@ -1,7 +1,6 @@
 package DataManager;
 
 import errors.ErrorUtils;
-
 import java.util.List;
 
 public interface DataManager {
@@ -15,6 +14,7 @@ public interface DataManager {
     public int getNumOfLeafs();
 
     public int getNumOfTargets();
+
     public List<String> getInfoFromTarget(String nameOfTarget) throws ErrorUtils;
     /*
     [0] = target name;

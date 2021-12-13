@@ -1,4 +1,5 @@
 package Graph;
+import GpupClassesEx2.GPUPDescriptor;
 import errors.ErrorUtils;
 
 import java.io.*;
@@ -17,6 +18,7 @@ public class Graph implements Serializable {
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
     private Map<String, Set<Target>> mSerialSets = new HashMap<>();
+
 
     public Graph(List<Target> targets, Map<String, Target> mNameToTarget) throws ErrorUtils {
         this.targets = targets;
@@ -42,22 +44,19 @@ public class Graph implements Serializable {
         return this.targets;
     }
 
-    public boolean targetExist(Target currTarget)
-    {
+    public boolean targetExist(Target currTarget) {
         if(targets.contains(currTarget))
             return true;
         return false;
     }
 
-    public boolean targetExist(String targetName)
-    {
+    public boolean targetExist(String targetName) {
         if(this.mNameToTarget.get(targetName) == null)
             return false;
         return true;
     }
 
-    public String getPathFromTargets(String src, String dest) throws ErrorUtils
-    {
+    public String getPathFromTargets(String src, String dest) throws ErrorUtils {
         try{
             return this.pathFinder.findAllPaths(src, dest);
         }catch (ErrorUtils e){throw e;}
@@ -88,8 +87,7 @@ public class Graph implements Serializable {
 
     }
 
-    public void findCircleHelper(Target currTarget,Target dest ,List<String> res,Map<String, Boolean> isVisited)
-    {
+    public void findCircleHelper(Target currTarget,Target dest ,List<String> res,Map<String, Boolean> isVisited) {
         if(currTarget.getTargetType().toString().equals("Leaf"))
             return;
         else if(currTarget.getDependsOn().contains(dest)) {
@@ -110,6 +108,50 @@ public class Graph implements Serializable {
 
     }
 
+    public static Map<String, Set<Target>> initSerialSetsFrom(GPUPDescriptor information, List<Target> targets) throws ErrorUtils  {
+
+        List<String> serialSetNames = new ArrayList<>();
+        Map<String, Set<Target>> serialNameToTargets = new HashMap<>();
+        String curSerialName = new String(), curTargetsName = new String();
+        Set<Target> curSerialTargets = new HashSet<>();
+
+        // get to serial sets
+        GPUPDescriptor.GPUPSerialSets gpupTmpMap = information.getGPUPSerialSets();
+        List<GPUPDescriptor.GPUPSerialSets.GPUPSerialSet> tmp = gpupTmpMap.getGPUPSerialSet();
+
+        // add each serial set to res map
+        for(GPUPDescriptor.GPUPSerialSets.GPUPSerialSet cur : tmp){
+
+            curSerialName = cur.getName();
+            serialSetNames.add(curSerialName);
+
+            curTargetsName = cur.getTargets();
+
+            // get serial targets from all targets & checks that serial targets exist
+            curSerialTargets = Target.getTargetsByName(curTargetsName, targets);
+
+            serialNameToTargets.put(curSerialName, curSerialTargets);
+        }
+
+        if(serialNameRepeatsItself(serialSetNames))
+            throw new ErrorUtils(ErrorUtils.invalidXMLFile("Different serial sets with  the same name found."));
+
+        return serialNameToTargets;
+    }
+
+    public static boolean serialNameRepeatsItself(List<String> serialSetNames) {
+
+        boolean foundDouble = false;
+
+        for(String curName : serialSetNames){
+
+            if(serialSetNames.contains(curName)) {
+                foundDouble = true;
+                break;
+            }
+        }
+        return foundDouble;
+    }
 
     public  Set<List<Target>> whatIf(String targetName, String connection) throws ErrorUtils{
 
@@ -127,7 +169,7 @@ public class Graph implements Serializable {
 
         return this.createListOfDependencies(allDependencies);
     }
-//todo
+    //todo
     private Set<List<Target>> createListOfDependencies(List<String> allDependencies) {
         Set<List<Target>> setOfDependencies = new HashSet<>();
         for(String str : allDependencies)

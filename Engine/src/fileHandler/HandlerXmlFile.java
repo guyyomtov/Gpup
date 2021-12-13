@@ -1,83 +1,62 @@
 package fileHandler;
 
+import GpupClassesEx2.GPUPDescriptor;
+import GpupClassesEx2.GPUPTarget;
+import GpupClassesEx2.GPUPTargetDependencies;
+import Graph.Graph;
 import Graph.Target;
 import errors.ErrorUtils;
-import schemaXmlFile.GPUPDescriptor;
-import schemaXmlFile.GPUPTarget;
-import schemaXmlFile.GPUPTargetDependencies;
+//import fileHandler.schemaXmlFile.GPUPDescriptor;
+//import fileHandler.schemaXmlFile.GPUPTarget;
+//import fileHandler.schemaXmlFile.GPUPTargetDependencies;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HandlerXmlFile {
 
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
     private List<Target> targets = new ArrayList<Target>();
-    public boolean isGood = true;
+    private Map<String, Set<Target>> nameToSerialSet = new HashMap<String, Set<Target>>();
 
     public void buildMe(GPUPDescriptor information) throws ErrorUtils {
-        try {
-            initGraphFromFile(information);
-        } catch (ErrorUtils e) {
-            throw e;
-        }
 
+        try {this.initGraphFromFile(information);}
+        catch (ErrorUtils e) {throw e;}
     }
 
     public void initGraphFromFile(GPUPDescriptor information) throws ErrorUtils {
+
         int size = information.getGPUPTargets().getGPUPTarget().size();
+
         this.targets = new ArrayList<Target>(size);
-        for (int i = 0; i < size; i++) {
-            Target tmpTarget = this.setUpTarget(information, i);
-            if (targetExist(tmpTarget))
-                throw new ErrorUtils(ErrorUtils.invalidFile("The target " + tmpTarget.getName() + " was given twice.")); // to send more messege
-            this.targets.add(tmpTarget);
-        }
 
         try {
 
-            this.initializeMap();
+            this.targets = Target.CreateTargetsFromXmlInfo(information, size);
+
+            this.mNameToTarget = Target.initNameToTargetFrom(this.targets);
 
             this.getFromFileDependencies(information.getGPUPTargets().getGPUPTarget());
 
-            this.updateTypeOfTargets();
-
-          //  this.tree.startMe(this.targets.size(), this.targets);
+            this.targets = Target.updateTypeOfTargets(this.targets);
 
             this.checkCircleBetweenTwoTargets();
 
             TaskFile.gpupPath = information.getGPUPConfiguration().getGPUPWorkingDirectory();
 
-        } catch (ErrorUtils e) {throw e;}
-
-    }
-
-    public void updateTypeOfTargets() { for(Target tr : targets) tr.setTargetType(); }
-
-    public void initializeMap() {
-        for (Target currT : this.targets)
-            this.mNameToTarget.put(currT.getName(), currT);
-
-    }
-
-    public Target setUpTarget(GPUPDescriptor information, int index) {
-
-        GPUPTarget currTarget = information.getGPUPTargets().getGPUPTarget().get(index); // get name
-        String name = currTarget.getName();
-        String generalInfo;
-        if(currTarget.getGPUPUserData() == null)
-            generalInfo = "Nothing";
-        else
-            generalInfo = currTarget.getGPUPUserData();
-        return new Target(name, generalInfo);
+            this.nameToSerialSet = Graph.initSerialSetsFrom(information, this.targets);
+        }
+        catch (ErrorUtils e) {throw e;}
     }
 
     public void getFromFileDependencies(List<GPUPTarget> gpupTargets) throws ErrorUtils {
+
         for (int i = 0; i < targets.size(); i++) {
+
             try {
+
                 setDependenciesList(gpupTargets.get(i).getGPUPTargetDependencies(), targets.get(i));
+
             } catch (ErrorUtils e) {
                 throw e;
             }
@@ -113,11 +92,15 @@ public class HandlerXmlFile {
     public void checkCircleBetweenTwoTargets() throws ErrorUtils {
 
         for (Target t : targets) {
+
             String type = t.getClass().getSimpleName();
             List<Target> dependsOn = t.getDependsOn();
             List<Target> requiredFor = t.getRequiredFor();
+
             try {
+
                 checkCircleBetweenTwoTargetsHelper(t, dependsOn, true);
+
                 checkCircleBetweenTwoTargetsHelper(t, requiredFor, false);
             }catch (ErrorUtils e){throw e;}
 
@@ -145,26 +128,9 @@ public class HandlerXmlFile {
 
     }
 
-    public boolean targetExist(Target currTarget)
-    {
-        if(targets.contains(currTarget))
-            return true;
-        return false;
-    }
-
-    public boolean targetExist(String targetName)
-    {
-        if(this.mNameToTarget.get(targetName) == null)
-            return false;
-        return true;
-    }
-
     public List<Target> getListOfTargets(){return this.targets;}
 
     public Map<String, Target> getMap(){return this.mNameToTarget;}
 
-
-
-
-
+    public Map<String, Set<Target>> getNameToSerialSet() { return this.nameToSerialSet;}
 }

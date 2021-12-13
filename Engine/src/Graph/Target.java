@@ -1,9 +1,17 @@
 package Graph;
 
+import GpupClassesEx2.GPUPDescriptor;
+import GpupClassesEx2.GPUPTarget;
+import errors.ErrorUtils;
+//import fileHandler.schemaXmlFile.GPUPDescriptor;
+//import fileHandler.schemaXmlFile.GPUPTarget;
+
 import java.io.Serializable;
 import java.util.*;
 
 public class Target implements Serializable {
+
+
     public enum Type implements Serializable {
         INDEPENDENT{public String toString(){return "Independent";}}
 
@@ -12,20 +20,15 @@ public class Target implements Serializable {
         MIDDLE{public String toString(){return "Middle";}}
 
         , LEAF{public String toString(){return "Leaf";}};
-
     }
-
     private String name;
-
     private Integer countOfDependency;
-
     private String generalInfo;
-
     private Type targetType;
-
     private List<Target> dependsOn = new ArrayList<Target>();
-
     private List<Target> requiredFor = new ArrayList<Target>();;
+
+
 
     public void setDependsOn(List<Target> dependsOn)
     {
@@ -81,6 +84,7 @@ public class Target implements Serializable {
     }
 
     public void setTargetType() {
+
         if(this.dependsOn.isEmpty() && this.requiredFor.isEmpty())
             this.targetType = Type.INDEPENDENT;
         else if(!this.dependsOn.isEmpty() && !this.requiredFor.isEmpty())
@@ -104,7 +108,7 @@ public class Target implements Serializable {
         return Objects.hash(name);
     }
 
-    static public Map<String, Target> startTargetMap(List<Target> targets) {
+    static public Map<String, Target> initNameToTargetFrom(List<Target> targets) {
 
         Map<String, Target> resM = new HashMap<>();
 
@@ -112,5 +116,95 @@ public class Target implements Serializable {
             resM.put(curT.getName(), curT);
 
         return resM;
+    }
+
+    static public Target makeMe(GPUPDescriptor information, int index) {
+
+        GPUPTarget currTarget = information.getGPUPTargets().getGPUPTarget().get(index); // get name
+        String name = currTarget.getName();
+        String generalInfo;
+
+        if(currTarget.getGPUPUserData() == null)
+            generalInfo = "Nothing";
+        else
+            generalInfo = currTarget.getGPUPUserData();
+
+        return new Target(name, generalInfo);
+    }
+
+    static public  List<Target> updateTypeOfTargets(List<Target> targets) {
+
+        for(Target tr : targets)
+            tr.setTargetType();
+
+        return targets;
+    }
+
+    static public List<Target> CreateTargetsFromXmlInfo(GPUPDescriptor information, int size) throws ErrorUtils {
+
+        List<Target> targets = new ArrayList<Target>(size);
+
+        for (int i = 0; i < size; i++) {
+
+            Target tmpTarget = Target.makeMe(information, i);
+
+            if (iExsistAllReady(tmpTarget, targets))
+                throw new ErrorUtils(ErrorUtils.invalidFile("The target " + tmpTarget.getName() + " was given twice.")); // to send more messege
+
+            targets.add(tmpTarget);
+        }
+        return targets;
+    }
+
+    static public boolean iExsistAllReady(Target currTarget,List<Target> targets){
+
+        if(targets.contains(currTarget))
+            return true;
+
+        return false;
+    }
+
+    public static Set<Target> getTargetsByName(String curTargetsName, List<Target> targets) throws ErrorUtils {
+
+        Set<Target> res = new HashSet<Target>();
+        Set<String> allTargetNames = new HashSet<>();
+        List<String> serialTargetNames = new ArrayList<>();
+
+        // get all targets names & serial set names
+        allTargetNames = Target.getTargetNamesFrom(targets);
+        serialTargetNames = Arrays.asList(curTargetsName.split(","));
+
+        for(String curTName : serialTargetNames){
+
+            if(allTargetNames.contains(curTName)) {
+
+                Target curT = Target.getTargetByName(curTName, targets);
+
+                res.add(curT);
+            }
+            else
+                throw new ErrorUtils(ErrorUtils.invalidXMLFile("Target in serial set doesn't exist."));
+        }
+        return res;
+    }
+
+    public static Set<String> getTargetNamesFrom(List<Target> targets) {
+
+        Set<String> res = new HashSet<>();
+
+        for(Target curT : targets)
+            res.add(curT.getName().toString());
+
+        return res;
+    }
+
+    public static Target getTargetByName(String curTName, List<Target> targets) throws ErrorUtils {
+
+        Map<String, Target> namesToTargets = Target.initNameToTargetFrom(targets);
+
+        if(!namesToTargets.containsKey(curTName))
+            throw new ErrorUtils(ErrorUtils.invalidTarget("Target doesn't exist in the given list."));
+        else
+            return namesToTargets.get(curTName);
     }
 }

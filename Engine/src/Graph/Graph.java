@@ -16,6 +16,7 @@ public class Graph implements Serializable {
 
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
+    private Map<String, Set<Target>> mSerialSets = new HashMap<>();
 
     public Graph(List<Target> targets, Map<String, Target> mNameToTarget) throws ErrorUtils {
         this.targets = targets;
@@ -106,6 +107,58 @@ public class Graph implements Serializable {
             }
 
         }
+
+    }
+
+
+    public  Set<List<Target>> whatIf(String targetName, String connection) throws ErrorUtils{
+
+        List<String> allDependencies = new ArrayList<>();
+        Map<String, Boolean> isVisited = new HashMap<>();
+
+        if(!targetExist(targetName))
+            throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + targetName + "doesn't exist"));
+
+        else {
+            for (Target t : targets)
+                isVisited.put(t.getName(), false);
+            findDependencies(mNameToTarget.get(targetName), mNameToTarget.get(targetName),  allDependencies, isVisited);
+        }
+
+        return this.createListOfDependencies(allDependencies);
+    }
+//todo
+    private Set<List<Target>> createListOfDependencies(List<String> allDependencies) {
+        Set<List<Target>> setOfDependencies = new HashSet<>();
+        for(String str : allDependencies)
+        {
+            String[] split = str.split(",");
+            for(String string : split)
+            {
+                string.replaceAll(" ", "");
+
+            }
+        }
+        return setOfDependencies;
+    }
+
+    private void findDependencies(Target currTarget, Target target,  List<String> allDependencies,Map<String, Boolean> isVisited ) throws ErrorUtils {
+
+        List<Target> directDependencies = target.getDependsOn();
+        try {
+            if (target.getTargetType().equals(Target.Type.LEAF)) {
+                String path = this.pathFinder.findAllPaths(currTarget.getName(), target.getName());
+                allDependencies.add(path);
+            }
+            else {
+                isVisited.put(target.getName(), true);
+                for (Target currT : directDependencies) {
+                    if(!isVisited.get(currT.getName()))
+                        findDependencies(currTarget, currT, allDependencies, isVisited);
+                }
+            }
+        }catch (ErrorUtils e){throw e;}
+
 
     }
 

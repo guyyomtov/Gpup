@@ -189,5 +189,10 @@ public class BackDataManager implements DataManager {
         }catch (ErrorUtils e){throw e;}
     }
 
+    public Set<String> whatIf(String name, String connection)
+    {
+        return this.graph.whatIf(name, connection);
+    }
+
 
 }

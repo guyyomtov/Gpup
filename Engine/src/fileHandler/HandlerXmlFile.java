@@ -6,10 +6,6 @@ import GpupClassesEx2.GPUPTargetDependencies;
 import Graph.Graph;
 import Graph.Target;
 import errors.ErrorUtils;
-//import fileHandler.schemaXmlFile.GPUPDescriptor;
-//import fileHandler.schemaXmlFile.GPUPTarget;
-//import fileHandler.schemaXmlFile.GPUPTargetDependencies;
-
 import java.util.*;
 
 public class HandlerXmlFile {

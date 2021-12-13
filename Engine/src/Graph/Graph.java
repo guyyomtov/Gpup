@@ -142,13 +142,18 @@ public class Graph implements Serializable {
     public static boolean serialNameRepeatsItself(List<String> serialSetNames) {
 
         boolean foundDouble = false;
+        String tmp = new String();
 
         for(String curName : serialSetNames){
+
+            tmp = curName;
+            serialSetNames.remove(curName);
 
             if(serialSetNames.contains(curName)) {
                 foundDouble = true;
                 break;
             }
+            serialSetNames.add(tmp);
         }
         return foundDouble;
     }

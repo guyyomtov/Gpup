@@ -1,5 +1,5 @@
 
-package fileHandler.schemaXmlFile;
+package GpupClassesEx2;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;all>
  *         &lt;element ref="{}GPUP-Graph-Name"/>
  *         &lt;element ref="{}GPUP-Working-Directory"/>
+ *         &lt;element name="GPUP-Max-Parallelism" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/all>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -39,6 +40,8 @@ public class GPUPConfiguration {
     protected String gpupGraphName;
     @XmlElement(name = "GPUP-Working-Directory", required = true)
     protected String gpupWorkingDirectory;
+    @XmlElement(name = "GPUP-Max-Parallelism")
+    protected int gpupMaxParallelism;
 
     /**
      * Gets the value of the gpupGraphName property.
@@ -86,6 +89,22 @@ public class GPUPConfiguration {
      */
     public void setGPUPWorkingDirectory(String value) {
         this.gpupWorkingDirectory = value;
+    }
+
+    /**
+     * Gets the value of the gpupMaxParallelism property.
+     * 
+     */
+    public int getGPUPMaxParallelism() {
+        return gpupMaxParallelism;
+    }
+
+    /**
+     * Sets the value of the gpupMaxParallelism property.
+     * 
+     */
+    public void setGPUPMaxParallelism(int value) {
+        this.gpupMaxParallelism = value;
     }
 
 }

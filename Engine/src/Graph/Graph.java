@@ -169,20 +169,6 @@ public class Graph implements Serializable {
 
         return this.createListOfDependencies(allDependencies);
     }
-    //todo
-    private Set<List<Target>> createListOfDependencies(List<String> allDependencies) {
-        Set<List<Target>> setOfDependencies = new HashSet<>();
-        for(String str : allDependencies)
-        {
-            String[] split = str.split(",");
-            for(String string : split)
-            {
-                string.replaceAll(" ", "");
-
-            }
-        }
-        return setOfDependencies;
-    }
 
     private void findDependencies(Target currTarget, Target target,  List<String> allDependencies,Map<String, Boolean> isVisited ) throws ErrorUtils {
 
@@ -203,7 +189,20 @@ public class Graph implements Serializable {
 
 
     }
+    //todo
+    private Set<List<Target>> createListOfDependencies(List<String> allDependencies) {
+        Set<List<Target>> setOfDependencies = new HashSet<>();
+        for(String str : allDependencies)
+        {
+            String[] split = str.split(",");
+            for(String string : split)
+            {
+                string.replaceAll(" ", "");
 
+            }
+        }
+        return setOfDependencies;
+    }
 
 
 }

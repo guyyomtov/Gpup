@@ -1,6 +1,7 @@
 package DataManager;
 
 import DataManager.consumerData.ProcessInfo;
+import GpupClassesEx2.GPUPDescriptor;
 import Graph.process.Simulation;
 import Graph.process.Task;
 import errors.ErrorUtils;

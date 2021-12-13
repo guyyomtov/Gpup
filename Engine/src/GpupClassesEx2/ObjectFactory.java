@@ -1,5 +1,5 @@
 
-package fileHandler.schemaXmlFile;
+package GpupClassesEx2;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
@@ -10,7 +10,7 @@ import javax.xml.namespace.QName;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the fileHandler package. 
+ * generated in the GpupClassesEx2 package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -29,7 +29,7 @@ public class ObjectFactory {
     private final static QName _GPUPGraphName_QNAME = new QName("", "GPUP-Graph-Name");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: fileHandler
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: GpupClassesEx2
      * 
      */
     public ObjectFactory() {
@@ -49,6 +49,14 @@ public class ObjectFactory {
      */
     public GPUPDescriptor createGPUPDescriptor() {
         return new GPUPDescriptor();
+    }
+
+    /**
+     * Create an instance of {@link GPUPDescriptor.GPUPSerialSets }
+     * 
+     */
+    public GPUPDescriptor.GPUPSerialSets createGPUPDescriptorGPUPSerialSets() {
+        return new GPUPDescriptor.GPUPSerialSets();
     }
 
     /**
@@ -81,6 +89,14 @@ public class ObjectFactory {
      */
     public GPUPTargetDependencies.GPUGDependency createGPUPTargetDependenciesGPUGDependency() {
         return new GPUPTargetDependencies.GPUGDependency();
+    }
+
+    /**
+     * Create an instance of {@link GPUPDescriptor.GPUPSerialSets.GPUPSerialSet }
+     * 
+     */
+    public GPUPDescriptor.GPUPSerialSets.GPUPSerialSet createGPUPDescriptorGPUPSerialSetsGPUPSerialSet() {
+        return new GPUPDescriptor.GPUPSerialSets.GPUPSerialSet();
     }
 
     /**

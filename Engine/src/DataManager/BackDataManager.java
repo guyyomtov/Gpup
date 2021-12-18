@@ -8,7 +8,6 @@ import errors.ErrorUtils;
 import fileHandler.HandlerLoadFile;
 import fileHandler.HandlerSaveFile;
 import fileHandler.HandlerXmlFile;
-import fileHandler.schemaXmlFile.*;
 
 import java.io.*;
 import java.util.*;

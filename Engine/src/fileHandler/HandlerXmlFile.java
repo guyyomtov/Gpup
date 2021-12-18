@@ -13,6 +13,7 @@ public class HandlerXmlFile {
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
     private List<Target> targets = new ArrayList<Target>();
     private Map<String, Set<Target>> nameToSerialSet = new HashMap<String, Set<Target>>();
+    private int maxParallelism;
 
     public void buildMe(GPUPDescriptor information) throws ErrorUtils {
 
@@ -23,6 +24,8 @@ public class HandlerXmlFile {
     public void initGraphFromFile(GPUPDescriptor information) throws ErrorUtils {
 
         int size = information.getGPUPTargets().getGPUPTarget().size();
+
+        this.maxParallelism = information.getGPUPConfiguration().getGPUPMaxParallelism();
 
         this.targets = new ArrayList<Target>(size);
 
@@ -129,4 +132,8 @@ public class HandlerXmlFile {
     public Map<String, Target> getMap(){return this.mNameToTarget;}
 
     public Map<String, Set<Target>> getNameToSerialSet() { return this.nameToSerialSet;}
+
+    public int getMaxParallelism() {
+        return maxParallelism;
+    }
 }

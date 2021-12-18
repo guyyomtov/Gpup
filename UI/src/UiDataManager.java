@@ -97,4 +97,9 @@ public class UiDataManager implements DataManager {
         }catch (ErrorUtils e){throw e;}
     }
 
+    public void whatIf(String a, String dependsOn) throws ErrorUtils {
+        try{
+            this.bDM.whatIf(a, dependsOn);
+        } catch(ErrorUtils e){throw e;}
+    }
 }

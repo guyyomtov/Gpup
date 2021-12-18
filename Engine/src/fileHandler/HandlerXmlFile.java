@@ -44,7 +44,7 @@ public class HandlerXmlFile {
 
             TaskFile.gpupPath = information.getGPUPConfiguration().getGPUPWorkingDirectory();
 
-            this.nameToSerialSet = Graph.initSerialSetsFrom(information, this.targets);
+          //  this.nameToSerialSet = Graph.initSerialSetsFrom(information, this.targets);
         }
         catch (ErrorUtils e) {throw e;}
     }

@@ -148,7 +148,7 @@ public class Menu {
 
             System.out.println("Graph given was uploaded successfully :)");
             System.out.println("You may start asking for data from the graph.\r\n ");
-
+            this.dM.whatIf("E", "dependsOn");
         }catch (ErrorUtils e){
             System.out.println(e.getMessage()+"\r\n");}
     }

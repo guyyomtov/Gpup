@@ -153,6 +153,7 @@ public class Graph implements Serializable {
         return foundDouble;
     }
 
+    //todo to give attention to the connection
     public  Set<List<Target>> whatIf(String targetName, String connection) throws ErrorUtils{
 
         List<String> allDependencies = new ArrayList<>();
@@ -175,6 +176,7 @@ public class Graph implements Serializable {
         List<Target> directDependencies = target.getDependsOn();
         try {
             if (target.getTargetType().equals(Target.Type.LEAF)) {
+                isVisited.put(target.getName(), true);
                 String path = this.pathFinder.findAllPaths(currTarget.getName(), target.getName());
                 allDependencies.add(path);
             }
@@ -197,7 +199,16 @@ public class Graph implements Serializable {
             String[] split = str.split(",");
             for(String string : split)
             {
-                string.replaceAll(" ", "");
+                string = string.replace(" ", ",");
+                try {
+                    //todo
+                    List<Target> path = new ArrayList<Target>(Target.getTargetsByName(string, this.targets));
+                    setOfDependencies.add(path);
+                }catch(ErrorUtils e){}
+//                for(String ch : s)
+//                {
+//                    path.add(this.mNameToTarget.get(ch));
+//                }
 
             }
         }

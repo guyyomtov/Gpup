@@ -8,7 +8,7 @@ import errors.ErrorUtils;
 import fileHandler.HandlerLoadFile;
 import fileHandler.HandlerSaveFile;
 import fileHandler.HandlerXmlFile;
-import fileHandler.schemaXmlFile.*;
+
 
 import java.io.*;
 import java.util.*;
@@ -200,9 +200,10 @@ public class BackDataManager implements DataManager {
         }catch (ErrorUtils e){throw e;}
     }
 
-    public Set<String> whatIf(String name, String connection)
-    {
-        return this.graph.whatIf(name, connection);
+    public Set<List<Target>> whatIf(String name, String connection) throws ErrorUtils {
+        try {
+            return this.graph.whatIf(name, connection);
+        }catch(ErrorUtils e){throw e;}
     }
 
 

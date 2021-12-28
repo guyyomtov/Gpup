@@ -5,6 +5,7 @@ import GpupClassesEx2.GPUPTarget;
 import GpupClassesEx2.GPUPTargetDependencies;
 import Graph.Graph;
 import Graph.Target;
+import Graph.process.Task;
 import errors.ErrorUtils;
 import java.util.*;
 
@@ -13,7 +14,6 @@ public class HandlerXmlFile {
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
     private List<Target> targets = new ArrayList<Target>();
     private Map<String, Set<Target>> nameToSerialSet = new HashMap<String, Set<Target>>();
-    private int maxParallelism;
 
     public void buildMe(GPUPDescriptor information) throws ErrorUtils {
 
@@ -25,7 +25,7 @@ public class HandlerXmlFile {
 
         int size = information.getGPUPTargets().getGPUPTarget().size();
 
-        this.maxParallelism = information.getGPUPConfiguration().getGPUPMaxParallelism();
+        Task.maxParallelism = information.getGPUPConfiguration().getGPUPMaxParallelism();
 
         this.targets = new ArrayList<Target>(size);
 
@@ -133,7 +133,4 @@ public class HandlerXmlFile {
 
     public Map<String, Set<Target>> getNameToSerialSet() { return this.nameToSerialSet;}
 
-    public int getMaxParallelism() {
-        return maxParallelism;
-    }
 }

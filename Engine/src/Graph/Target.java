@@ -21,14 +21,32 @@ public class Target implements Serializable {
 
         , LEAF{public String toString(){return "Leaf";}};
     }
+
     private String name;
+
     private Integer countOfDependency;
+
     private String generalInfo;
+
     private Type targetType;
+
     private List<Target> dependsOn = new ArrayList<Target>();
+
     private List<Target> requiredFor = new ArrayList<Target>();;
 
+    private Integer totalDependsOn = 0;
 
+    private Integer totalRequiredFor = 0;
+
+    private Integer totalSerialNum = 0;
+
+    public Integer getTotalRequiredFor() {
+       return totalRequiredFor;
+    }
+
+   public Integer getTotalDependsOn() {
+       return totalDependsOn;
+    }
 
     public void setDependsOn(List<Target> dependsOn)
     {
@@ -207,4 +225,51 @@ public class Target implements Serializable {
         else
             return namesToTargets.get(curTName);
     }
+
+    public Integer countTotalDependsOn() {
+        Integer res = 0;
+        if(dependsOn.isEmpty())
+            return res;
+        else
+            countTotalDependsOnHelper(res, this);
+        return res;
+    }
+
+    private void countTotalDependsOnHelper(Integer res, Target currTarget) {
+        if(currTarget.dependsOn.isEmpty())
+            return;
+        else
+        {
+            res+= dependsOn.size();
+            for(Target target : currTarget.dependsOn)
+                countTotalDependsOnHelper(res, target);
+        }
+
+
+    }
+
+    public Integer countTotalRequiredFor() {
+        Integer res = 0;
+        if(requiredFor.isEmpty())
+            return res;
+        else
+            countTotalDependsOnHelper(res, this);
+        return res;
+    }
+
+    private void countTotalRequiredForHelper(Integer res, Target currTarget) {
+        if(currTarget.requiredFor.isEmpty())
+            return;
+        else
+        {
+            res+= requiredFor.size();
+            for(Target target : currTarget.requiredFor)
+                countTotalDependsOnHelper(res, target);
+        }
+
+
+    }
+
+
+
 }

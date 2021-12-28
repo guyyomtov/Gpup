@@ -4,6 +4,7 @@ import Graph.Target;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 public abstract class Task implements Serializable {
@@ -17,7 +18,8 @@ public abstract class Task implements Serializable {
     protected List<Minion> minions = new ArrayList<>();
     protected Consumer cUI;
     protected Map<String, List<String>> targetNameToSummeryProcess = new HashMap<>();
-
+    protected static Queue<Minion> waitingList = new LinkedList<>();
+    public static int maxParallelism;
 
 
     // from beginning
@@ -88,6 +90,20 @@ public abstract class Task implements Serializable {
         }
         else// incremental
             this.initCurMinFrom(oldTask.getMinions());
+        AddDataOnMinions();
+
+
+    }
+
+    private void AddDataOnMinions() {
+
+        Map<String, Minion> namesToMinions = Minion.startMinionMapFrom(this.minions);
+
+        for(Minion curM : this.minions) {
+            curM.initMyKindsAndParents(this.minions);
+            curM.setAllNamesToMinions(namesToMinions);
+            curM.setcUI(this.cUI);
+        }
     }
 
     // when time random
@@ -193,4 +209,12 @@ public abstract class Task implements Serializable {
     }
 
     public abstract void setName();
+
+    public void makeQueue() {
+        for(Minion curM : this.minions)
+            if(curM.getCanIRun())
+                waitingList.add(curM);
+
+    }
+
 }

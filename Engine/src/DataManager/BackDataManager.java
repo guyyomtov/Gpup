@@ -28,6 +28,8 @@ public class BackDataManager implements DataManager {
 //    private final static String JAXB_XML_GAME_PACKAGE_NAME = "schemaXmlFile";
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "GpupClassesEx2";
 
+
+    // for console application
     public boolean checkFile(String fileName) throws ErrorUtils {
 
         boolean fileSuccess = false;
@@ -205,5 +207,6 @@ public class BackDataManager implements DataManager {
         }catch(ErrorUtils e){throw e;}
     }
 
+    public List<Target> getAllTargets() { return this.graph.getAllTargets(); }
 
 }

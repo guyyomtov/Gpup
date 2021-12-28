@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class Simulation extends Task implements Serializable {
@@ -52,7 +54,6 @@ public class Simulation extends Task implements Serializable {
         Map<String,Minion> middles = typeOfTargetToTargetNameToHisTask.get("Middle");
         Map<String,Minion> roots = typeOfTargetToTargetNameToHisTask.get("Root");
 
-
         FormatAllTask.restartMap();
         FormatAllTask.start = Instant.now();
 
@@ -61,16 +62,18 @@ public class Simulation extends Task implements Serializable {
         // go over all targets:
 
         // 1) start with independents
-        this.runTheseTargetsByType(independents,namesToMinions);
-
+       // this.runTheseTargetsByType(independents,namesToMinions);
+        //
+        this.makeQueue();
+       this.runTheseTasks(namesToMinions);
         // move to leaves
-        this.runTheseTargetsByType(leaves,namesToMinions);
+       // this.runTheseTargetsByType(leaves,namesToMinions);
 
         // then to middle
-        this.runTheseTargetsByType(middles,namesToMinions);
+      //  this.runTheseTargetsByType(middles,namesToMinions);
 
         // then to root
-        this.runTheseTargetsByType(roots,namesToMinions);
+      //  this.runTheseTargetsByType(roots,namesToMinions);
 
         FormatAllTask.end = Instant.now();
         FormatAllTask.sendData(cUI);
@@ -99,39 +102,77 @@ public class Simulation extends Task implements Serializable {
         return resM;
     }
 
-    private void runTheseTargetsByType(Map<String,Minion> curMinions, Map<String, Minion> namesToMinions){
+//    private void runTheseTargetsByType(Map<String,Minion> curMinions, Map<String, Minion> namesToMinions){
+//
+//        Boolean curMinionsFinished = false;
+//
+//        if(!curMinions.keySet().isEmpty()) {
+//
+//            while (!curMinionsFinished) {
+//
+//                this.runTheseTasks(new ArrayList<>(curMinions.values()), namesToMinions); // go over all cur tasks and get the needed data back
+//
+//                curMinionsFinished = checkIfWeFinished(new ArrayList<>(curMinions.values())); // go over all cur tasks and check if finished (with get
+//            }
+//        }
+//    }
 
-        Boolean curMinionsFinished = false;
 
-        if(!curMinions.keySet().isEmpty()) {
+//    private void runTheseTasks(List<Minion> minions, Map<String, Minion> namesToMinions){
+//
+//        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
+//        List<String> curTaskData = new ArrayList<>();
+//        List<Minion> kids = new ArrayList<Minion>();
+//
+//        for(Minion curM : minions){
+//
+//            if(this.iAllReadyRan(curM))
+//                curTaskData = this.getOldDataFrom(curM);
+//            else{
+//
+//                kids = findMyKids(curM, namesToMinions);
+//                curTaskData = curM.tryToRunMe(kids, namesToMinions, this.cUI);
+//                if(!curTaskData.isEmpty()) {
+//                    this.targetNameToSummeryProcess.put(curM.getName(), curTaskData);
+//                    FormatAllTask.updateCounter(curTaskData.get(3));// the status
+//                }
+//            }
+//        }
+//    }
 
-            while (!curMinionsFinished) {
+    private void runTheseTasks(Map<String, Minion> namesToMinions){
 
-                this.runTheseTasks(new ArrayList<>(curMinions.values()), namesToMinions); // go over all cur tasks and get the needed data back
+        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
+        List<String> curTaskData;
+        ExecutorService threadExecutor = Executors.newFixedThreadPool(/*maxParallelism*/1);
 
-                curMinionsFinished = checkIfWeFinished(new ArrayList<>(curMinions.values())); // go over all cur tasks and check if finished (with get
-            }
+        for(Minion curM : this.waitingList){
+
+            // to remove from the queue
+            threadExecutor.execute(curM); //ask aviad
+
+            //this.checkIfToAddMyParents(curM, namesToMinions);
+
+            //curTaskData = curM.getMyPData();
+
+//                if(!curTaskData.isEmpty()) {
+//                    this.targetNameToSummeryProcess.put(curM.getName(), curTaskData);
+//
+//                    FormatAllTask.updateCounter(curTaskData.get(3));// the status
+//                }
+//            }
         }
     }
 
-    private void runTheseTasks(List<Minion> minions, Map<String, Minion> namesToMinions){
+    private void checkIfToAddMyParents(Minion curM, Map<String, Minion> namesToMinions) {
 
-        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
-        List<String> curTaskData = new ArrayList<>();
-        List<Minion> kids = new ArrayList<Minion>();
+        if(curM.ISucceeded())
+        {
+            List<Minion> parents = Minion.getMinionsByName(curM.getParentsNames(), namesToMinions);
 
-        for(Minion curM : minions){
-
-            if(this.iAllReadyRan(curM))
-                curTaskData = this.getOldDataFrom(curM);
-            else{
-
-                kids = findMyKids(curM, namesToMinions);
-                curTaskData = curM.tryToRunMe(kids, namesToMinions, this.cUI);
-                if(!curTaskData.isEmpty()) {
-                    this.targetNameToSummeryProcess.put(curM.getName(), curTaskData);
-                    FormatAllTask.updateCounter(curTaskData.get(3));// the status
-                }
+            for(Minion curD : parents) {
+                if(curD.getCanIRun())
+                    this.waitingList.add(curD);
             }
         }
     }

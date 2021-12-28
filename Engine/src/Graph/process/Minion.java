@@ -1,5 +1,6 @@
 package Graph.process;
 
+import DataManager.consumerData.FormatAllTask;
 import Graph.Target;
 import DataManager.consumerData.ConsumerTaskInfo;
 import fileHandler.TaskFile;
@@ -9,7 +10,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class Minion implements Serializable {
+public class Minion implements Serializable, Runnable {
 
     private Target target;
     private String myStatus = new String();
@@ -17,9 +18,16 @@ public class Minion implements Serializable {
     private Boolean iAmFinished;
     private List<String> parentsNames = new ArrayList<>();
     private List<String> myKidsNames = new ArrayList<>();
+    private List<Minion> parents = new ArrayList<>();
+    private List<Minion> myKids = new ArrayList<>();
+    private List<String> myPData = new ArrayList<>();
+    private Consumer cUI;
     protected Integer timeIRun;
     protected Integer chancesISucceed;
     protected Integer chancesImAWarning;
+
+
+    private Map<String, Minion> allNamesToMinions;
 
     public Minion(Target target, Integer maxTime, Integer chancesISucceed, Integer chancesImAWarning, boolean timeIsRand ){
 
@@ -31,7 +39,6 @@ public class Minion implements Serializable {
         this.chancesImAWarning = chancesImAWarning;
         this.setMyKidsNames();
         this.setMyParentsNames();
-
         if(timeIsRand){
 
             Random rand = new Random();
@@ -43,11 +50,23 @@ public class Minion implements Serializable {
         }
     }
 
+    public static List<Minion> getMinionsByName(List<String> minionsNames, Map<String, Minion> namesToMinions) {
+
+        List<Minion> res = new ArrayList<>();
+
+        for(String curMinName : minionsNames)
+            res.add(namesToMinions.get(curMinName));
+
+        return res;
+    }
+
     public void setiAmFinished(Boolean iAmFinished) { this.iAmFinished = iAmFinished; }
 
     public void setCanIRun(Boolean canIRun) { this.canIRun = canIRun;}
 
     public void setMyStatus(String newS){this.myStatus = newS;}
+
+    public List<String> getParentsNames() { return parentsNames;}
 
     public String getName(){return target.getName();}
 
@@ -66,24 +85,22 @@ public class Minion implements Serializable {
 
     public List<String> tryToRunMe(List<Minion> myKids, Map<String,Minion> allMinions, Consumer cUI){
 
-        List<String> myPData = new ArrayList<>();
         String myS = this.myStatus;
 
-
         if(myS.equals("SKIPPED")  || myS.equals("FAILURE")  || myS.equals("WARNING") || myS.equals("SUCCESS")) { // return nothing
-            return myPData;
+            return this.myPData;
         }
         else if(!this.myStatus.equals("WAITING")) { // i'm not a leaf\independent but maybe i can start
 
             this.myStatus = checkStatusOfMyKidsAndUpdateMe(myKids);
-            myPData = this.giveMyData();
+            this.myPData = this.giveMyData();
         }
 
         if(this.myStatus.equals("WAITING"))
-            myPData = this.runMe(allMinions, cUI);
+            this.myPData = this.runMe(allMinions, cUI);
 
 
-        return myPData;
+        return this.myPData;
     }
 
     public List<String> runMe(Map<String,Minion> allMinions, Consumer cUI)  {
@@ -146,6 +163,10 @@ public class Minion implements Serializable {
 
         for(Target curT : this.target.getDependsOn())
             this.myKidsNames.add(curT.getName());
+    }
+
+    public Boolean getCanIRun() {
+        return canIRun;
     }
 
     private String checkStatusOfMyKidsAndUpdateMe(List<Minion> myKids){
@@ -239,4 +260,72 @@ public class Minion implements Serializable {
 
         return resM;
     }
+
+
+    @Override
+    public void run(){
+
+        this.tryToRunMe(myKids, allNamesToMinions,this.cUI);
+
+        this.checkIfToAddMyParents();
+
+        if(!myPData.isEmpty()) {
+
+           // this.targetNameToSummeryProcess.put(curM.getName(), curTaskData);
+
+            FormatAllTask.updateCounter(myPData.get(3));// the status
+        }
+    }
+
+    private void checkIfToAddMyParents() {
+
+        if(this.ISucceeded())
+        {
+            for(Minion curD : this.parents) {
+                if(curD.getCanIRun())
+                    Task.waitingList.add(curD);
+            }
+        }
+    }
+
+    public boolean ISucceeded() {
+
+        boolean iSucceeded = false;
+
+        if(this.myStatus.equals("WARNING") || this.myStatus.equals("SUCCESS"))
+            iSucceeded = true;
+
+        return iSucceeded;
+    }
+
+    public void initMyKindsAndParents(List<Minion> minions) {
+
+        Map<String, Minion> nameToMinion = startMinionMapFrom(minions);
+        this.parents = findMinions(this.parentsNames, nameToMinion);
+        this.myKids = findMinions(this.myKidsNames, nameToMinion);
+
+    }
+
+    private List<Minion> findMinions(List<String> mNames ,Map<String, Minion> namesToTasks){
+
+        List<Minion> res = new ArrayList<Minion>();
+
+        for(String curName : mNames)
+            res.add(namesToTasks.get(curName));
+
+        return res;
+    }
+
+    public void setAllNamesToMinions(Map<String, Minion> allNamesToMinions) {
+        this.allNamesToMinions = allNamesToMinions;
+    }
+
+    public List<String> getMyPData() {
+        return myPData;
+    }
+
+    public void setcUI(Consumer cUI) {
+        this.cUI = cUI;
+    }
+
 }

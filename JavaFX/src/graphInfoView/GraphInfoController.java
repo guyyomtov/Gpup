@@ -3,6 +3,7 @@ package graphInfoView;
 import DataManager.BackDataManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.chart.BarChart;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -33,12 +34,12 @@ public class GraphInfoController {
     private Label summaryBy;
 
     @FXML
-    private ScrollPane tableComponent;
+    private Parent tableComponent;
 
     @FXML
     private TableController tableComponentController;
 
-    private BackDataManager bDM = new BackDataManager()
+    private BackDataManager bDM = new BackDataManager();
 
     public void initGraphInfo(){
 

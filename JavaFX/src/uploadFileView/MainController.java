@@ -55,10 +55,10 @@ public class MainController {
         try {
             //FXMLLoader fxmlLoader = new FXMLLoader();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../graphInfoView/graphInfoFxml.fxml"));
+            Parent graphInfoView = loader.load();
             GraphInfoController graphInfoController = loader.getController();
             graphInfoController.setbDM(this.bDM);
             graphInfoController.initGraphInfo();
-            Parent graphInfoView = loader.load();
             int size = this.bDM.getAllTargets().size();
             MainBorderPane.setCenter(graphInfoView);
         }catch (IOException e) {

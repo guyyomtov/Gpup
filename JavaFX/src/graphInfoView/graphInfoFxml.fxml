@@ -82,11 +82,7 @@
                   <Insets top="10.0" />
                </GridPane.margin>
             </VBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-               <content>
-                  <fx:include fx:id="tableComponent" source="../tableView/tableViewFxml.fxml" />
-               </content>
-            </ScrollPane>
+            <fx:include fx:id="tableComponent" source="../tableView/tableViewFxml.fxml" />
          </children>
       </GridPane>
    </content>

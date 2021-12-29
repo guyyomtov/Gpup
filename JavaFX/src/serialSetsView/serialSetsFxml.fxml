@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="375.0" prefWidth="213.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <VBox alignment="TOP_CENTER" minHeight="300.0" minWidth="250.0" spacing="10.0">
+         <children>
+            <Label text="Serial sets:">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+            <Label text="name:">
+               <font>
+                  <Font size="22.0" />
+               </font>
+            </Label>
+            <ChoiceBox fx:id="checkBoxSerialSets" prefWidth="150.0" />
+            <Label text="Targets:">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Label>
+            <Label fx:id="resultOfCheckBox" text="Label">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets top="40.0" />
+         </padding>
+      </VBox>
+   </content>
+</ScrollPane>

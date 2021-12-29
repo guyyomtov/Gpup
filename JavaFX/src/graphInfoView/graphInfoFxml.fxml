@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fx:id="welcomeView" fitToHeight="true" fitToWidth="true" prefHeight="500.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphInfoView.GraphInfoController">
+   <content>
+      <GridPane focusTraversable="true" minHeight="600.0" minWidth="800.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="562.0" minWidth="10.0" percentWidth="70.0" prefWidth="559.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.0" minWidth="0.0" percentWidth="1.0" prefWidth="15.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.0" minWidth="10.0" percentWidth="25.0" prefWidth="44.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="469.0" minHeight="10.0" percentHeight="60.0" prefHeight="469.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="262.0" minHeight="10.0" percentHeight="35.0" prefHeight="68.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="262.0" minHeight="10.0" percentHeight="5.0" prefHeight="68.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" />
+            <VBox fx:id="summaryByType" alignment="TOP_CENTER" minHeight="300.0" minWidth="250.0" spacing="10.0" GridPane.columnIndex="2">
+               <children>
+                  <Label text="Serial sets:">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                  </Label>
+                  <Label text="name:">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+                  <ChoiceBox fx:id="choiceBoxSerialSets" prefWidth="150.0" />
+                  <Label text="Targets:">
+                     <font>
+                        <Font size="21.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="resultOfChoiceBox" text="Label">
+                     <font>
+                        <Font size="21.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets top="40.0" />
+               </padding>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.rowIndex="1">
+               <children>
+                  <Label fx:id="summaryTable" prefHeight="28.0" prefWidth="178.0" text="Total targets:&#10;">
+                     <font>
+                        <Font size="19.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="summaryBy" prefHeight="28.0" prefWidth="545.0" text="Label">
+                     <font>
+                        <Font size="19.0" />
+                     </font>
+                  </Label>
+                  <BarChart fx:id="barChart">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </BarChart>
+               </children>
+               <GridPane.margin>
+                  <Insets top="10.0" />
+               </GridPane.margin>
+            </VBox>
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+               <content>
+                  <fx:include fx:id="tableComponent" source="../tableView/tableViewFxml.fxml" />
+               </content>
+            </ScrollPane>
+         </children>
+      </GridPane>
+   </content>
+</ScrollPane>

@@ -8,16 +8,28 @@ package InterrogatorComponent;
         import javafx.fxml.FXMLLoader;
         import javafx.scene.Parent;
         import javafx.scene.control.Button;
+        import javafx.scene.layout.AnchorPane;
         import javafx.scene.layout.BorderPane;
 
         import java.io.IOException;
 
 public class InterrogatorController {
 
-    @FXML private Button circleButton;
-    @FXML private Button pathButton;
-    @FXML private Button whatIfButton;
-    @FXML private BorderPane mainBoarderPain;
+    @FXML
+    private Button circleButton;
+
+    @FXML
+    private Button pathButton;
+
+    @FXML
+    private Button whatIfButton;
+
+    @FXML
+    private AnchorPane mainSplitPane;
+
+    @FXML
+    private BorderPane mainBoarderPain;
+
     private BackDataManager bDM;
 
 
@@ -63,5 +75,5 @@ public class InterrogatorController {
 
         this.mainBoarderPain.setCenter(whatIfView);
     }
-
 }
+

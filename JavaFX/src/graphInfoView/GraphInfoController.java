@@ -2,6 +2,8 @@ package graphInfoView;
 
 import DataManager.BackDataManager;
 import Graph.Target;
+import Graph.Target;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -13,7 +15,10 @@ import javafx.scene.control.TableView;
 import tableView.TableController;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class GraphInfoController {
 
@@ -21,7 +26,7 @@ public class GraphInfoController {
     private ScrollPane welcomeView;
 
     @FXML
-    private ChoiceBox<?> choiceBoxSerialSets;
+    private ChoiceBox<String> choiceBoxSerialSets;
 
     @FXML
     private Label resultOfChoiceBox;
@@ -47,9 +52,26 @@ public class GraphInfoController {
     public void initGraphInfo(){
 
         this.tableComponentController.initTable(this.bDM.getAllTargets());
-        this.initSummary();
+        this.initSummary();;
+        this.initChoiceBox();
+    }
 
-        this.tableIsFull = true;
+    private void initChoiceBox() {
+        Map<String, Set<Target>> serialSets = this.bDM.getSerialSets();
+        Set<String> namesOfSerialSets = serialSets.keySet();
+        String[] names = namesOfSerialSets.toArray(new String[0]);
+        this.choiceBoxSerialSets.getItems().addAll(names);
+        this.choiceBoxSerialSets.setOnAction(this::getNames);
+    }
+
+    public void getNames(ActionEvent event){
+        Map<String, Set<Target>> serialSets = this.bDM.getSerialSets();
+        Set<Target> inSerial = serialSets.get(this.choiceBoxSerialSets.getValue());
+        for(Target target: inSerial)
+        {
+            this.resultOfChoiceBox.setText(this.resultOfChoiceBox.getText() + target.getName() + " ");
+        }
+
     }
 
     private void initSummary() {

@@ -17,12 +17,14 @@ public class Graph implements Serializable {
 
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
+
     private Map<String, Set<Target>> mSerialSets = new HashMap<>();
 
 
-    public Graph(List<Target> targets, Map<String, Target> mNameToTarget) throws ErrorUtils {
+    public Graph(List<Target> targets, Map<String, Target> mNameToTarget, Map<String, Set<Target>> mSerialSets) throws ErrorUtils {
         this.targets = targets;
         this.mNameToTarget = mNameToTarget;
+        this.mSerialSets = mSerialSets;
         try {
             this.pathFinder.startMe(this.targets.size(), this.targets);
         }catch(ErrorUtils e){throw e;}
@@ -222,6 +224,14 @@ public class Graph implements Serializable {
             }
         }
         return setOfDependencies;
+    }
+
+    public Map<String, Set<Target>> getmSerialSets() {
+        return mSerialSets;
+    }
+
+    public void setmSerialSets(Map<String, Set<Target>> mSerialSets) {
+        this.mSerialSets = mSerialSets;
     }
 
 

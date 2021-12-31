@@ -188,7 +188,6 @@ public class BackDataManager implements DataManager {
         }catch (ErrorUtils e){throw e;}
     }
 
-
     public void saveToFile(String fullPath){
 
         HandlerSaveFile saveToFile = new HandlerSaveFile(this.graph, fullPath);

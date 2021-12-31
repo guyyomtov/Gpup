@@ -65,6 +65,5 @@ public class TableController {
         tableView.setItems(data);
     }
 
-
-
+    public TableView<Target> getTableView(){ return this.tableView;}
 }

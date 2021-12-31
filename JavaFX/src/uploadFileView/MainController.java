@@ -1,22 +1,19 @@
 package uploadFileView;
 
 import DataManager.BackDataManager;
-import Mediator.UIDataManager;
+import FindPathComponent.FindPathController;
+import InterrogatorComponent.InterrogatorController;
+import WhatIfComponent.WhatIfController;
 import errors.ErrorUtils;
 import graphInfoView.GraphInfoController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import summaryForTable.SummeryForTableController;
-import tableView.TableController;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +58,8 @@ public class MainController {
             graphInfoController.initGraphInfo();
             int size = this.bDM.getAllTargets().size();
             MainBorderPane.setCenter(graphInfoView);
+
+
         }catch (IOException e) {
            //e.printStackTrace();
         }
@@ -89,8 +88,15 @@ public class MainController {
     }
 
     @FXML
-    void InterrogatorButtonAction(ActionEvent event) {
+    void InterrogatorButtonAction(ActionEvent event) throws IOException {
 
+        String circlePathName = "../InterrogatorComponent/InteragatorComponent.fxml";
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(circlePathName));
+        Parent interrogatorView = loader.load();
+        InterrogatorController intController = loader.getController();
+        intController.init(this.bDM);
+
+        MainBorderPane.setCenter(interrogatorView);
     }
 
     @FXML

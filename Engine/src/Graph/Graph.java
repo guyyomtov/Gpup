@@ -80,7 +80,7 @@ public class Graph implements Serializable {
                 }
                 else throw new ErrorUtils("The target " + targetName + " doesn't in circle.");
             }
-            else throw new ErrorUtils("The target " + targetName + " doesn't in circle.");
+            else throw new ErrorUtils("The target " + targetName + " isn't in a circle.");
         }
         else
             throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + targetName + " doesn't exist"));

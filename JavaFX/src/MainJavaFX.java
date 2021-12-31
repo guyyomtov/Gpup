@@ -11,6 +11,7 @@ public class MainJavaFX extends Application {
     MainController mainController = new MainController();
     FXMLLoader loader = new FXMLLoader();
 
+
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -24,9 +25,9 @@ public class MainJavaFX extends Application {
         primaryStage.show();
     }
 
+
+
     public static void main(String[] args) {
         launch(args);
     }
-
-
 }

@@ -49,7 +49,7 @@ public class BackDataManager implements DataManager {
 
                     fileSuccess =  true;
 
-                    this.graph = new Graph(handlerFile.getListOfTargets(),handlerFile.getMap());
+                    this.graph = new Graph(handlerFile.getListOfTargets(),handlerFile.getMap(), handlerFile.getNameToSerialSet());
 
                     this.mTypeToTargets = this.makeMap(this.graph.getAllTargets());
 
@@ -208,5 +208,9 @@ public class BackDataManager implements DataManager {
     }
 
     public List<Target> getAllTargets() { return this.graph.getAllTargets(); }
+
+    public Map<String, Set<Target>> getSerialSets() {
+        return this.graph.getmSerialSets();
+    }
 
 }

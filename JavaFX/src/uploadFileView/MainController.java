@@ -53,7 +53,6 @@ public class MainController {
     @FXML
     void graphInfoAction(ActionEvent event){
         try {
-            //FXMLLoader fxmlLoader = new FXMLLoader();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../graphInfoView/graphInfoFxml.fxml"));
             Parent graphInfoView = loader.load();
             GraphInfoController graphInfoController = loader.getController();

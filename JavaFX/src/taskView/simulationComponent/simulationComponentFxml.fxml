@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="taskView.simulationComponent.SimulationComponentController">
+   <children>
+      <HBox prefHeight="48.0" prefWidth="400.0" spacing="7.0">
+         <children>
+            <Label prefHeight="21.0" prefWidth="101.0" text="choose time?" />
+            <Label fx:id="errorLabel" />
+            <Spinner fx:id="chooseTimeSpinner" onDragDone="#onDragDoneChooseTime" />
+         </children>
+         <padding>
+            <Insets left="10.0" />
+         </padding>
+      </HBox>
+      <HBox prefHeight="49.0" prefWidth="400.0" spacing="10.0">
+         <children>
+            <RadioButton fx:id="randomButton" mnemonicParsing="false" onAction="#randomButtonAction" prefHeight="21.0" prefWidth="92.0" text="Random">
+               <toggleGroup>
+                  <ToggleGroup fx:id="randomOrManual" />
+               </toggleGroup></RadioButton>
+            <RadioButton fx:id="manualButton" mnemonicParsing="false" onAction="#manualButtonAction" prefHeight="21.0" prefWidth="88.0" text="Manual" toggleGroup="$randomOrManual" />
+         </children>
+         <padding>
+            <Insets left="15.0" />
+         </padding>
+      </HBox>
+      <HBox prefHeight="50.0" prefWidth="400.0" spacing="5.0">
+         <children>
+            <Label prefHeight="21.0" prefWidth="136.0" text="Chances for success:" />
+            <Spinner fx:id="succsesSpinner" disable="true" />
+         </children>
+         <padding>
+            <Insets left="10.0" />
+         </padding>
+      </HBox>
+      <HBox prefHeight="76.0" prefWidth="590.0" spacing="5.0">
+         <children>
+            <Label prefHeight="46.0" prefWidth="137.0" text="Chances for success&#10; with warning:" />
+            <Spinner fx:id="warningSpinner" disable="true">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Spinner>
+         </children>
+         <VBox.margin>
+            <Insets left="10.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+   <padding>
+      <Insets top="15.0" />
+   </padding>
+</VBox>

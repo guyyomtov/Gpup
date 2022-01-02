@@ -51,6 +51,8 @@ public class BackDataManager implements DataManager {
 
                     this.graph = new Graph(handlerFile.getListOfTargets(),handlerFile.getMap(), handlerFile.getNameToSerialSet());
 
+                    this.graph.updateTotalDependenciesAndSerialSets();
+
                     this.mTypeToTargets = this.makeMap(this.graph.getAllTargets());
 
                 }catch(ErrorUtils e){throw e;}

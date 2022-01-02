@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import taskView.TaskController;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,18 +47,26 @@ public class MainController {
 
     private BackDataManager bDM = new BackDataManager();
 
+    private GraphInfoController graphInfoController;
+
+    private Parent graphInfoView;
+   // FXMLLoader graphInfoLoader;
+
+    private TaskController taskController;
+
+    private Parent taskView;
 
     @FXML
     void graphInfoAction(ActionEvent event){
         try {
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../graphInfoView/graphInfoFxml.fxml"));
-            Parent graphInfoView = loader.load();
-            GraphInfoController graphInfoController = loader.getController();
+            graphInfoView = loader.load();
+            graphInfoController = loader.getController();
             graphInfoController.setbDM(this.bDM);
             graphInfoController.initGraphInfo();
             int size = this.bDM.getAllTargets().size();
             MainBorderPane.setCenter(graphInfoView);
-
 
         }catch (IOException e) {
            //e.printStackTrace();
@@ -81,7 +90,11 @@ public class MainController {
         this.InterrogatorButton.setDisable(false);
         this.taskButton.setDisable(false);
         this.msgAfterUploadFile.setText("The file " + selectedFile.getAbsolutePath() + " upload successfully");
-
+        if(graphInfoController != null) {
+            graphInfoController.setbDM(this.bDM);
+            graphInfoController.initGraphInfo();
+        }
+        this.taskController = null;
     //    this.msgAfterUploadFile.setVisible(true);
 
     }
@@ -100,7 +113,21 @@ public class MainController {
 
     @FXML
     void taskButtonAction(ActionEvent event) {
+        try {
+            if (taskController == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../taskView/taskViewFxml.fxml"));
+                taskView = loader.load();
+                taskController = loader.getController();
+                taskController.setbDM(this.bDM);
+                taskController.initTaskView();
+            }
+            MainBorderPane.setCenter(taskView);
 
+
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -4,8 +4,10 @@ import DataManager.consumerData.FormatAllTask;
 import Graph.Target;
 import DataManager.consumerData.ConsumerTaskInfo;
 import fileHandler.TaskFile;
+import javafx.scene.control.CheckBox;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
@@ -13,6 +15,8 @@ import java.util.function.Consumer;
 public class Minion implements Serializable, Runnable {
 
     private Target target;
+    private String targetName;
+    private Target.Type targetType;
     private String myStatus = new String();
     private Boolean canIRun;
     private Boolean iAmFinished;
@@ -25,13 +29,13 @@ public class Minion implements Serializable, Runnable {
     protected Integer timeIRun;
     protected Integer chancesISucceed;
     protected Integer chancesImAWarning;
-
-
     private Map<String, Minion> allNamesToMinions;
 
     public Minion(Target target, Integer maxTime, Integer chancesISucceed, Integer chancesImAWarning, boolean timeIsRand ){
 
         this.target = target;
+        this.targetName = target.getName();
+        this.targetType = target.getTargetType();
         this.myStatus = this.myStartStatus(target.getTargetType().toString());
         this.canIRun = this.myStatus.equals("WAITING") ? true : false;
         this.iAmFinished = false;
@@ -326,6 +330,14 @@ public class Minion implements Serializable, Runnable {
 
     public void setcUI(Consumer cUI) {
         this.cUI = cUI;
+    }
+
+    public String getTargetName() {
+        return targetName;
+    }
+
+    public Target.Type getTargetType() {
+        return targetType;
     }
 
 }

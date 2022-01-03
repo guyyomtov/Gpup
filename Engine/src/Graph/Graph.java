@@ -164,7 +164,7 @@ public class Graph implements Serializable {
         return foundDouble;
     }
 
-    //todo to give attention to the connection
+    //todo --> give attention to the connection
     public  Set<List<Target>> whatIf(String targetName, String connection) throws ErrorUtils{
 
         List<String> allDependencies = new ArrayList<>();

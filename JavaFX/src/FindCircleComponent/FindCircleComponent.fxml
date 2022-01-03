@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -11,44 +10,40 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FindCircleComponent.FindCircleController">
-   <content>
-      <SplitPane dividerPositions="0.46422628951747086" prefHeight="403.0" prefWidth="603.0">
-        <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="401.0" prefWidth="305.0">
+<SplitPane dividerPositions="0.46422628951747086" minHeight="400.0" minWidth="600.0" prefHeight="403.0" prefWidth="603.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FindCircleComponent.FindCircleController">
+   <items>
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="401.0" prefWidth="305.0">
+         <children>
+            <VBox prefHeight="385.0" prefWidth="305.0">
                <children>
-                  <VBox prefHeight="385.0" prefWidth="305.0">
+                  <TextArea editable="false" prefHeight="78.0" prefWidth="305.0" text="Explanation:&#10;1) Choose a target from the list.&#10;2) Click the 'Find Circle' button." />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <TextArea editable="false" prefHeight="78.0" prefWidth="305.0" text="Explanation:&#10;1) Choose a target from the list.&#10;2) Click the 'Find Circle' button." />
-                        <HBox prefHeight="100.0" prefWidth="200.0">
-                           <children>
-                              <TextField editable="false" prefHeight="25.0" prefWidth="82.0" text="Targets:">
-                                 <font>
-                                    <Font name="System Bold" size="12.0" />
-                                 </font>
-                              </TextField>
-                              <ChoiceBox fx:id="targetList" prefHeight="25.0" prefWidth="170.0" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </children>
-            </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="401.0" prefWidth="281.0">
-               <children>
-                  <VBox layoutX="36.0" prefHeight="384.0" prefWidth="267.0">
-                     <children>
-                        <Button fx:id="findCircleButton" mnemonicParsing="false" onAction="#findCircleAction" text="Find Circle" />
-                        <TextArea fx:id="resultPrintArea" disable="true" editable="false" prefHeight="144.0" prefWidth="287.0">
+                        <TextField editable="false" prefHeight="25.0" prefWidth="82.0" text="Targets:">
                            <font>
-                              <Font name="System Bold" size="14.0" />
+                              <Font name="System Bold" size="12.0" />
                            </font>
-                        </TextArea>
+                        </TextField>
+                        <ChoiceBox fx:id="targetList" prefHeight="25.0" prefWidth="170.0" />
                      </children>
-                  </VBox>
+                  </HBox>
                </children>
-            </AnchorPane>
-        </items>
-      </SplitPane>
-   </content>
-</ScrollPane>
+            </VBox>
+         </children>
+      </AnchorPane>
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="401.0" prefWidth="281.0">
+         <children>
+            <VBox layoutX="36.0" prefHeight="384.0" prefWidth="267.0">
+               <children>
+                  <Button fx:id="findCircleButton" mnemonicParsing="false" onAction="#findCircleAction" text="Find Circle" />
+                  <TextArea fx:id="resultPrintArea" disable="true" editable="false" prefHeight="144.0" prefWidth="287.0">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </TextArea>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </items>
+</SplitPane>

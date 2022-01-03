@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
+import javafx.scene.paint.Paint;
+
 import java.util.List;
 import java.util.Set;
 
@@ -60,4 +62,11 @@ public class FindCircleController {
         targetList.setItems(data);
     }
 
+    public void setSkins(String wantedColor, Paint textColor) {
+
+        this.findCircleButton.setStyle(wantedColor);
+        this.targetList.setStyle(wantedColor);
+
+        this.findCircleButton.setTextFill(textColor);
+    }
 }

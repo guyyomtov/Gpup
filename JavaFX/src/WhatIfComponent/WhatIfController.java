@@ -12,6 +12,7 @@ package WhatIfComponent;
         import javafx.scene.control.TableColumn;
         import javafx.scene.control.TableView;
         import javafx.scene.control.cell.PropertyValueFactory;
+        import javafx.scene.paint.Paint;
 
 
         import java.util.Arrays;
@@ -86,5 +87,11 @@ public class WhatIfController {
         ObservableList<String> data = FXCollections.observableArrayList(tNames);
 
         targetListButton.setItems(data);
+    }
+
+    public void setSkins(String wantedColor, Paint textColor) {
+
+        this.dependenciesType.setStyle(wantedColor);
+        this.targetListButton.setStyle(wantedColor);
     }
 }

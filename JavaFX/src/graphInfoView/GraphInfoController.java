@@ -8,10 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.chart.BarChart;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableView;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.*;
 import tableView.TableController;
 
 import java.net.URL;
@@ -32,7 +30,7 @@ public class GraphInfoController {
     private Label resultOfChoiceBox;
 
     @FXML
-    private BarChart<?, ?> barChart;
+    private BarChart<String, Integer> barChart;
 
     @FXML
     private Label summaryTable;
@@ -45,6 +43,10 @@ public class GraphInfoController {
 
     @FXML
     private TableController tableComponentController;
+
+    @FXML
+    private CheckBox whatIfCheckBox;
+
     private boolean tableIsFull = false;
 
     private BackDataManager bDM = new BackDataManager();
@@ -52,11 +54,15 @@ public class GraphInfoController {
     public void initGraphInfo(){
 
         this.tableComponentController.initTable(this.bDM.getAllTargets());
+        this.tableComponentController.setTargets(this.bDM.getAllTargets());
         this.initSummary();;
         this.initChoiceBox();
+        this.initBarChart();
+
     }
 
     private void initChoiceBox() {
+        this.choiceBoxSerialSets.getItems().clear();
         Map<String, Set<Target>> serialSets = this.bDM.getSerialSets();
         Set<String> namesOfSerialSets = serialSets.keySet();
         String[] names = namesOfSerialSets.toArray(new String[0]);
@@ -77,9 +83,30 @@ public class GraphInfoController {
     private void initSummary() {
         summaryTable.setText("Total targets: " + bDM.getAllTargets().size()
         );
-        summaryBy.setText(    "Independents: " + bDM.getNumOfIndependents() + " Leafs: " + bDM.getNumOfLeafs() +
-                "Middles: " + bDM.getNumOfMiddle() + " Roots: " + bDM.getNumOfRoots() + ".");
+        summaryBy.setText(    "Independents: " + bDM.getNumOfIndependents() + " Leaves: " + bDM.getNumOfLeafs() +
+                " Middles: " + bDM.getNumOfMiddle() + " Roots: " + bDM.getNumOfRoots() + ".");
     }
+
+    private void initBarChart()
+    {
+        barChart.getData().clear();
+        XYChart.Series series = new XYChart.Series();
+        series.setName("Target Level");
+        series.getData().add(new XYChart.Data<>("Independent", this.bDM.getNumOfIndependents()));
+        series.getData().add(new XYChart.Data<>("Leaf", this.bDM.getNumOfLeafs()));
+        series.getData().add(new XYChart.Data<>("Middle", this.bDM.getNumOfMiddle()));
+        series.getData().add(new XYChart.Data<>("Root", this.bDM.getNumOfRoots()));
+        barChart.getData().addAll(series);
+
+    }
+
+    @FXML
+    void whatIfCheckBoxAction(ActionEvent event){
+
+    }
+
+
+
 
     public TableView<Target> getTable(){
 

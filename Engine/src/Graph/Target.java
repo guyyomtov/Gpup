@@ -3,6 +3,7 @@ package Graph;
 import GpupClassesEx2.GPUPDescriptor;
 import GpupClassesEx2.GPUPTarget;
 import errors.ErrorUtils;
+import javafx.scene.control.CheckBox;
 //import fileHandler.schemaXmlFile.GPUPDescriptor;
 //import fileHandler.schemaXmlFile.GPUPTarget;
 
@@ -10,7 +11,6 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Target implements Serializable {
-
 
     public enum Type implements Serializable {
         INDEPENDENT{public String toString(){return "Independent";}}
@@ -38,7 +38,11 @@ public class Target implements Serializable {
 
     private Integer totalRequiredFor = 0;
 
-    private Integer totalSerialNum = 0;
+    private Integer totalSerialSets = 0;
+
+    private CheckBox remark = new CheckBox();
+
+    public Integer getTotalSerialSets() {return totalSerialSets;}
 
     public Integer getTotalRequiredFor() {
        return totalRequiredFor;
@@ -226,50 +230,60 @@ public class Target implements Serializable {
             return namesToTargets.get(curTName);
     }
 
-    public Integer countTotalDependsOn() {
-        Integer res = 0;
+    public void countTotalDependsOn(Map<String, Boolean> isVisited) {
         if(dependsOn.isEmpty())
-            return res;
+            return;
         else
-            countTotalDependsOnHelper(res, this);
-        return res;
+            countTotalDependsOnHelper(this, isVisited);
     }
 
-    private void countTotalDependsOnHelper(Integer res, Target currTarget) {
+    private void countTotalDependsOnHelper(Target currTarget, Map<String, Boolean> isVisited) {
         if(currTarget.dependsOn.isEmpty())
             return;
-        else
-        {
-            res+= dependsOn.size();
-            for(Target target : currTarget.dependsOn)
-                countTotalDependsOnHelper(res, target);
-        }
-
-
-    }
-
-    public Integer countTotalRequiredFor() {
-        Integer res = 0;
-        if(requiredFor.isEmpty())
-            return res;
-        else
-            countTotalDependsOnHelper(res, this);
-        return res;
-    }
-
-    private void countTotalRequiredForHelper(Integer res, Target currTarget) {
-        if(currTarget.requiredFor.isEmpty())
+        if(isVisited.get(currTarget.getName()))
             return;
         else
         {
-            res+= requiredFor.size();
-            for(Target target : currTarget.requiredFor)
-                countTotalDependsOnHelper(res, target);
+            isVisited.put(currTarget.getName(), true);
+            this.totalDependsOn += dependsOn.size();
+            for(Target target : currTarget.dependsOn)
+                countTotalDependsOnHelper(target, isVisited);
         }
 
+    }
+
+    public void countTotalRequiredFor(Map<String, Boolean> isVisited) {
+        if(requiredFor.isEmpty())
+            return;
+        else
+            countTotalRequiredForHelper(this,isVisited);
+    }
+
+    private void countTotalRequiredForHelper(Target currTarget, Map<String, Boolean> isVisited) {
+        if(currTarget.requiredFor.isEmpty())
+            return;
+        if(isVisited.get(currTarget.getName()))
+            return;
+        else
+        {
+            isVisited.put(currTarget.getName(), true);
+            this.totalRequiredFor+= requiredFor.size();
+            for(Target target : currTarget.requiredFor)
+                countTotalRequiredForHelper(target, isVisited);
+        }
+
+    }
+
+    public void countIncludedSerialSets(Map<String, Set<Target>> mSerialSets) {
+
+        for(Set<Target> targets : mSerialSets.values()) {
+            if(targets.contains(this))
+                ++this.totalSerialSets;
+        }
 
     }
 
 
+    public CheckBox getRemark() {return remark;}
 
 }

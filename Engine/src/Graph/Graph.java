@@ -235,4 +235,23 @@ public class Graph implements Serializable {
     }
 
 
+    public void updateTotalDependenciesAndSerialSets() {
+        Map <String, Boolean> isVisited = makeIsVisitedMap();
+        for(Target target : this.targets)
+        {
+            target.countTotalDependsOn(isVisited);
+            target.countTotalRequiredFor(isVisited);
+            target.countIncludedSerialSets(this.mSerialSets);
+
+        }
+
+    }
+
+    private Map<String, Boolean> makeIsVisitedMap() {
+        Map <String, Boolean> isVisited = new HashMap<>();
+        for(Target target: targets)
+            isVisited.put(target.getName(), false);
+        return isVisited;
+    }
+
 }

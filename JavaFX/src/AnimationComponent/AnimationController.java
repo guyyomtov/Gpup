@@ -26,7 +26,6 @@ public class AnimationController {
     @FXML private Button animationButton1;
     @FXML private Button animationButton2;
     @FXML private Button stopAnimationButton;
-    @FXML private ChoiceBox<String> cuntButton;
     private Node square;
     private Node circle;
     private Text textAno1;
@@ -35,27 +34,19 @@ public class AnimationController {
 
     public void init(){
 
-        this.textAno1 = new Text("Target: None");
+        this.textAno1 = new Text("Serial Set: None");
         this.textCircle = new Text("CLICK ME!");
 
         this.initAnimation1();
-        this.initCuntButton();
         this.initCircle();
 
-        this.boarderPane.setCenter(stack);
-
+        this.boarderPane.setLeft(stack);
     }
 
-    private void initCuntButton() {
 
-        this.cuntButton.getItems().add("A");
-        this.cuntButton.getItems().add("B");
+    public void setSquareText(String text){
 
-        this.cuntButton.getSelectionModel().selectedIndexProperty().addListener(
-                (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-                    this.textAno1.setText("Target: " + this.cuntButton.getValue());
-                }
-        );
+        this.textAno1.setText(text);
     }
 
     private void initCircle(){
@@ -142,7 +133,6 @@ public class AnimationController {
 
         this.textAno1.setVisible(true);
         square.setVisible(true);
-
     }
 
     @FXML

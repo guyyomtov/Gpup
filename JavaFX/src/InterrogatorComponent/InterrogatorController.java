@@ -10,6 +10,7 @@ package InterrogatorComponent;
         import javafx.scene.Parent;
         import javafx.scene.control.Button;
         import javafx.scene.control.ChoiceBox;
+        import javafx.scene.input.MouseEvent;
         import javafx.scene.layout.AnchorPane;
         import javafx.scene.layout.BorderPane;
         import javafx.scene.paint.Color;
@@ -28,14 +29,65 @@ public class InterrogatorController {
     @FXML private Button changeSkins;
     private BackDataManager bDM;
     private String wantedColor = new String();
-    private Paint textColor;
+    private Paint textColor = Color.BLACK;
+    private FindCircleComponent.FindCircleController fCController;
+    private FindPathController fPController;
+    private WhatIfController wIController;
+    private Parent findCircleView;
+    private Parent findPathView;
+    private Parent whatIfView;
+    private String pathName = new String();
+    private FXMLLoader loader;
 
 
-    public void init(BackDataManager other){
+    public void init(BackDataManager other) throws IOException {
 
         this.bDM = other;
 
         this.initSkinsButton();
+
+        this.initCircleComponenet();
+        this.initPathComponent();
+        this.WhatIfComponent();
+    }
+
+
+    private FXMLLoader getCurrentFXMLoader(String curPath){
+
+        return new FXMLLoader(getClass().getResource(curPath));
+    }
+
+    private void WhatIfComponent() throws IOException {
+
+        String curP = "../WhatIfComponent/WhatIfComponent.fxml";
+
+        this.loader = getCurrentFXMLoader(curP);
+        this.whatIfView = loader.load();
+        this.wIController = loader.getController();
+
+        this.wIController.init(this.bDM);
+    }
+
+    private void initPathComponent() throws IOException {
+
+        String curP = "../FindPathComponent/FindPathComponent.fxml";
+        this.loader = getCurrentFXMLoader(curP);
+        this.findPathView = loader.load();
+        this.fPController = loader.getController();
+
+        this.fPController.init(this.bDM);
+    }
+
+    private void initCircleComponenet() throws IOException {
+
+        String curP = "../FindCircleComponent/FindCircleComponent.fxml";
+        this.loader = getCurrentFXMLoader(curP);
+
+        this.findCircleView = loader.load();
+
+        this.fCController = loader.getController();
+
+        this.fCController.initFindCircleController(this.bDM);
     }
 
     private void initSkinsButton() {
@@ -68,10 +120,7 @@ public class InterrogatorController {
         else {
             wantedColor = null;
         }
-
         this.changeButtonSkins(this.wantedColor, this.textColor);
-
-
     }
 
     private void changeButtonSkins(String wantedColor, Paint textColor) {
@@ -85,6 +134,15 @@ public class InterrogatorController {
         this.circleButton.setStyle(wantedColor);
         this.pathButton.setStyle(wantedColor);
         this.whatIfButton.setStyle(wantedColor);
+
+        this.setKidComponentButtonSkins();
+    }
+
+    private void setKidComponentButtonSkins() {
+
+        this.fCController.setSkins(this.wantedColor, this.textColor);
+        this.fPController.setSkins(this.wantedColor, this.textColor);
+        this.wIController.setSkins(this.wantedColor, this.textColor);
     }
 
     @FXML
@@ -96,27 +154,11 @@ public class InterrogatorController {
     @FXML
     void circleButtonAction(ActionEvent event) throws IOException {
 
-         String circlePathName = "../FindCircleComponent/FindCircleComponent.fxml";
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(circlePathName));
-        Parent findCircleView = loader.load();
-        FindCircleComponent.FindCircleController fCController = loader.getController();
-
-        fCController.initFindCircleController(this.bDM);
-        fCController.setSkins(this.wantedColor, this.textColor);
-
         this.mainBoarderPain.setCenter(findCircleView);
     }
 
     @FXML
     void pathButtonAction(ActionEvent event) throws IOException {
-
-        String circlePathName = "../FindPathComponent/FindPathComponent.fxml";
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(circlePathName));
-        Parent findPathView = loader.load();
-        FindPathController fPController = loader.getController();
-
-        fPController.init(this.bDM);
-        fPController.setSkins(this.wantedColor, this.textColor);
 
         this.mainBoarderPain.setCenter(findPathView);
     }
@@ -124,15 +166,63 @@ public class InterrogatorController {
     @FXML
     void whatIfButtonAction(ActionEvent event) throws IOException {
 
-        String circlePathName = "../WhatIfComponent/WhatIfComponent.fxml";
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(circlePathName));
-        Parent whatIfView = loader.load();
-        WhatIfController wIController = loader.getController();
-
-        wIController.init(this.bDM);
-        wIController.setSkins(this.wantedColor, this.textColor);
-
         this.mainBoarderPain.setCenter(whatIfView);
+    }
+
+    @FXML
+    void whatIfOnMOuseEntered(MouseEvent event) {
+
+        this.whatIfButton.setTextFill(Color.BLACK);
+        this.whatIfButton.setStyle(null);
+    }
+
+    @FXML
+    void whatIfOnMOuseExist(MouseEvent event) {
+
+        this.whatIfButton.setStyle(this.wantedColor);
+        this.whatIfButton.setTextFill(this.textColor);
+    }
+
+    @FXML
+    void pathOnMOuseEntered(MouseEvent event) {
+
+        this.pathButton.setTextFill(Color.BLACK);
+        this.pathButton.setStyle(null);
+    }
+
+    @FXML
+    void pathOnMOuseExist(MouseEvent event) {
+
+        this.pathButton.setStyle(this.wantedColor);
+        this.pathButton.setTextFill(this.textColor);
+    }
+
+    @FXML
+    void circleOnMOuseEntered(MouseEvent event) {
+
+        this.circleButton.setTextFill(Color.BLACK);
+        this.circleButton.setStyle(null);
+    }
+
+    @FXML
+    void circleOnMOuseExist(MouseEvent event) {
+
+        this.circleButton.setStyle(this.wantedColor);
+        this.circleButton.setTextFill(this.textColor);
+    }
+
+    @FXML
+    void changeSkinfOnMouseEntered(MouseEvent event) {
+
+        this.changeSkins.setTextFill(Color.BLACK);
+        this.changeSkins.setStyle(null);
+    }
+
+    @FXML
+    void changeSkinfOnMouseExist(MouseEvent event) {
+
+        this.changeSkins.setTextFill(this.textColor);
+        this.changeSkins.setStyle(this.wantedColor);
     }
 }
 

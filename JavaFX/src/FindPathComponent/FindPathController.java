@@ -13,6 +13,8 @@ package FindPathComponent;
         import javafx.scene.control.TableColumn;
         import javafx.scene.control.TableView;
         import javafx.scene.control.cell.PropertyValueFactory;
+        import javafx.scene.input.MouseEvent;
+        import javafx.scene.paint.Color;
         import javafx.scene.paint.Paint;
 
         import java.util.*;
@@ -28,6 +30,9 @@ public class FindPathController {
     private BackDataManager bDM;
     private List<Target> targets;
     private List<String> resPaths = new ArrayList<>();
+    private String backroundColor = new String();
+    private Paint textColor;
+
 
     @FXML
     void findPathAction(ActionEvent event) throws ErrorUtils {
@@ -112,12 +117,65 @@ public class FindPathController {
 
     public void setSkins(String wantedColor, Paint textColor) {
 
+        this.backroundColor = wantedColor;
+        this.textColor = textColor;
+
         this.findPathButton.setStyle(wantedColor);
+        this.findPathButton.setTextFill(textColor);
         this.srcTargetButton.setStyle(wantedColor);
         this.dstTargetButton.setStyle(wantedColor);
         this.relationshipButton.setStyle(wantedColor);
-
-        this.findPathButton.setTextFill(textColor);
     }
+
+    @FXML
+    void destOMExist(MouseEvent event) {
+
+        this.dstTargetButton.setStyle(this.backroundColor);
+    }
+
+    @FXML
+    void destTOMEnter(MouseEvent event) {
+
+        this.dstTargetButton.setStyle(null);
+    }
+
+    @FXML
+    void findOMExist(MouseEvent event) {
+
+        this.findPathButton.setTextFill(this.textColor);
+        this.findPathButton.setStyle(this.backroundColor);
+    }
+
+    @FXML
+    void findTOMEnter(MouseEvent event) {
+
+        this.findPathButton.setStyle(null);
+        this.findPathButton.setTextFill(Color.BLACK);
+    }
+
+    @FXML
+    void relOMExist(MouseEvent event) {
+
+        this.relationshipButton.setStyle(this.backroundColor);
+    }
+
+    @FXML
+    void relTOMEnter(MouseEvent event) {
+
+        this.relationshipButton.setStyle(null);
+    }
+
+    @FXML
+    void srcOMExist(MouseEvent event) {
+
+        this.srcTargetButton.setStyle(this.backroundColor);
+    }
+
+    @FXML
+    void srcTOMEnter(MouseEvent event) {
+
+        this.srcTargetButton.setStyle(null);
+    }
+
 }
 

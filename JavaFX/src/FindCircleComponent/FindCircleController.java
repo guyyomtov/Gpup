@@ -10,6 +10,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 import java.util.List;
@@ -23,6 +26,8 @@ public class FindCircleController {
     private BackDataManager bDM;
     private List<Target> targets;
     private Target curTarget;
+    private String backroundColor = new String();
+    private Paint textColor;
 
 
     @FXML
@@ -64,9 +69,37 @@ public class FindCircleController {
 
     public void setSkins(String wantedColor, Paint textColor) {
 
-        this.findCircleButton.setStyle(wantedColor);
-        this.targetList.setStyle(wantedColor);
+        this.backroundColor = wantedColor;
+        this.textColor = textColor;
 
+        this.findCircleButton.setStyle(wantedColor);
         this.findCircleButton.setTextFill(textColor);
+        this.targetList.setStyle(wantedColor);
+    }
+
+    @FXML
+    void findCircleButtonMouseEnteredAction(MouseEvent event) {
+
+        this.findCircleButton.setStyle(null);
+        this.findCircleButton.setTextFill(Color.BLACK);
+    }
+
+    @FXML
+    void findCircleButtonMouseExitedAction(MouseEvent event) {
+
+        this.findCircleButton.setStyle(this.backroundColor);
+        this.findCircleButton.setTextFill(this.textColor);
+    }
+
+    @FXML
+    void tOnMOuseEntered(MouseEvent event) {
+
+        this.targetList.setStyle(null);
+    }
+
+    @FXML
+    void tOnMOuseExist(MouseEvent event) {
+
+        this.targetList.setStyle(this.backroundColor);
     }
 }

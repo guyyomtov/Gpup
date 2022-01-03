@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.171" fx:controller="FindPathComponent.FindPathController">
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FindPathComponent.FindPathController">
    <content>
       <SplitPane dividerPositions="0.5" prefHeight="398.0" prefWidth="599.0">
         <items>
@@ -29,7 +29,7 @@
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </TextField>
-                              <ChoiceBox fx:id="srcTargetButton" prefWidth="150.0" />
+                              <ChoiceBox fx:id="srcTargetButton" onMouseEntered="#srcTOMEnter" onMouseExited="#srcOMExist" prefWidth="150.0" />
                            </children>
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0">
@@ -39,7 +39,7 @@
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </TextField>
-                              <ChoiceBox fx:id="dstTargetButton" prefWidth="150.0" />
+                              <ChoiceBox fx:id="dstTargetButton" onMouseEntered="#destTOMEnter" onMouseExited="#destOMExist" prefWidth="150.0" />
                            </children>
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0">
@@ -49,7 +49,7 @@
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </TextField>
-                              <ChoiceBox fx:id="relationshipButton" prefWidth="150.0" />
+                              <ChoiceBox fx:id="relationshipButton" onMouseEntered="#relTOMEnter" onMouseExited="#relOMExist" prefWidth="150.0" />
                            </children>
                         </HBox>
                      </children>
@@ -60,7 +60,7 @@
                <children>
                   <VBox layoutX="14.0" layoutY="14.0" prefHeight="360.0" prefWidth="260.0">
                      <children>
-                        <Button fx:id="findPathButton" mnemonicParsing="false" onAction="#findPathAction" text="Find Path">
+                        <Button fx:id="findPathButton" mnemonicParsing="false" onAction="#findPathAction" onMouseEntered="#findTOMEnter" onMouseExited="#findOMExist" text="Find Path">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>

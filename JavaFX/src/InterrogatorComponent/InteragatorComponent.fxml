@@ -30,22 +30,22 @@
                      </font>
                   </TextField>
                   <ChoiceBox fx:id="skinsChoiceBox" prefWidth="150.0" />
-                  <Button fx:id="changeSkins" disable="true" mnemonicParsing="false" onAction="#changeSkins" text="Change Skin!">
+                  <Button fx:id="changeSkins" disable="true" mnemonicParsing="false" onAction="#changeSkins" onMouseEntered="#changeSkinfOnMouseEntered" onMouseExited="#changeSkinfOnMouseExist" text="Change Skin!">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Button>
-                  <Button fx:id="circleButton" mnemonicParsing="false" onAction="#circleButtonAction" text="Circle">
+                  <Button fx:id="circleButton" mnemonicParsing="false" onAction="#circleButtonAction" onMouseEntered="#circleOnMOuseEntered" onMouseExited="#circleOnMOuseExist" text="Circle">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Button>
-                  <Button fx:id="pathButton" mnemonicParsing="false" onAction="#pathButtonAction" text="Path">
+                  <Button fx:id="pathButton" mnemonicParsing="false" onAction="#pathButtonAction" onMouseEntered="#pathOnMOuseEntered" onMouseExited="#pathOnMOuseExist" text="Path">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Button>
-                  <Button fx:id="whatIfButton" mnemonicParsing="false" onAction="#whatIfButtonAction" text="WhatIf">
+                  <Button fx:id="whatIfButton" mnemonicParsing="false" onAction="#whatIfButtonAction" onMouseEntered="#whatIfOnMOuseEntered" onMouseExited="#whatIfOnMOuseExist" text="WhatIf">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>

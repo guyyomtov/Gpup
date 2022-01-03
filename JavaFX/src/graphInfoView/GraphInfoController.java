@@ -1,17 +1,22 @@
 package graphInfoView;
 
+import AnimationComponent.AnimationController;
 import DataManager.BackDataManager;
 import Graph.Target;
 import Graph.Target;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import tableView.TableController;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -20,38 +25,22 @@ import java.util.Set;
 
 public class GraphInfoController {
 
-    @FXML
-    private ScrollPane welcomeView;
-
-    @FXML
-    private ChoiceBox<String> choiceBoxSerialSets;
-
-    @FXML
-    private Label resultOfChoiceBox;
-
-    @FXML
-    private BarChart<String, Integer> barChart;
-
-    @FXML
-    private Label summaryTable;
-
-    @FXML
-    private Label summaryBy;
-
-    @FXML
-    private Parent tableComponent;
-
-    @FXML
-    private TableController tableComponentController;
-
-    @FXML
-    private CheckBox whatIfCheckBox;
-
+    @FXML private ScrollPane welcomeView;
+    @FXML private GridPane gridPane;
+    @FXML private ChoiceBox<String> choiceBoxSerialSets;
+    @FXML private Label resultOfChoiceBox;
+    @FXML private BarChart<String, Integer> barChart;
+    @FXML private Label summaryTable;
+    @FXML private Label summaryBy;
+    @FXML private Parent tableComponent;
+    @FXML private TableController tableComponentController;
+    @FXML private CheckBox whatIfCheckBox;
     private boolean tableIsFull = false;
-
     private BackDataManager bDM = new BackDataManager();
+    AnimationController aniController;
 
-    public void initGraphInfo(){
+
+    public void initGraphInfo() throws IOException {
 
         this.tableComponentController.initTable(this.bDM.getAllTargets());
         this.tableComponentController.setTargets(this.bDM.getAllTargets());
@@ -59,6 +48,20 @@ public class GraphInfoController {
         this.initChoiceBox();
         this.initBarChart();
 
+        this.initAnimation();
+    }
+
+    private void initAnimation() throws IOException {
+
+        String curP = "../AnimationComponent/Animation.fxml";
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(curP));
+        Parent animationView = loader.load();
+        this.aniController = loader.getController();
+
+        aniController.init();
+
+        gridPane.add(animationView, 2,2);
     }
 
     private void initChoiceBox() {
@@ -76,6 +79,7 @@ public class GraphInfoController {
         for(Target target: inSerial)
         {
             this.resultOfChoiceBox.setText(this.resultOfChoiceBox.getText() + target.getName() + " ");
+            this.aniController.setSquareText(this.resultOfChoiceBox.getText());
         }
 
     }
@@ -104,9 +108,6 @@ public class GraphInfoController {
     void whatIfCheckBoxAction(ActionEvent event){
 
     }
-
-
-
 
     public TableView<Target> getTable(){
 

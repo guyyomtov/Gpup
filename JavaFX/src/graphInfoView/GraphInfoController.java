@@ -36,11 +36,11 @@ public class GraphInfoController {
     @FXML private TableController tableComponentController;
     @FXML private CheckBox whatIfCheckBox;
     private boolean tableIsFull = false;
+
     private BackDataManager bDM = new BackDataManager();
     private AnimationController aniController;
 
-
-    public void initGraphInfo() throws IOException {
+    public void initGraphInfo(){
 
         this.tableComponentController.initTable(this.bDM.getAllTargets());
         this.tableComponentController.setTargets(this.bDM.getAllTargets());
@@ -108,6 +108,9 @@ public class GraphInfoController {
     void whatIfCheckBoxAction(ActionEvent event){
 
     }
+
+
+
 
     public TableView<Target> getTable(){
 

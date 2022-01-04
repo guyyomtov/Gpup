@@ -169,13 +169,11 @@ public class Graph implements Serializable {
 
         List<String> allDependencies = new ArrayList<>();
         Map<String, Boolean> isVisited = new HashMap<>();
-
+        isVisited = this.makeIsVisitedMap();
         if(!targetExist(targetName))
             throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + targetName + "doesn't exist"));
 
         else {
-            for (Target t : targets)
-                isVisited.put(t.getName(), false);
             findDependencies(mNameToTarget.get(targetName), mNameToTarget.get(targetName),  allDependencies, isVisited);
         }
 
@@ -204,6 +202,7 @@ public class Graph implements Serializable {
     }
     //todo
     private Set<List<Target>> createListOfDependencies(List<String> allDependencies) {
+
         Set<List<Target>> setOfDependencies = new HashSet<>();
         for(String str : allDependencies)
         {

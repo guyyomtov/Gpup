@@ -107,7 +107,6 @@ public class TaskController {
         Integer chancesImAWarning = this.simulationComponentController.getChancesToSuccessWithWarning();
         boolean isRand = this.simulationComponentController.getIfRandom();
 
-
         for(Target target : targets){
             if(target.getRemark().isSelected())
             {

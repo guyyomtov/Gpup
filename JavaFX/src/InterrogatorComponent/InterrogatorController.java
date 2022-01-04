@@ -119,6 +119,7 @@ public class InterrogatorController {
         }
         else {
             wantedColor = null;
+            this.textColor = Color.BLACK;
         }
         this.changeButtonSkins(this.wantedColor, this.textColor);
     }

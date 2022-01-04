@@ -12,6 +12,9 @@ package WhatIfComponent;
         import javafx.scene.control.TableColumn;
         import javafx.scene.control.TableView;
         import javafx.scene.control.cell.PropertyValueFactory;
+        import javafx.scene.input.MouseEvent;
+        import javafx.scene.paint.Color;
+        import javafx.scene.paint.Paint;
 
 
         import java.util.Arrays;
@@ -28,6 +31,8 @@ public class WhatIfController {
     private BackDataManager bDM;
     private List<Target> targets;
     private Set<List<Target>> resTargets;
+    private String backroundColor = new String();
+    private Paint textColor;
 
 
     @FXML
@@ -86,5 +91,55 @@ public class WhatIfController {
         ObservableList<String> data = FXCollections.observableArrayList(tNames);
 
         targetListButton.setItems(data);
+    }
+
+    public void setSkins(String wantedColor, Paint textColor) {
+
+        this.backroundColor = wantedColor;
+        this.textColor = textColor;
+
+        this.dependenciesType.setStyle(wantedColor);
+        this.targetListButton.setStyle(wantedColor);
+        this.findButton.setStyle(wantedColor);
+        this.findButton.setTextFill(textColor);
+    }
+
+
+    @FXML
+    void findOnMOuseEntered(MouseEvent event) {
+
+        this.findButton.setTextFill(Color.BLACK);
+        this.findButton.setStyle(null);
+    }
+
+    @FXML
+    void findOnMOuseExist(MouseEvent event) {
+
+        this.findButton.setStyle(this.backroundColor);
+        this.findButton.setTextFill(this.textColor);
+    }
+
+    @FXML
+    void relOnMOuseEntered(MouseEvent event) {
+
+        this.dependenciesType.setStyle(null);
+    }
+
+    @FXML
+    void relOnMOuseExist(MouseEvent event) {
+
+        this.dependenciesType.setStyle(this.backroundColor);
+    }
+
+    @FXML
+    void tOnMOuseEntered(MouseEvent event) {
+
+        this.targetListButton.setStyle(null);
+    }
+
+    @FXML
+    void tOnMOuseExist(MouseEvent event) {
+
+        this.targetListButton.setStyle(this.backroundColor);
     }
 }

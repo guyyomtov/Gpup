@@ -1,5 +1,6 @@
 package uploadFileView;
 
+import AnimationComponent.AnimationController;
 import DataManager.BackDataManager;
 import FindPathComponent.FindPathController;
 import InterrogatorComponent.InterrogatorController;
@@ -109,6 +110,17 @@ public class MainController {
         intController.init(this.bDM);
 
         MainBorderPane.setCenter(interrogatorView);
+
+//
+//        // ---------------- TEST ANIMATION
+//        String circlePathName = "../AnimationComponent/Animation.fxml";
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource(circlePathName));
+//        Parent animationView = loader.load();
+//        AnimationController aController = loader.getController();
+//        aController.init();
+//
+//        MainBorderPane.setCenter(animationView);
+
     }
 
     @FXML

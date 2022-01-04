@@ -3,6 +3,7 @@ package FindPathComponent;
         import DataManager.BackDataManager;
         import Graph.Target;
         import errors.ErrorUtils;
+        import javafx.beans.property.SimpleStringProperty;
         import javafx.collections.FXCollections;
         import javafx.collections.ObservableList;
         import javafx.event.ActionEvent;
@@ -12,10 +13,11 @@ package FindPathComponent;
         import javafx.scene.control.TableColumn;
         import javafx.scene.control.TableView;
         import javafx.scene.control.cell.PropertyValueFactory;
+        import javafx.scene.input.MouseEvent;
+        import javafx.scene.paint.Color;
+        import javafx.scene.paint.Paint;
 
-        import java.util.Arrays;
-        import java.util.List;
-        import java.util.Set;
+        import java.util.*;
 
 public class FindPathController {
 
@@ -23,11 +25,14 @@ public class FindPathController {
     @FXML private ChoiceBox<String> dstTargetButton;
     @FXML private ChoiceBox<String> relationshipButton;
     @FXML private Button findPathButton;
-    @FXML private TableView<Target> pathsTableView;
-    @FXML private TableColumn<Target, String> pathsColum;
+    @FXML private TableView<String> pathsTableView = new TableView<>();
+    @FXML private TableColumn<String, String> pathsColum;
     private BackDataManager bDM;
     private List<Target> targets;
-    private List<String> resPaths;
+    private List<String> resPaths = new ArrayList<>();
+    private String backroundColor = new String();
+    private Paint textColor;
+
 
     @FXML
     void findPathAction(ActionEvent event) throws ErrorUtils {
@@ -39,13 +44,11 @@ public class FindPathController {
 
     private void initViewPathTable() {
 
-        ObservableList<Target> data = FXCollections.observableArrayList(this.targets);
+        ObservableList<String> details = FXCollections.observableArrayList(this.resPaths);
 
-        pathsColum.setCellValueFactory(
-                new PropertyValueFactory<>("Paths")
-        );
+        this.pathsColum.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()));
 
-        this.pathsTableView.setItems(data);
+        this.pathsTableView.setItems(details);
     }
 
     private void initDataNeededForPath() throws ErrorUtils {
@@ -62,12 +65,25 @@ public class FindPathController {
 
     private void initResPaths(String pathFromTargets) {
 
+        List<String> tmp = new ArrayList<>();
+        String arrowString = new String();
+
         if(!pathFromTargets.isEmpty() && pathFromTargets != null) {
 
             // separate by comas
-            List<String> tmp = Arrays.asList(pathFromTargets.split(","));
+            tmp = Arrays.asList(pathFromTargets.split(","));
 
-            this.resPaths = tmp;
+            for(Integer i = 0; i < tmp.size(); i++){
+
+                arrowString = tmp.get(i).trim();
+
+                arrowString = arrowString.replaceAll(" ", "-->");
+
+                this.resPaths.add(arrowString);
+
+            }
+
+            //this.resPaths.addAll(tmp);
         }
     }
 
@@ -98,5 +114,68 @@ public class FindPathController {
         this.srcTargetButton.setItems(data);
         this.dstTargetButton.setItems(data);
     }
+
+    public void setSkins(String wantedColor, Paint textColor) {
+
+        this.backroundColor = wantedColor;
+        this.textColor = textColor;
+
+        this.findPathButton.setStyle(wantedColor);
+        this.findPathButton.setTextFill(textColor);
+        this.srcTargetButton.setStyle(wantedColor);
+        this.dstTargetButton.setStyle(wantedColor);
+        this.relationshipButton.setStyle(wantedColor);
+    }
+
+    @FXML
+    void destOMExist(MouseEvent event) {
+
+        this.dstTargetButton.setStyle(this.backroundColor);
+    }
+
+    @FXML
+    void destTOMEnter(MouseEvent event) {
+
+        this.dstTargetButton.setStyle(null);
+    }
+
+    @FXML
+    void findOMExist(MouseEvent event) {
+
+        this.findPathButton.setTextFill(this.textColor);
+        this.findPathButton.setStyle(this.backroundColor);
+    }
+
+    @FXML
+    void findTOMEnter(MouseEvent event) {
+
+        this.findPathButton.setStyle(null);
+        this.findPathButton.setTextFill(Color.BLACK);
+    }
+
+    @FXML
+    void relOMExist(MouseEvent event) {
+
+        this.relationshipButton.setStyle(this.backroundColor);
+    }
+
+    @FXML
+    void relTOMEnter(MouseEvent event) {
+
+        this.relationshipButton.setStyle(null);
+    }
+
+    @FXML
+    void srcOMExist(MouseEvent event) {
+
+        this.srcTargetButton.setStyle(this.backroundColor);
+    }
+
+    @FXML
+    void srcTOMEnter(MouseEvent event) {
+
+        this.srcTargetButton.setStyle(null);
+    }
+
 }
 

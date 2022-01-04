@@ -106,8 +106,6 @@ public class GraphInfoController {
     }
 
 
-
-
     public TableView<Target> getTable(){
 
         if(tableIsFull)

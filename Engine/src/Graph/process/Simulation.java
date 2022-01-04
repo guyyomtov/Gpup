@@ -41,7 +41,6 @@ public class Simulation extends Task implements Serializable {
 
     public void run(){
 
-
         //setup data
         Map<String, Target> namesToTargetsMap = Target.initNameToTargetFrom(this.targets);
         Map<String, Minion> namesToMinions     = Minion.startMinionMapFrom(this.minions);

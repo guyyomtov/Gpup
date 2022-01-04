@@ -70,7 +70,6 @@ public class BackDataManager implements DataManager {
         return (GPUPDescriptor) u.unmarshal(in);
     }
 
-
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
         String tType;
@@ -182,7 +181,6 @@ public class BackDataManager implements DataManager {
             simulation.run();
         }
     }
-
 
     public String findCircle(String name) throws ErrorUtils {
         try{

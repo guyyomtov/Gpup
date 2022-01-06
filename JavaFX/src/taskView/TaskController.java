@@ -69,16 +69,22 @@ public class TaskController {
     @FXML
     void startButtonAction(ActionEvent event) throws ErrorUtils {
 
-//        // start flagger (which is a MUST part of dSP)
-//        Flagger flagger = new Flagger().builder()
-//                .processIsSimulation(true)
-//                .processFromScratch(true)
-//                .chancesIsRandomInProcess(true);
-//
-//        //start more needed data
-//        DataSetupProcess dSP = new DataSetupProcess().builder()
-//                .flagger(flagger)
-//                .timeToRun(2);
+        /* ---------- EXAMPLE PROCESS FROM --------------
+        // start flagger (which is a MUST part of dSP)
+        Flagger flagger = new Flagger().builder()
+                .processIsSimulation(true)
+                .processFromScratch(true)
+                .chancesIsRandomInProcess(true);
+
+        //start more needed data
+        DataSetupProcess dSP = new DataSetupProcess().builder()
+                .flagger(flagger)
+                .timeToRun(2);
+
+        this.bDM.startProcess(dSP);
+         */
+        
+        /* ---------- EXAMPLE PROCESS FOR RANDOM USER TARGETS --------------
 
         // start flagger (which is a MUST part of dSP)
         Flagger flagger = new Flagger().builder()
@@ -95,6 +101,8 @@ public class TaskController {
             dSP.minionsChoosenByUser(this.minions);
 
         this.bDM.startProcess(dSP);
+
+         */
     }
 
     @FXML

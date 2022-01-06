@@ -1,6 +1,8 @@
 package Graph.process;
 
+import Flagger.Flagger;
 import Graph.Target;
+import errors.ErrorUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -22,55 +24,63 @@ public abstract class Task implements Serializable {
     public static int maxParallelism;
 
 
-    // from beginning
-    public Task(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, boolean timeIsRandom, Consumer cUI) {
+    public Task(DataSetupProcess dSp) throws ErrorUtils {
 
-        this.targets = targets;
-        this.cUI = cUI;
-        this.timeIRun = timeToRun;
-        this.chancesISucceed = chancesToSucceed;
-        this.chancesImAWarning = chancesToBeAWarning;
+        if(dSp.allGraphTargets == null || dSp.timeToRun == null
+        || dSp.chancesToSucceed == null || dSp.chancesToBeAWarning == null){
 
-        if(timeIsRandom){
-
-            Integer maxTime = this.timeIRun;
-
-            this.isRandom = true;
-
-            this.startMinions(null, maxTime);
+            throw new ErrorUtils(ErrorUtils.NEEDED_DATA_IS_NULL);
         }
-        else{
 
-            this.isRandom = false;
+        this.targets = dSp.allGraphTargets;
+        this.timeIRun = dSp.timeToRun;
+        this.chancesISucceed = dSp.chancesToSucceed;
+        this.chancesImAWarning = dSp.chancesToBeAWarning;
 
-            this.startMinions(null);
+        if (dSp.flagger.processFromScratch) {
+
+            // make all minions from scratch
+            this.startMinions();
         }
-    }
+        else if (dSp.flagger.processIncremental) {
 
-    // incremental
-    public Task(List<Target> targets, Task oldTask, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, boolean timeIsRandom, Consumer cUI) {
-
-        this.targets = targets;
-        this.cUI = cUI;
-        this.timeIRun = timeToRun;
-        this.chancesISucceed = chancesToSucceed;
-        this.chancesImAWarning = chancesToBeAWarning;
-
-        if(timeIsRandom){
-
-            Integer maxTime = this.timeIRun;
-
-            this.isRandom = true;
-
-            this.startMinions(oldTask, maxTime);
+            // copy minions from last task
+            this.startMinions(dSp.oldTask);
         }
-        else{
+        else if(dSp.flagger.processFromRandomTargets){
 
-            this.isRandom = false;
-
-            this.startMinions(oldTask);
+            //make on chosen minions with 100% succeed
+            this.startMinions(dSp.minionsChoosenByUser);
         }
     }
+
+    // from scratch
+    private void startMinions(){
+
+        this.minions = Minion.makeMinionsFrom(this.targets, this.timeIRun, this.chancesISucceed, this.chancesImAWarning);
+    }
+
+    private void startMinions(Task oldTask){
+
+        this.initCurMinFrom(oldTask.getMinions());
+
+        AddDataOnMinions();
+    }
+
+    private void startMinions(List<Minion> userMinions){
+
+        List<String> existingMinions = Minion.getMinionsNames(userMinions);
+
+        //add missing minions with 100% success
+        for(Target curTarget : this.targets) {
+
+            if(!existingMinions.contains(curTarget.getName()))
+                this.minions.add(Minion.startMinionWithSuccessFrom(curTarget));
+        }
+        // process wanted minions
+        this.minions.addAll(userMinions);
+    }
+
 
     public List<Minion> getMinions() { return minions; }
 
@@ -80,21 +90,6 @@ public abstract class Task implements Serializable {
 
     public Map<String, List<String>> getLastPData(){ return this.targetNameToSummeryProcess; }
 
-    public void startMinions(Task oldTask){
-
-        // from beginning
-        if(oldTask == null){
-
-            for(Target curTarget : this.targets)
-                this.minions.add(new Minion(curTarget, this.timeIRun, this.chancesISucceed, this.chancesImAWarning, false));
-        }
-        else// incremental
-            this.initCurMinFrom(oldTask.getMinions());
-        AddDataOnMinions();
-
-
-    }
-
     private void AddDataOnMinions() {
 
         Map<String, Minion> namesToMinions = Minion.startMinionMapFrom(this.minions);
@@ -103,64 +98,6 @@ public abstract class Task implements Serializable {
             curM.initMyKindsAndParents(this.minions);
             curM.setAllNamesToMinions(namesToMinions);
             curM.setcUI(this.cUI);
-        }
-    }
-
-    // when time random
-    public void startMinions(Task oldTask, Integer maxPossibleTime){
-
-        // from beginning
-        if(oldTask == null){
-
-            for(Target curTarget : this.targets)
-                this.minions.add(new Minion(curTarget, maxPossibleTime, this.chancesISucceed, this.chancesImAWarning, true));
-        }
-        else// incremental
-            this.initCurMinFrom(oldTask.getMinions(), maxPossibleTime);
-    }
-
-    //when time random
-    public void initCurMinFrom(List<Minion> oldMins, Integer maxPossibleTime){
-
-        String oldStatus;
-        String targetType;
-
-        // go over all old
-        for(Minion curOldMin : oldMins){
-
-            oldStatus =  curOldMin.getMyStatus();
-            targetType = curOldMin.getTarget().getTargetType().toString();
-
-            Minion newMin = new Minion(curOldMin.getTarget(), maxPossibleTime, this.chancesISucceed, this.chancesImAWarning, true);
-
-            // if success || warning --> give it to new minions
-            if(oldStatus.equals("WARNING") || oldStatus.equals("SUCCESS")){
-                newMin.setMyStatus(oldStatus);
-                newMin.setiAmFinished(true);
-                newMin.setCanIRun(true);
-            }
-            else if(oldStatus.equals("SKIPPED")) {
-
-                newMin.setMyStatus("FROZEN");
-                newMin.setiAmFinished(false);
-                newMin.setCanIRun(false);
-            }
-            else if(oldStatus.equals("FAILURE") ){
-
-                if(targetType.equals("Leaf") || targetType.equals("Independent")) {
-
-                    newMin.setMyStatus("WAITING");
-                    newMin.setiAmFinished(false);
-                    newMin.setCanIRun(true);
-                }
-                else { // middle or root
-
-                    newMin.setMyStatus("FROZEN");
-                    newMin.setiAmFinished(false);
-                    newMin.setCanIRun(false);
-                }
-            }
-            this.minions.add(newMin);
         }
     }
 
@@ -175,7 +112,7 @@ public abstract class Task implements Serializable {
             oldStatus =  curOldMin.getMyStatus();
             targetType = curOldMin.getTarget().getTargetType().toString();
 
-            Minion newMin = new Minion(curOldMin.getTarget(), this.timeIRun, this.chancesISucceed, this.chancesImAWarning, false);
+            Minion newMin = new Minion(curOldMin.getTarget(), this.timeIRun, this.chancesISucceed, this.chancesImAWarning);
 
             // if success || warning --> give it to new minions
             if(oldStatus.equals("WARNING") || oldStatus.equals("SUCCESS")){

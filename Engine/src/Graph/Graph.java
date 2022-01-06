@@ -7,17 +7,11 @@ import java.util.*;
 
 public class Graph implements Serializable {
 
-
-
-
     private List<Target> targets = new ArrayList<Target>();
     public boolean isGood = true;
     private PathFinder pathFinder = new PathFinder();
-
-
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
-
     private Map<String, Set<Target>> mSerialSets = new HashMap<>();
 
 

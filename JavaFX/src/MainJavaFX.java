@@ -30,10 +30,6 @@ public class MainJavaFX extends Application {
 
     public static void main(String[] args) {
 
-        Flagger curFlagger = new Flagger().builder()
-                        .processFromScratch(true)
-                                .timeIsRandomInProcess(false);
-
         launch(args);
     }
 }

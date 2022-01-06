@@ -1,9 +1,12 @@
 package taskView;
 
 import DataManager.BackDataManager;
+import Flagger.Flagger;
 import Graph.Target;
+import Graph.process.DataSetupProcess;
 import Graph.process.Minion;
 import Graph.process.Task;
+import errors.ErrorUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,57 +21,28 @@ import taskView.simulationComponent.SimulationComponentController;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class TaskController {
 
-    @FXML
-    private GridPane gridPaneSettingTab;
-
-    @FXML
-    private RadioButton simulationButton;
-
-    @FXML
-    private RadioButton compilationButton;
-
-    @FXML
-    private Spinner<Integer> threadsSpinner;
-
-    @FXML
-    private RadioButton incrementalButton;
-
-    @FXML
-    private RadioButton fromScratchButton;
-
-    @FXML
-    private Label errorMessegeForIncremental;
-
-    @FXML
-    private Text infoForTarget;
-
-    @FXML
-    private Button updateTargetListButton;
-
-    @FXML
-    private Button startButton;
-
-    @FXML
-    private Button pauseButton;
-
-    @FXML
-    private Label summaryLabel;
-
-    @FXML
-    private Parent tableProcess;
-
-    @FXML
-    private TableForProcessController tableProcessController;
-
-
+    @FXML private GridPane gridPaneSettingTab;
+    @FXML private RadioButton simulationButton;
+    @FXML private RadioButton compilationButton;
+    @FXML private Spinner<Integer> threadsSpinner;
+    @FXML private RadioButton incrementalButton;
+    @FXML private RadioButton fromScratchButton;
+    @FXML private Label errorMessegeForIncremental;
+    @FXML private Text infoForTarget;
+    @FXML private Button updateTargetListButton;
+    @FXML private Button startButton;
+    @FXML private Button pauseButton;
+    @FXML private Label summaryLabel;
+    @FXML private Parent tableProcess;
+    @FXML private TableForProcessController tableProcessController;
     private BackDataManager bDM;
-
     private SimulationComponentController simulationComponentController;
-
     private Parent simulationComponent;
+    private List<Minion> minions = new ArrayList<>();
 
 
     @FXML
@@ -93,15 +67,40 @@ public class TaskController {
     }
 
     @FXML
-    void startButtonAction(ActionEvent event) {
+    void startButtonAction(ActionEvent event) throws ErrorUtils {
 
+//        // start flagger (which is a MUST part of dSP)
+//        Flagger flagger = new Flagger().builder()
+//                .processIsSimulation(true)
+//                .processFromScratch(true)
+//                .chancesIsRandomInProcess(true);
+//
+//        //start more needed data
+//        DataSetupProcess dSP = new DataSetupProcess().builder()
+//                .flagger(flagger)
+//                .timeToRun(2);
+
+        // start flagger (which is a MUST part of dSP)
+        Flagger flagger = new Flagger().builder()
+                .processIsSimulation(true)
+                .processFromRandomTargets(true)
+                .chancesIsRandomInProcess(true);
+
+        //start more needed data
+        DataSetupProcess dSP = new DataSetupProcess().builder()
+                .flagger(flagger)
+                .timeToRun(2);
+
+        if(!this.minions.isEmpty())
+            dSP.minionsChoosenByUser(this.minions);
+
+        this.bDM.startProcess(dSP);
     }
 
     @FXML
     void updateTargetListButtonAction(ActionEvent event) {
 
         List<Target> targets = this.bDM.getAllTargets();
-        List<Minion> minions = new ArrayList<>();
         Integer maxTime = this.simulationComponentController.getMaxTime();
         Integer chancesISucceed = this.simulationComponentController.getChancesToSuccess();
         Integer chancesImAWarning = this.simulationComponentController.getChancesToSuccessWithWarning();
@@ -110,12 +109,10 @@ public class TaskController {
         for(Target target : targets){
             if(target.getRemark().isSelected())
             {
-                minions.add(new Minion(target, maxTime, chancesISucceed, chancesImAWarning, isRand));
+                minions.add(new Minion(target, maxTime, chancesISucceed, chancesImAWarning));
             }
         }
-
         tableProcessController.initTable(minions);
-
     }
 
     public void setbDM(BackDataManager bDM) {

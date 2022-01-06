@@ -3,25 +3,21 @@ package graphInfoView;
 import AnimationComponent.AnimationController;
 import DataManager.BackDataManager;
 import Graph.Target;
-import Graph.Target;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import tableView.TableController;
+import Flagger.Flagger;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class GraphInfoController {
 
@@ -40,7 +36,7 @@ public class GraphInfoController {
     private BackDataManager bDM = new BackDataManager();
     private AnimationController aniController;
 
-    public void initGraphInfo(){
+    public void initGraphInfo() throws IOException {
 
         this.tableComponentController.initTable(this.bDM.getAllTargets());
         this.tableComponentController.setTargets(this.bDM.getAllTargets());
@@ -108,9 +104,6 @@ public class GraphInfoController {
     void whatIfCheckBoxAction(ActionEvent event){
 
     }
-
-
-
 
     public TableView<Target> getTable(){
 

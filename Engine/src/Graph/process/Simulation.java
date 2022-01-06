@@ -3,6 +3,7 @@ package Graph.process;
 import Graph.Target;
 import DataManager.consumerData.FormatAllTask;
 import DataManager.consumerData.ProcessInfo;
+import errors.ErrorUtils;
 import fileHandler.TaskFile;
 
 import java.io.Serializable;
@@ -17,66 +18,61 @@ import java.util.function.Consumer;
 
 public class Simulation extends Task implements Serializable {
 
-    // from beginning
-    public Simulation(List<Target> targets, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, boolean isTimeRandom, Consumer cUI) {
+    public Simulation(DataSetupProcess dSp) throws ErrorUtils {
 
-        super(targets, timeToRun, chancesToSucceed, chancesToBeAWarning, isTimeRandom, cUI);
-
-        this.setName();
-
-        TaskFile taskFile = new TaskFile();
-        taskFile.makeTaskDir(this.taskName);
-    }
-
-    // incremental
-    public Simulation(List<Target> targets, Task oldTask, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, boolean isTimeRandom, Consumer cUI) {
-
-        super(targets, oldTask, timeToRun, chancesToSucceed, chancesToBeAWarning, isTimeRandom, cUI);
+        super(dSp);
 
         this.setName();
 
         TaskFile taskFile = new TaskFile();
         taskFile.makeTaskDir(this.taskName);
     }
+
 
     public void run(){
 
-        //setup data
+        //setup data part 1
         Map<String, Target> namesToTargetsMap = Target.initNameToTargetFrom(this.targets);
         Map<String, Minion> namesToMinions     = Minion.startMinionMapFrom(this.minions);
         Map<String, Map<String, Minion>>    typeOfTargetToTargetNameToHisTask   = this.startMinionMapByTargetType(namesToMinions, namesToTargetsMap);
 
-
-        // setup data
+        // setup data part 2
         Map<String,Minion> independents = typeOfTargetToTargetNameToHisTask.get("Independent");
         Map<String,Minion> leaves = typeOfTargetToTargetNameToHisTask.get("Leaf");
         Map<String,Minion> middles = typeOfTargetToTargetNameToHisTask.get("Middle");
         Map<String,Minion> roots = typeOfTargetToTargetNameToHisTask.get("Root");
 
+        this.cUI = new Consumer() {
+            @Override
+            public void accept(Object o) {
+                System.out.println(o);
+            }
+        };
+
         FormatAllTask.restartMap();
         FormatAllTask.start = Instant.now();
 
         // start process
-
         // go over all targets:
 
         // 1) start with independents
-       // this.runTheseTargetsByType(independents,namesToMinions);
-        //
-        this.makeQueue();
-       this.runTheseTasks(namesToMinions);
+        this.runTheseTargetsByType(independents,namesToMinions);
+
+        // ----------- needed to be fixed !!!
+        //this.makeQueue();
+       //this.runTheseTasks(namesToMinions);
+
         // move to leaves
-       // this.runTheseTargetsByType(leaves,namesToMinions);
+        this.runTheseTargetsByType(leaves,namesToMinions);
 
         // then to middle
-      //  this.runTheseTargetsByType(middles,namesToMinions);
+        this.runTheseTargetsByType(middles,namesToMinions);
 
         // then to root
-      //  this.runTheseTargetsByType(roots,namesToMinions);
+        this.runTheseTargetsByType(roots,namesToMinions);
 
         FormatAllTask.end = Instant.now();
         FormatAllTask.sendData(cUI);
-
 
         FormatAllTask.sendData(cUI, this.targetNameToSummeryProcess);
         ProcessInfo.setOldTask(this);
@@ -101,65 +97,41 @@ public class Simulation extends Task implements Serializable {
         return resM;
     }
 
-//    private void runTheseTargetsByType(Map<String,Minion> curMinions, Map<String, Minion> namesToMinions){
-//
-//        Boolean curMinionsFinished = false;
-//
-//        if(!curMinions.keySet().isEmpty()) {
-//
-//            while (!curMinionsFinished) {
-//
-//                this.runTheseTasks(new ArrayList<>(curMinions.values()), namesToMinions); // go over all cur tasks and get the needed data back
-//
-//                curMinionsFinished = checkIfWeFinished(new ArrayList<>(curMinions.values())); // go over all cur tasks and check if finished (with get
-//            }
-//        }
-//    }
+    private void runTheseTargetsByType(Map<String,Minion> curMinions, Map<String, Minion> namesToMinions){
+
+        Boolean curMinionsFinished = false;
+
+        if(!curMinions.keySet().isEmpty()) {
+
+            while (!curMinionsFinished) {
+
+                this.runTheseTasks(new ArrayList<>(curMinions.values()), namesToMinions); // go over all cur tasks and get the needed data back
+
+                curMinionsFinished = checkIfWeFinished(new ArrayList<>(curMinions.values())); // go over all cur tasks and check if finished (with get
+            }
+        }
+    }
 
 
-//    private void runTheseTasks(List<Minion> minions, Map<String, Minion> namesToMinions){
-//
-//        // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
-//        List<String> curTaskData = new ArrayList<>();
-//        List<Minion> kids = new ArrayList<Minion>();
-//
-//        for(Minion curM : minions){
-//
-//            if(this.iAllReadyRan(curM))
-//                curTaskData = this.getOldDataFrom(curM);
-//            else{
-//
-//                kids = findMyKids(curM, namesToMinions);
-//                curTaskData = curM.tryToRunMe(kids, namesToMinions, this.cUI);
-//                if(!curTaskData.isEmpty()) {
-//                    this.targetNameToSummeryProcess.put(curM.getName(), curTaskData);
-//                    FormatAllTask.updateCounter(curTaskData.get(3));// the status
-//                }
-//            }
-//        }
-//    }
-
-    private void runTheseTasks(Map<String, Minion> namesToMinions){
+    private void runTheseTasks(List<Minion> minions, Map<String, Minion> namesToMinions){
 
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
-        List<String> curTaskData;
-        ExecutorService threadExecutor = Executors.newFixedThreadPool(/*maxParallelism*/1);
+        List<String> curTaskData = new ArrayList<>();
+        List<Minion> kids = new ArrayList<Minion>();
 
-        for(Minion curM : this.waitingList){
+        for(Minion curM : minions){
 
-            // to remove from the queue
-            threadExecutor.execute(curM); //ask aviad
+            if(this.iAllReadyRan(curM))
+                curTaskData = this.getOldDataFrom(curM);
+            else{
 
-            //this.checkIfToAddMyParents(curM, namesToMinions);
-
-            //curTaskData = curM.getMyPData();
-
-//                if(!curTaskData.isEmpty()) {
-//                    this.targetNameToSummeryProcess.put(curM.getName(), curTaskData);
-//
-//                    FormatAllTask.updateCounter(curTaskData.get(3));// the status
-//                }
-//            }
+                kids = findMyKids(curM, namesToMinions);
+                curTaskData = curM.tryToRunMe(kids, namesToMinions, this.cUI);
+                if(!curTaskData.isEmpty()) {
+                    this.targetNameToSummeryProcess.put(curM.getName(), curTaskData);
+                    FormatAllTask.updateCounter(curTaskData.get(3));// the status
+                }
+            }
         }
     }
 

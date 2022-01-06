@@ -52,19 +52,20 @@ public abstract class Task implements Serializable {
             //make on chosen minions with 100% succeed
             this.startMinions(dSp.minionsChoosenByUser);
         }
+        AddDataOnMinions();
     }
 
     // from scratch
     private void startMinions(){
 
         this.minions = Minion.makeMinionsFrom(this.targets, this.timeIRun, this.chancesISucceed, this.chancesImAWarning);
+
     }
 
     private void startMinions(Task oldTask){
 
         this.initCurMinFrom(oldTask.getMinions());
 
-        AddDataOnMinions();
     }
 
     private void startMinions(List<Minion> userMinions){

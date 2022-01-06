@@ -1,5 +1,6 @@
 package taskView;
 
+import AnimationComponent.SkinsUtils;
 import DataManager.BackDataManager;
 import Flagger.Flagger;
 import Graph.Target;
@@ -20,11 +21,16 @@ import taskView.simulationComponent.SimulationComponentController;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class TaskController {
 
+    private List<Button> buttons = new ArrayList<>();
+    @FXML private Button updateTargetListButton;
+    @FXML private Button startButton;
+    @FXML private Button pauseButton;
     @FXML private GridPane gridPaneSettingTab;
     @FXML private RadioButton simulationButton;
     @FXML private RadioButton compilationButton;
@@ -33,9 +39,6 @@ public class TaskController {
     @FXML private RadioButton fromScratchButton;
     @FXML private Label errorMessegeForIncremental;
     @FXML private Text infoForTarget;
-    @FXML private Button updateTargetListButton;
-    @FXML private Button startButton;
-    @FXML private Button pauseButton;
     @FXML private Label summaryLabel;
     @FXML private Parent tableProcess;
     @FXML private TableForProcessController tableProcessController;
@@ -43,6 +46,25 @@ public class TaskController {
     private SimulationComponentController simulationComponentController;
     private Parent simulationComponent;
     private List<Minion> minions = new ArrayList<>();
+
+
+
+    public void initTaskView()
+    {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("simulationComponent/simulationComponentFxml.fxml"));
+            simulationComponent = loader.load();
+            simulationComponentController = loader.getController();
+            simulationComponentController.initSimulation();
+            this.initThreadsSpinner();
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.buttons = Arrays.asList(this.pauseButton, this.startButton,
+                this.updateTargetListButton);
+    }
 
 
     @FXML
@@ -105,6 +127,11 @@ public class TaskController {
          */
     }
 
+    public void setButtonsColors(SkinsUtils.Colors wantedColors){
+
+        SkinsUtils.changeButtonColorTo(wantedColors, this.buttons);
+    }
+
     @FXML
     void updateTargetListButtonAction(ActionEvent event) {
 
@@ -127,20 +154,6 @@ public class TaskController {
         this.bDM = bDM;
     }
 
-    public void initTaskView()
-    {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("simulationComponent/simulationComponentFxml.fxml"));
-            simulationComponent = loader.load();
-            simulationComponentController = loader.getController();
-            simulationComponentController.initSimulation();
-            this.initThreadsSpinner();
-
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private void initThreadsSpinner() {
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Task.maxParallelism, 1);

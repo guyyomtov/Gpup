@@ -59,13 +59,11 @@ public abstract class Task implements Serializable {
     private void startMinions(){
 
         this.minions = Minion.makeMinionsFrom(this.targets, this.timeIRun, this.chancesISucceed, this.chancesImAWarning);
-
     }
 
     private void startMinions(Task oldTask){
 
         this.initCurMinFrom(oldTask.getMinions());
-
     }
 
     private void startMinions(List<Minion> userMinions){

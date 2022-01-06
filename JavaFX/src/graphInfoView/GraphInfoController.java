@@ -32,9 +32,9 @@ public class GraphInfoController {
     @FXML private TableController tableComponentController;
     @FXML private CheckBox whatIfCheckBox;
     private boolean tableIsFull = false;
-
     private BackDataManager bDM = new BackDataManager();
     private AnimationController aniController;
+
 
     public void initGraphInfo() throws IOException {
 

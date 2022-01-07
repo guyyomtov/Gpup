@@ -12,6 +12,7 @@ public class MainJavaFX extends Application {
     FXMLLoader loader = new FXMLLoader();
 
 
+
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -28,6 +29,7 @@ public class MainJavaFX extends Application {
 
 
     public static void main(String[] args) {
+
         launch(args);
     }
 }

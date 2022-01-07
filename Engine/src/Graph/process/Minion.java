@@ -31,7 +31,8 @@ public class Minion implements Serializable, Runnable {
     protected Integer chancesImAWarning;
     private Map<String, Minion> allNamesToMinions;
 
-    public Minion(Target target, Integer maxTime, Integer chancesISucceed, Integer chancesImAWarning, boolean timeIsRand ){
+
+    public Minion(Target target, Integer maxTime, Integer chancesISucceed, Integer chancesImAWarning){
 
         this.target = target;
         this.targetName = target.getName();
@@ -43,15 +44,26 @@ public class Minion implements Serializable, Runnable {
         this.chancesImAWarning = chancesImAWarning;
         this.setMyKidsNames();
         this.setMyParentsNames();
-        if(timeIsRand){
+        this.timeIRun = maxTime;
+    }
 
-            Random rand = new Random();
+    public Minion(Target target){
 
-            this.timeIRun = rand.nextInt(maxTime); // gives a value from 0 to maxTime
-        }
-        else{
-            this.timeIRun = maxTime;
-        }
+        this.target = target;
+        this.targetName = target.getName();
+        this.targetType = target.getTargetType();
+        this.myStatus = "SUCCESS";
+        this.iAmFinished = true;
+        this.chancesISucceed = 100;
+        this.chancesImAWarning = 0;
+        this.setMyKidsNames();
+        this.setMyParentsNames();
+        this.timeIRun = 0;
+    }
+
+    public static Minion startMinionWithSuccessFrom(Target target){
+
+        return new Minion(target);
     }
 
     public static List<Minion> getMinionsByName(List<String> minionsNames, Map<String, Minion> namesToMinions) {
@@ -60,6 +72,20 @@ public class Minion implements Serializable, Runnable {
 
         for(String curMinName : minionsNames)
             res.add(namesToMinions.get(curMinName));
+
+        return res;
+    }
+
+    public static List<Minion> makeMinionsFrom(List<Target> targets, Integer timeIRun, Integer chancesISucceed, Integer chancesImAWarning) {
+
+        List<Minion> res = new ArrayList<>();
+
+        for(Target curT : targets){
+
+            Minion newM = new Minion(curT, timeIRun, chancesISucceed, chancesImAWarning);
+
+            res.add(newM);
+        }
 
         return res;
     }
@@ -199,6 +225,16 @@ public class Minion implements Serializable, Runnable {
         this.canIRun = iCanRun;
 
         return resStatus;
+    }
+
+    static public List<String> getMinionsNames(List<Minion> minions){
+
+        List<String> res = new ArrayList<>();
+
+        for(Minion curM : minions)
+            res.add(curM.getName());
+
+        return res;
     }
 
     private List<String> giveMyData(){

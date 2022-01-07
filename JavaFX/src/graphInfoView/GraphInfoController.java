@@ -15,6 +15,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import tableView.TableController;
+import Flagger.Flagger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class GraphInfoController {
 
@@ -38,22 +40,20 @@ public class GraphInfoController {
     @FXML private RadioButton dependsOnButton;
     @FXML private RadioButton requiredForButton;
     private boolean tableIsFull = false;
-    private AnimationController aniController;
 
     private BackDataManager bDM = new BackDataManager();
+    private AnimationController aniController;
 
-    public void initGraphInfo(){
+
+    public void initGraphInfo() throws IOException {
 
         this.tableComponentController.initTable(this.bDM.getAllTargets());
         this.tableComponentController.setGraphInfoController(this);
         this.initSummary();;
         this.initChoiceBox();
         this.initBarChart();
-        try {
-            this.initAnimation();
-        } catch (IOException e) {
-           // to handle with exception e.printStackTrace();
-        }
+
+        this.initAnimation();
     }
 
     private void initAnimation() throws IOException {
@@ -120,6 +120,8 @@ public class GraphInfoController {
             this.requiredForButton.setDisable(true);
         }
     }
+
+
 
 
     public TableView<Target> getTable(){

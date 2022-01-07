@@ -1,5 +1,6 @@
 package InterrogatorComponent;
 
+        import AnimationComponent.SkinsUtils;
         import DataManager.BackDataManager;
         import FindPathComponent.FindPathController;
         import WhatIfComponent.WhatIfController;
@@ -15,14 +16,17 @@ package InterrogatorComponent;
         import javafx.scene.layout.BorderPane;
         import javafx.scene.paint.Color;
         import javafx.scene.paint.Paint;
-
         import java.io.IOException;
+        import java.util.ArrayList;
+        import java.util.Arrays;
+        import java.util.List;
 
 public class InterrogatorController {
 
     @FXML private Button circleButton;
     @FXML private Button pathButton;
     @FXML private Button whatIfButton;
+    private List<Button> buttons = new ArrayList<>();
     @FXML private AnchorPane mainSplitPane;
     @FXML private BorderPane mainBoarderPain;
     @FXML private ChoiceBox<String> skinsChoiceBox;
@@ -44,11 +48,18 @@ public class InterrogatorController {
 
         this.bDM = other;
 
-        this.initSkinsButton();
+       // this.initSkinsButton();
 
         this.initCircleComponenet();
         this.initPathComponent();
         this.WhatIfComponent();
+
+       this.buttons = Arrays.asList(this.circleButton, this.pathButton, this.whatIfButton);
+    }
+
+    public void setButtonsColors(SkinsUtils.Colors wantedColors){
+
+        SkinsUtils.changeButtonColorTo(wantedColors, this.buttons);
     }
 
 
@@ -90,55 +101,6 @@ public class InterrogatorController {
         this.fCController.initFindCircleController(this.bDM);
     }
 
-    private void initSkinsButton() {
-
-        this.skinsChoiceBox.getItems().add("RED");
-        this.skinsChoiceBox.getItems().add("BLUE");
-        this.skinsChoiceBox.getItems().add("DEFAULT");
-
-
-        this.skinsChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
-                (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-
-                    this.changeSkins.setDisable(false);
-                }
-        );
-
-    }
-
-    private void changeButtonColorTo(String value) {
-
-        String text = "color: white;";
-        if(value == "RED") {
-            wantedColor = "-fx-background-color: red; ";
-            this.textColor = Color.WHITE;
-        }
-        else if(value == "BLUE") {
-            wantedColor = "-fx-background-color: blue; ";
-            this.textColor = Color.YELLOW;
-        }
-        else {
-            wantedColor = null;
-            this.textColor = Color.BLACK;
-        }
-        this.changeButtonSkins(this.wantedColor, this.textColor);
-    }
-
-    private void changeButtonSkins(String wantedColor, Paint textColor) {
-
-        this.changeSkins.setTextFill(textColor);
-        this.circleButton.setTextFill(textColor);
-        this.pathButton.setTextFill(textColor);
-        this.whatIfButton.setTextFill(textColor);
-
-        this.changeSkins.setStyle(wantedColor);
-        this.circleButton.setStyle(wantedColor);
-        this.pathButton.setStyle(wantedColor);
-        this.whatIfButton.setStyle(wantedColor);
-
-        this.setKidComponentButtonSkins();
-    }
-
     private void setKidComponentButtonSkins() {
 
         this.fCController.setSkins(this.wantedColor, this.textColor);
@@ -149,7 +111,7 @@ public class InterrogatorController {
     @FXML
     void changeSkins(ActionEvent event) {
 
-        this.changeButtonColorTo(this.skinsChoiceBox.getValue());
+       // this.changeButtonColorTo(this.skinsChoiceBox.getValue());
     }
 
     @FXML

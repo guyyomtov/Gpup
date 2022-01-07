@@ -93,7 +93,7 @@ public class UIDataManager implements DataManager {
 
     public void startProcess(Consumer cUI, boolean isTimeRandom, boolean isIncremental, int timeToRun, int chancesToSucceed, int chancesToBeAWarning) throws ErrorUtils {
 
-        this.bDM.startProcess(cUI, isTimeRandom, isIncremental, timeToRun, chancesToSucceed, chancesToBeAWarning);
+        //this.bDM.startProcess(cUI, isTimeRandom, isIncremental, timeToRun, chancesToSucceed, chancesToBeAWarning);
     }
 
     public void loadFile(String fullPath) throws ErrorUtils {

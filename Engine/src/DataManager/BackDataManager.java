@@ -1,7 +1,10 @@
 package DataManager;
 
 import DataManager.consumerData.ProcessInfo;
+import Flagger.Flagger;
 import GpupClassesEx2.GPUPDescriptor;
+import Graph.process.DataSetupProcess;
+import Graph.process.Minion;
 import Graph.process.Minion;
 import Graph.process.Simulation;
 import Graph.process.Task;
@@ -166,19 +169,18 @@ public class BackDataManager implements DataManager {
             throw new ErrorUtils(ErrorUtils.invalidInput("Please enter in the wanted relationship 'depends On' -> D/ 'required For' -> R."));
     }
 
-    public void startProcess(Consumer cUI, boolean isTimeRandom, Boolean isIncremental,int timeToRun, int chancesToSucceed, int chancesToBeAWarning) {
+    public void startProcess(DataSetupProcess dSP) throws ErrorUtils {
 
-        if(isIncremental) {
+        //give more needed data
+        dSP.allGraphTargets(this.graph.getAllTargets());
 
-            Task oldTask = ProcessInfo.getOldTask();
+        // Choose process
+        if(dSP.flagger.processIsSimulation){
 
-            Task simulation = new Simulation(this.graph.getAllTargets(), oldTask, timeToRun, chancesToSucceed, chancesToBeAWarning, isTimeRandom, cUI);
-
+            Task simulation = new Simulation(dSP);
             simulation.run();
         }
-        else{ // from beginning
-
-            Task simulation = new Simulation(this.graph.getAllTargets(), timeToRun, chancesToSucceed, chancesToBeAWarning, isTimeRandom, cUI);
+        else if(dSP.flagger.processIsCompilation){
 
             simulation.run();
         }
@@ -214,9 +216,4 @@ public class BackDataManager implements DataManager {
         return this.graph.getmSerialSets();
     }
 
-    public void startPro(List<Minion> minions) {
-
-       // javafx.concurrent.Task<Boolean>
-
-    }
 }

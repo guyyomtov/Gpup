@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.46422628951747086" minHeight="400.0" minWidth="600.0" prefHeight="403.0" prefWidth="603.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FindCircleComponent.FindCircleController">
+<SplitPane dividerPositions="0.46422628951747086" minHeight="500.0" minWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FindCircleComponent.FindCircleController">
    <items>
       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="401.0" prefWidth="305.0">
          <children>
@@ -21,7 +21,7 @@
                      <children>
                         <TextField editable="false" prefHeight="25.0" prefWidth="82.0" text="Targets:">
                            <font>
-                              <Font name="System Bold" size="12.0" />
+                              <Font name="System Bold" size="15.0" />
                            </font>
                         </TextField>
                         <ChoiceBox fx:id="targetList" onMouseEntered="#tOnMOuseEntered" onMouseExited="#tOnMOuseExist" prefHeight="25.0" prefWidth="170.0" />

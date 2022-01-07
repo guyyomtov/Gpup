@@ -1,5 +1,6 @@
 package graphInfoView;
 
+import AnimationComponent.AnimationController;
 import DataManager.BackDataManager;
 import Graph.Target;
 import Graph.Target;
@@ -34,19 +35,25 @@ public class GraphInfoController {
     @FXML private Parent tableComponent;
     @FXML private TableController tableComponentController;
     @FXML private CheckBox whatIfCheckBox;
+    @FXML private RadioButton dependsOnButton;
+    @FXML private RadioButton requiredForButton;
     private boolean tableIsFull = false;
+    private AnimationController aniController;
 
     private BackDataManager bDM = new BackDataManager();
 
     public void initGraphInfo(){
 
         this.tableComponentController.initTable(this.bDM.getAllTargets());
-        this.tableComponentController.setTargets(this.bDM.getAllTargets());
+        this.tableComponentController.setGraphInfoController(this);
         this.initSummary();;
         this.initChoiceBox();
         this.initBarChart();
-
-        this.initAnimation();
+        try {
+            this.initAnimation();
+        } catch (IOException e) {
+           // to handle with exception e.printStackTrace();
+        }
     }
 
     private void initAnimation() throws IOException {
@@ -104,10 +111,15 @@ public class GraphInfoController {
 
     @FXML
     void whatIfCheckBoxAction(ActionEvent event){
-
+        if(this.whatIfCheckBox.isSelected()) {
+            this.dependsOnButton.setDisable(false);
+            this.requiredForButton.setDisable(false);
+        }
+        else{
+            this.dependsOnButton.setDisable(true);
+            this.requiredForButton.setDisable(true);
+        }
     }
-
-
 
 
     public TableView<Target> getTable(){
@@ -122,6 +134,18 @@ public class GraphInfoController {
 
     public void setbDM(BackDataManager bDM) {
         this.bDM = bDM;
+    }
+
+    public CheckBox getWhatIfCheckBox() {
+        return this.whatIfCheckBox;
+    }
+
+    public RadioButton getDependsOnRadioButton(){
+        return this.dependsOnButton;
+    }
+
+    public BackDataManager getbDM(){
+        return this.bDM;
     }
 }
 

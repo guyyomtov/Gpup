@@ -3,6 +3,7 @@ package WhatIfComponent;
         import DataManager.BackDataManager;
         import Graph.Target;
         import errors.ErrorUtils;
+        import javafx.beans.property.SimpleStringProperty;
         import javafx.collections.FXCollections;
         import javafx.collections.ObservableList;
         import javafx.event.ActionEvent;
@@ -17,6 +18,7 @@ package WhatIfComponent;
         import javafx.scene.paint.Paint;
 
 
+        import java.util.ArrayList;
         import java.util.Arrays;
         import java.util.List;
         import java.util.Set;
@@ -26,13 +28,14 @@ public class WhatIfController {
     @FXML private ChoiceBox<String> targetListButton;
     @FXML private ChoiceBox<String> dependenciesType;
     @FXML private Button findButton;
-    @FXML private TableColumn<Target, String> resTable;
-    @FXML private TableView<Target> tableView;
+    @FXML private TableColumn<String, String> resTable;
+    @FXML private TableView<String> tableView;
     private BackDataManager bDM;
     private List<Target> targets;
     private Set<List<Target>> resTargets;
     private String backroundColor = new String();
     private Paint textColor;
+    private List<String> resPaths = new ArrayList<>();
 
 
     @FXML
@@ -42,19 +45,46 @@ public class WhatIfController {
 
         tableView.setDisable(false);
 
+        this.convertToStringPath();
+
         this.initResTable();
+    }
+
+    private void convertToStringPath() {
+
+        this.resPaths.clear();
+        for(List<Target> targets : this.resTargets ) {
+            String path = new String();
+            if(dependenciesType.getValue().equals("Depends On")) {
+                for (int i = 0; i < targets.size(); i++) {
+                    path += targets.get(i).getName();
+                    if (i != targets.size() - 1)
+                        path += "-->";
+                }
+            }
+
+            else{ // print it as required for should be
+                for (int i = targets.size() - 1; i >=0 ; i--) {
+                    path += targets.get(i).getName();
+                    if (i != 0)
+                        path += "-->";
+                }
+            }
+            this.resPaths.add(path);
+        }
+
     }
 
     private void initResTable() {
 
-        ObservableList<Target> data = FXCollections.observableArrayList(this.targets);
+        ObservableList<String> dataL = FXCollections.observableArrayList(this.resPaths);
 
-        resTable.setCellValueFactory(
-                new PropertyValueFactory<>("Name")
-        );
+        this.resTable.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()));
 
-        tableView.setItems(data);
+        tableView.setItems(dataL);
     }
+
+
 
     private void initFindButtonNeededData() throws ErrorUtils {
 
@@ -63,6 +93,7 @@ public class WhatIfController {
             String relationshipType = dependenciesType.getValue() == "Depends On" ? "D" : "R";
 
             this.resTargets = this.bDM.whatIf(targetListButton.getValue(), relationshipType);
+
         }
     }
 
@@ -108,38 +139,38 @@ public class WhatIfController {
     @FXML
     void findOnMOuseEntered(MouseEvent event) {
 
-        this.findButton.setTextFill(Color.BLACK);
-        this.findButton.setStyle(null);
+      //  this.findButton.setTextFill(Color.BLACK);
+      //  this.findButton.setStyle(null);
     }
 
     @FXML
     void findOnMOuseExist(MouseEvent event) {
 
-        this.findButton.setStyle(this.backroundColor);
-        this.findButton.setTextFill(this.textColor);
+      //  this.findButton.setStyle(this.backroundColor);
+      //  this.findButton.setTextFill(this.textColor);
     }
 
     @FXML
     void relOnMOuseEntered(MouseEvent event) {
 
-        this.dependenciesType.setStyle(null);
+       // this.dependenciesType.setStyle(null);
     }
 
     @FXML
     void relOnMOuseExist(MouseEvent event) {
 
-        this.dependenciesType.setStyle(this.backroundColor);
+       //  this.dependenciesType.setStyle(this.backroundColor);
     }
 
     @FXML
     void tOnMOuseEntered(MouseEvent event) {
 
-        this.targetListButton.setStyle(null);
+//        this.targetListButton.setStyle(null);
     }
-
     @FXML
     void tOnMOuseExist(MouseEvent event) {
 
-        this.targetListButton.setStyle(this.backroundColor);
+      //  this.targetListButton.setStyle(this.backroundColor);
     }
+
 }

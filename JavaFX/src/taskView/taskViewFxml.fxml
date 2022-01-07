@@ -3,11 +3,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -15,7 +17,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
 
 <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="taskView.TaskController">
    <content>
@@ -88,7 +90,7 @@
                                        <toggleGroup>
                                           <ToggleGroup fx:id="runFromBegining" />
                                        </toggleGroup></RadioButton>
-                                    <RadioButton fx:id="fromScratchButton" mnemonicParsing="false" text="from Scratch" toggleGroup="$runFromBegining" />
+                                    <RadioButton fx:id="fromScratchButton" mnemonicParsing="false" selected="true" text="from Scratch" toggleGroup="$runFromBegining" />
                                  </children>
                               </HBox>
                               <Label fx:id="errorMessegeForIncremental" prefHeight="21.0" prefWidth="267.0" text="Handle Error messege if we need to" />
@@ -118,27 +120,34 @@
                      </rowConstraints>
                      <children>
                         <fx:include fx:id="tableProcess" source="../tableForProcess/tableForProcessFxml.fxml" GridPane.rowIndex="1" />
-                        <Text fx:id="infoForTarget" strokeType="OUTSIDE" strokeWidth="0.0" text="info on targets" wrappingWidth="127.15576171875" GridPane.rowIndex="2" />
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1">
                            <children>
-                              <Button fx:id="updateTargetListButton" mnemonicParsing="false" onAction="#updateTargetListButtonAction" prefHeight="31.0" prefWidth="159.0" text="Update Target List" />
-                              <Button fx:id="startButton" mnemonicParsing="false" onAction="#startButtonAction" text="Start" />
-                              <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseButtonAction" text="Pause" />
+                              <Button fx:id="updateTargetListButton" mnemonicParsing="false" onAction="#updateTargetListButtonAction" prefHeight="31.0" prefWidth="148.0" text="Update Target List" />
+                              <Button fx:id="startButton" mnemonicParsing="false" onAction="#startButtonAction" prefHeight="31.0" prefWidth="62.0" text="Start" />
+                              <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseButtonAction" prefHeight="31.0" prefWidth="68.0" text="Pause" />
+                              <Button fx:id="resumeButton" disable="true" mnemonicParsing="false" onAction="#resumeButtonAction" text="Resume" />
                            </children>
                            <padding>
                               <Insets left="5.0" />
                            </padding>
                         </HBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <HBox prefHeight="100.0" prefWidth="200.0">
+                              <HBox prefHeight="39.0" prefWidth="549.0" spacing="10.0">
                                  <children>
-                                    <Label fx:id="summaryLabel" prefHeight="21.0" prefWidth="83.0" text="Summary" />
+                                    <Label prefHeight="38.0" prefWidth="100.0" text="Task Progress">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="precentOfProgressBar" prefHeight="39.0" prefWidth="64.0" />
                                  </children>
                               </HBox>
+                              <ProgressBar fx:id="progressBar" prefHeight="31.0" prefWidth="762.0" progress="0.0" />
                            </children>
                         </VBox>
-                        <Label prefHeight="241.0" prefWidth="550.0" text="information" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="infoForTarget" prefHeight="110.0" prefWidth="473.0" text="Label" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                </content>

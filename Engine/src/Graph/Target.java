@@ -230,50 +230,6 @@ public class Target implements Serializable {
             return namesToTargets.get(curTName);
     }
 
-    public void countTotalDependsOn(Map<String, Boolean> isVisited) {
-        if(dependsOn.isEmpty())
-            return;
-        else
-            countTotalDependsOnHelper(this, isVisited);
-    }
-
-    private void countTotalDependsOnHelper(Target currTarget, Map<String, Boolean> isVisited) {
-        if(currTarget.dependsOn.isEmpty())
-            return;
-        if(isVisited.get(currTarget.getName()))
-            return;
-        else
-        {
-            isVisited.put(currTarget.getName(), true);
-            this.totalDependsOn += dependsOn.size();
-            for(Target target : currTarget.dependsOn)
-                countTotalDependsOnHelper(target, isVisited);
-        }
-
-    }
-
-    public void countTotalRequiredFor(Map<String, Boolean> isVisited) {
-        if(requiredFor.isEmpty())
-            return;
-        else
-            countTotalRequiredForHelper(this,isVisited);
-    }
-
-    private void countTotalRequiredForHelper(Target currTarget, Map<String, Boolean> isVisited) {
-        if(currTarget.requiredFor.isEmpty())
-            return;
-        if(isVisited.get(currTarget.getName()))
-            return;
-        else
-        {
-            isVisited.put(currTarget.getName(), true);
-            this.totalRequiredFor+= requiredFor.size();
-            for(Target target : currTarget.requiredFor)
-                countTotalRequiredForHelper(target, isVisited);
-        }
-
-    }
-
     public void countIncludedSerialSets(Map<String, Set<Target>> mSerialSets) {
 
         for(Set<Target> targets : mSerialSets.values()) {
@@ -285,5 +241,14 @@ public class Target implements Serializable {
 
 
     public CheckBox getRemark() {return remark;}
+
+    public void setTotalRequiredFor(Integer totalRequiredFor) {
+        this.totalRequiredFor = totalRequiredFor;
+    }
+
+    public void setTotalDependsOn(Integer totalDependsOn) {
+        this.totalDependsOn = totalDependsOn;
+    }
+
 
 }

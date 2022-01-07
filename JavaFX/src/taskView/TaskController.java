@@ -4,6 +4,10 @@ import DataManager.BackDataManager;
 import Graph.Target;
 import Graph.process.Minion;
 import Graph.process.Task;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,55 +25,48 @@ import java.util.List;
 
 public class TaskController {
 
-    @FXML
-    private GridPane gridPaneSettingTab;
+    @FXML private GridPane gridPaneSettingTab;
+    @FXML private RadioButton simulationButton;
+    @FXML private RadioButton compilationButton;
+    @FXML private Spinner<Integer> threadsSpinner;
+    @FXML private RadioButton incrementalButton;
+    @FXML private RadioButton fromScratchButton;
+    @FXML private Label errorMessegeForIncremental;
+    @FXML private Label infoForTarget;
+    @FXML private Button updateTargetListButton;
+    @FXML private Button startButton;
+    @FXML private Button pauseButton;
+    @FXML private Button resumeButton;
+    @FXML private Label summaryLabel;
+    @FXML private Parent tableProcess;
+    @FXML private TableForProcessController tableProcessController;
+    @FXML private TextArea textArea;
+    @FXML ProgressBar progressBar;
+    @FXML private Label precentOfProgressBar;
 
-    @FXML
-    private RadioButton simulationButton;
 
-    @FXML
-    private RadioButton compilationButton;
-
-    @FXML
-    private Spinner<Integer> threadsSpinner;
-
-    @FXML
-    private RadioButton incrementalButton;
-
-    @FXML
-    private RadioButton fromScratchButton;
-
-    @FXML
-    private Label errorMessegeForIncremental;
-
-    @FXML
-    private Text infoForTarget;
-
-    @FXML
-    private Button updateTargetListButton;
-
-    @FXML
-    private Button startButton;
-
-    @FXML
-    private Button pauseButton;
-
-    @FXML
-    private Label summaryLabel;
-
-    @FXML
-    private Parent tableProcess;
-
-    @FXML
-    private TableForProcessController tableProcessController;
-
+    private SimpleIntegerProperty precentOfProgress;
+    private SimpleStringProperty updateInfoForUI;
+    private SimpleStringProperty targetInfo;
+    private SimpleBooleanProperty isPause;
 
     private BackDataManager bDM;
-
+    private List<Minion> minions = new ArrayList<>();
     private SimulationComponentController simulationComponentController;
 
     private Parent simulationComponent;
 
+    public TaskController(){
+        precentOfProgress = new SimpleIntegerProperty(0);
+        updateInfoForUI = new SimpleStringProperty();
+        isPause = new SimpleBooleanProperty(false);
+        targetInfo = new SimpleStringProperty();
+    }
+
+    @FXML
+    private void initialize(){
+        infoForTarget.textProperty().bind(targetInfo);
+    }
 
     @FXML
     void compilationButtonAction(ActionEvent event) {
@@ -77,6 +74,11 @@ public class TaskController {
             gridPaneSettingTab.getChildren().removeAll(simulationComponent);
             gridPaneSettingTab.add(summaryLabel, 0, 1);
         }catch (Exception e){}
+    }
+
+    @FXML
+    void resumeButtonAction(ActionEvent event) {
+
     }
 
     @FXML
@@ -94,27 +96,40 @@ public class TaskController {
 
     @FXML
     void startButtonAction(ActionEvent event) {
+        if(minions.isEmpty())
+            return;
+
+        //else
+        this.startButton.setDisable(true);
+        this.resumeButton.setDisable(false);
+        this.pauseButton.setDisable(false);
+        this.bDM.startPro(minions);
 
     }
 
     @FXML
     void updateTargetListButtonAction(ActionEvent event) {
 
-        List<Target> targets = this.bDM.getAllTargets();
-        List<Minion> minions = new ArrayList<>();
-        Integer maxTime = this.simulationComponentController.getMaxTime();
-        Integer chancesISucceed = this.simulationComponentController.getChancesToSuccess();
-        Integer chancesImAWarning = this.simulationComponentController.getChancesToSuccessWithWarning();
-        boolean isRand = this.simulationComponentController.getIfRandom();
+        try {
+            List<Target> targets = this.bDM.getAllTargets();
+            //List<Minion> minions = new ArrayList<>();
+            minions.clear();
+            Integer maxTime = this.simulationComponentController.getMaxTime();
+            Integer chancesISucceed = this.simulationComponentController.getChancesToSuccess();
+            Integer chancesImAWarning = this.simulationComponentController.getChancesToSuccessWithWarning();
+            boolean isRand = this.simulationComponentController.getIfRandom();
 
-        for(Target target : targets){
-            if(target.getRemark().isSelected())
-            {
-                minions.add(new Minion(target, maxTime, chancesISucceed, chancesImAWarning, isRand));
+            for (Target target : targets) {
+                if (target.getRemark().isSelected()) {
+                    minions.add(new Minion(target, maxTime, chancesISucceed, chancesImAWarning, isRand));
+                }
             }
-        }
 
-        tableProcessController.initTable(minions);
+            tableProcessController.initTable(minions);
+        }catch (Exception e){ }
+
+
+       // minions.get(0).setMyStatus("finished");
 
     }
 
@@ -122,14 +137,14 @@ public class TaskController {
         this.bDM = bDM;
     }
 
-    public void initTaskView()
-    {
+    public void initTaskView() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("simulationComponent/simulationComponentFxml.fxml"));
             simulationComponent = loader.load();
             simulationComponentController = loader.getController();
             simulationComponentController.initSimulation();
             this.initThreadsSpinner();
+           // this.updateTargetListButton
 
         }catch (IOException e) {
             e.printStackTrace();

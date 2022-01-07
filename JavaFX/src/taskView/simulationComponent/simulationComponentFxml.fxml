@@ -22,7 +22,7 @@
       </HBox>
       <HBox prefHeight="49.0" prefWidth="400.0" spacing="10.0">
          <children>
-            <RadioButton fx:id="randomButton" mnemonicParsing="false" onAction="#randomButtonAction" prefHeight="21.0" prefWidth="92.0" text="Random">
+            <RadioButton fx:id="randomButton" mnemonicParsing="false" onAction="#randomButtonAction" prefHeight="21.0" prefWidth="92.0" selected="true" text="Random">
                <toggleGroup>
                   <ToggleGroup fx:id="randomOrManual" />
                </toggleGroup></RadioButton>
@@ -35,7 +35,7 @@
       <HBox prefHeight="50.0" prefWidth="400.0" spacing="5.0">
          <children>
             <Label prefHeight="21.0" prefWidth="136.0" text="Chances for success:" />
-            <Spinner fx:id="succsesSpinner" disable="true" />
+            <Spinner fx:id="succsesSpinner" />
          </children>
          <padding>
             <Insets left="10.0" />
@@ -44,7 +44,7 @@
       <HBox prefHeight="76.0" prefWidth="590.0" spacing="5.0">
          <children>
             <Label prefHeight="46.0" prefWidth="137.0" text="Chances for success&#10; with warning:" />
-            <Spinner fx:id="warningSpinner" disable="true">
+            <Spinner fx:id="warningSpinner">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>

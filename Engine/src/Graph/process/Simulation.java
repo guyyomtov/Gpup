@@ -148,6 +148,7 @@ public class Simulation extends Task implements Serializable {
 
         for(Minion curM : this.waitingList){
 
+
             // to remove from the queue
             threadExecutor.execute(curM); //ask aviad
 

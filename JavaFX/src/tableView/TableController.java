@@ -2,6 +2,8 @@ package tableView;
 
 import DataManager.BackDataManager;
 import Graph.Target;
+import errors.ErrorUtils;
+import graphInfoView.GraphInfoController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,6 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class TableController {
 
@@ -46,10 +49,13 @@ public class TableController {
     @FXML
     private CheckBox selectAllCheckBox;
 
-    private List<Target> targets = new ArrayList<>();
+    private GraphInfoController graphInfoController;
 
     @FXML
     void selectAllCheckBoxAction(ActionEvent event) {
+
+        List<Target> targets = this.graphInfoController.getbDM().getAllTargets();
+
         if(this.selectAllCheckBox.isSelected()) {
             for(Target target : targets)
                 target.getRemark().setSelected(true);
@@ -88,11 +94,47 @@ public class TableController {
         );
 
         tableView.setItems(data);
+        levelColumn.setSortType(TableColumn.SortType.DESCENDING);
+        this.initActionOnCheckBoxes(targets);
+    }
+
+    private void initActionOnCheckBoxes(List<Target> targets) {
+        for(Target target : targets){
+            CheckBox currCheckBox = target.getRemark();
+            currCheckBox.setOnAction(event -> checkBoxAction(target));
+        }
+    }
+    //this action only for if what if selected.
+    private void checkBoxAction(Target target){
+
+        boolean whatIfSelected = graphInfoController.getWhatIfCheckBox().isSelected();
+        boolean dependsOnSelected = graphInfoController.getDependsOnRadioButton().isSelected();
+        boolean isAlreadySelected = target.getRemark().isSelected();
+        if(!isAlreadySelected)
+            return;
+        if(whatIfSelected){
+            Set<List<Target>> allPath;
+            try {
+                if (dependsOnSelected)
+                    allPath = this.graphInfoController.getbDM().whatIf(target.getName(), "D");
+                else // its requiredFor
+                    allPath = this.graphInfoController.getbDM().whatIf(target.getName(), "R");
+                this.updateCheckBoxesWith(allPath);
+            }catch(ErrorUtils e){}
+        }
+
+    }
+
+    private void updateCheckBoxesWith(Set<List<Target>> allPath) {
+
+        for(List<Target> path : allPath)
+            path.forEach(target -> target.getRemark().setSelected(true));
+
     }
 
     public TableView<Target> getTableView(){ return this.tableView;}
 
-    public void setTargets(List<Target> targets) {
-        this.targets = targets;
+    public void setGraphInfoController(GraphInfoController graphInfoController) {
+        this.graphInfoController = graphInfoController;
     }
 }

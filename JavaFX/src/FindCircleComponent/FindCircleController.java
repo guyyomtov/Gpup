@@ -80,26 +80,26 @@ public class FindCircleController {
     @FXML
     void findCircleButtonMouseEnteredAction(MouseEvent event) {
 
-        this.findCircleButton.setStyle(null);
-        this.findCircleButton.setTextFill(Color.BLACK);
+     //   this.findCircleButton.setStyle(null);
+      //  this.findCircleButton.setTextFill(Color.BLACK);
     }
 
     @FXML
     void findCircleButtonMouseExitedAction(MouseEvent event) {
 
-        this.findCircleButton.setStyle(this.backroundColor);
-        this.findCircleButton.setTextFill(this.textColor);
+      //  this.findCircleButton.setStyle(this.backroundColor);
+        //this.findCircleButton.setTextFill(this.textColor);
     }
 
     @FXML
     void tOnMOuseEntered(MouseEvent event) {
 
-        this.targetList.setStyle(null);
+       // this.targetList.setStyle(null);
     }
 
     @FXML
     void tOnMOuseExist(MouseEvent event) {
 
-        this.targetList.setStyle(this.backroundColor);
+      //  this.targetList.setStyle(this.backroundColor);
     }
 }

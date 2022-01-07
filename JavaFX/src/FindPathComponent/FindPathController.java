@@ -8,10 +8,7 @@ package FindPathComponent;
         import javafx.collections.ObservableList;
         import javafx.event.ActionEvent;
         import javafx.fxml.FXML;
-        import javafx.scene.control.Button;
-        import javafx.scene.control.ChoiceBox;
-        import javafx.scene.control.TableColumn;
-        import javafx.scene.control.TableView;
+        import javafx.scene.control.*;
         import javafx.scene.control.cell.PropertyValueFactory;
         import javafx.scene.input.MouseEvent;
         import javafx.scene.paint.Color;
@@ -25,8 +22,8 @@ public class FindPathController {
     @FXML private ChoiceBox<String> dstTargetButton;
     @FXML private ChoiceBox<String> relationshipButton;
     @FXML private Button findPathButton;
-    @FXML private TableView<String> pathsTableView = new TableView<>();
-    @FXML private TableColumn<String, String> pathsColum;
+    @FXML private ListView<String> pathListView;
+    @FXML private Label thereIsNoPathMessege;
     private BackDataManager bDM;
     private List<Target> targets;
     private List<String> resPaths = new ArrayList<>();
@@ -44,11 +41,13 @@ public class FindPathController {
 
     private void initViewPathTable() {
 
+       // this.pathsTableView.getSelectionModel().selectAll();
+
         ObservableList<String> details = FXCollections.observableArrayList(this.resPaths);
 
-        this.pathsColum.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()));
+      //  this.pathsColum.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()));
 
-        this.pathsTableView.setItems(details);
+        this.pathListView.setItems(details);
     }
 
     private void initDataNeededForPath() throws ErrorUtils {
@@ -59,7 +58,16 @@ public class FindPathController {
 
             String relationShipNeededSyntax = (relV == "Depends On" ? "D" : "R");
 
-            this.initResPaths(this.bDM.getPathFromTargets(srcV, dstV, relationShipNeededSyntax));
+            String allPath = this.bDM.getPathFromTargets(srcV, dstV, relationShipNeededSyntax);
+            if(allPath.equals("")){
+                this.thereIsNoPathMessege.setText("There is no path between " + srcV + " to " + dstV + "\n" +  " with the given connection " + this.relationshipButton.getValue());
+                return;
+            }
+            else {
+                this.thereIsNoPathMessege.setText("");
+                this.initResPaths(allPath);
+
+            }
         }
     }
 
@@ -67,31 +75,45 @@ public class FindPathController {
 
         List<String> tmp = new ArrayList<>();
         String arrowString = new String();
+        this.resPaths.clear();
 
         if(!pathFromTargets.isEmpty() && pathFromTargets != null) {
 
             // separate by comas
             tmp = Arrays.asList(pathFromTargets.split(","));
 
-            for(Integer i = 0; i < tmp.size(); i++){
+                for (Integer i = 0; i < tmp.size(); i++) {
 
-                arrowString = tmp.get(i).trim();
+                    arrowString = tmp.get(i).trim();
 
-                arrowString = arrowString.replaceAll(" ", "-->");
+                    if(this.relationshipButton.getValue().equals("Required For"))
+                        arrowString = this.reverseString(arrowString);
 
-                this.resPaths.add(arrowString);
+                    arrowString = arrowString.replaceAll(" ", "-->");
 
-            }
+                    this.resPaths.add(arrowString);
+                }
 
             //this.resPaths.addAll(tmp);
         }
+    }
+
+    private String reverseString(String arrowString) {
+        char ch;
+        String res = new String();
+        for (int i=0; i < arrowString.length(); i++)
+        {
+            ch = arrowString.charAt(i); //extracts each character
+            res= ch + res; //adds each character in front of the existing string
+        }
+
+        return res;
     }
 
     public void init(BackDataManager other){
 
         this.bDM = other;
         this.targets = other.getAllTargets();
-
         this.initTargetsButtons();
         this.initRelationshipButton();
     }
@@ -103,6 +125,7 @@ public class FindPathController {
         ObservableList<String> data = FXCollections.observableArrayList(relations);
 
         relationshipButton.setItems(data);
+        relationshipButton.setValue(relations.get(0));
     }
 
     private void initTargetsButtons() {
@@ -113,6 +136,10 @@ public class FindPathController {
 
         this.srcTargetButton.setItems(data);
         this.dstTargetButton.setItems(data);
+        if(data.size() > 2) {
+            this.srcTargetButton.setValue(data.get(0));
+            this.dstTargetButton.setValue(data.get(1));
+        }
     }
 
     public void setSkins(String wantedColor, Paint textColor) {
@@ -130,51 +157,51 @@ public class FindPathController {
     @FXML
     void destOMExist(MouseEvent event) {
 
-        this.dstTargetButton.setStyle(this.backroundColor);
+        //this.dstTargetButton.setStyle(this.backroundColor);
     }
 
     @FXML
     void destTOMEnter(MouseEvent event) {
 
-        this.dstTargetButton.setStyle(null);
+      //  this.dstTargetButton.setStyle(null);
     }
 
     @FXML
     void findOMExist(MouseEvent event) {
 
-        this.findPathButton.setTextFill(this.textColor);
-        this.findPathButton.setStyle(this.backroundColor);
+      //  this.findPathButton.setTextFill(this.textColor);
+      //  this.findPathButton.setStyle(this.backroundColor);
     }
 
     @FXML
     void findTOMEnter(MouseEvent event) {
 
-        this.findPathButton.setStyle(null);
-        this.findPathButton.setTextFill(Color.BLACK);
+      //  this.findPathButton.setStyle(null);
+       //  this.findPathButton.setTextFill(Color.BLACK);
     }
 
     @FXML
     void relOMExist(MouseEvent event) {
 
-        this.relationshipButton.setStyle(this.backroundColor);
+       // this.relationshipButton.setStyle(this.backroundColor);
     }
 
     @FXML
     void relTOMEnter(MouseEvent event) {
 
-        this.relationshipButton.setStyle(null);
+      //  this.relationshipButton.setStyle(null);
     }
 
     @FXML
     void srcOMExist(MouseEvent event) {
 
-        this.srcTargetButton.setStyle(this.backroundColor);
+     //   this.srcTargetButton.setStyle(this.backroundColor);
     }
 
     @FXML
     void srcTOMEnter(MouseEvent event) {
 
-        this.srcTargetButton.setStyle(null);
+     //   this.srcTargetButton.setStyle(null);
     }
 
 }

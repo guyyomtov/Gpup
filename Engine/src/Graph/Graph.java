@@ -164,7 +164,6 @@ public class Graph implements Serializable {
         return foundDouble;
     }
 
-    //todo --> give attention to the connection
     public  Set<List<Target>> whatIf(String targetName, String connection) throws ErrorUtils{
 
         List<String> allDependencies = new ArrayList<>();
@@ -174,33 +173,45 @@ public class Graph implements Serializable {
             throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + targetName + "doesn't exist"));
 
         else {
-            findDependencies(mNameToTarget.get(targetName), mNameToTarget.get(targetName),  allDependencies, isVisited);
+            findDependencies(mNameToTarget.get(targetName), mNameToTarget.get(targetName),  allDependencies, isVisited, connection);
         }
 
         return this.createListOfDependencies(allDependencies);
     }
 
-    private void findDependencies(Target currTarget, Target target,  List<String> allDependencies,Map<String, Boolean> isVisited ) throws ErrorUtils {
+    private void findDependencies(Target currTarget, Target target,  List<String> allDependencies,Map<String, Boolean> isVisited, String connection ) throws ErrorUtils {
 
-        List<Target> directDependencies = target.getDependsOn();
+        List<Target> directDependencies;
         try {
-            if (target.getTargetType().equals(Target.Type.LEAF)) {
+            if ((target.getTargetType().equals(Target.Type.LEAF) && connection.equals("D") )|| (target.getTargetType().equals(Target.Type.ROOT) && connection.equals("R")) && currTarget != target) {
                 isVisited.put(target.getName(), true);
-                String path = this.pathFinder.findAllPaths(currTarget.getName(), target.getName());
+                String path;
+                if(connection.equals("D"))
+                    path = this.pathFinder.findAllPaths(currTarget.getName(), target.getName());
+                else
+                    path = this.pathFinder.findAllPaths(target.getName(), currTarget.getName());
+
                 allDependencies.add(path);
             }
             else {
                 isVisited.put(target.getName(), true);
-                for (Target currT : directDependencies) {
-                    if(!isVisited.get(currT.getName()))
-                        findDependencies(currTarget, currT, allDependencies, isVisited);
+                if(connection.equals("D"))
+                    directDependencies = target.getDependsOn();
+                else
+                    directDependencies = target.getRequiredFor();
+
+                    for (Target currT : directDependencies) {
+                        if (!isVisited.get(currT.getName()))
+                            findDependencies(currTarget, currT, allDependencies, isVisited, connection);
+                    }
+
                 }
-            }
+
         }catch (ErrorUtils e){throw e;}
 
 
     }
-    //todo
+
     private Set<List<Target>> createListOfDependencies(List<String> allDependencies) {
 
         Set<List<Target>> setOfDependencies = new HashSet<>();
@@ -209,17 +220,16 @@ public class Graph implements Serializable {
             String[] split = str.split(",");
             for(String string : split)
             {
-                string = string.replace(" ", ",");
-                try {
-                    //todo
-                    List<Target> path = new ArrayList<Target>(Target.getTargetsByName(string, this.targets));
-                    setOfDependencies.add(path);
-                }catch(ErrorUtils e){}
-//                for(String ch : s)
-//                {
-//                    path.add(this.mNameToTarget.get(ch));
-//                }
+                string = string.replace(" ", "");
+                   List<Target> path = new ArrayList<Target>();
 
+                   String[] targetNames = string.split("");
+                   for(String targetName : targetNames) {
+                       Target target = this.mNameToTarget.get(targetName);
+                       if(target != null)
+                           path.add(target);
+                   }
+                    setOfDependencies.add(path);
             }
         }
         return setOfDependencies;
@@ -235,16 +245,38 @@ public class Graph implements Serializable {
 
 
     public void updateTotalDependenciesAndSerialSets() {
-        Map <String, Boolean> isVisited = makeIsVisitedMap();
-        for(Target target : this.targets)
-        {
-            target.countTotalDependsOn(isVisited);
-            target.countTotalRequiredFor(isVisited);
-            target.countIncludedSerialSets(this.mSerialSets);
-
-        }
-
+        Map <String, Boolean> isVisited;
+        Set<List<Target>> allPath;
+        int totalDependsON, totalRequiredFor;
+        try {
+            for (Target target : this.targets) {
+                allPath = this.whatIf(target.getName(), "D");
+                totalDependsON = countTotalDependencies(target ,allPath);
+                allPath = this.whatIf(target.getName(), "R");;
+                totalRequiredFor =  countTotalDependencies(target,allPath);
+                target.countIncludedSerialSets(this.mSerialSets);
+                target.setTotalDependsOn(totalDependsON);
+                target.setTotalRequiredFor(totalRequiredFor);
+            }
+        }catch(ErrorUtils e){}
     }
+
+    public int countTotalDependencies(Target currTarget,Set<List<Target>> allPath){
+        int res = 0;
+        Map<String, Boolean> isVisited = this.makeIsVisitedMap();
+        isVisited.put(currTarget.getName(), true);
+        for(List<Target> path : allPath){
+         //   path.stream().filter(target -> isVisited.get(target.getName()) == false).forEach((target -> isVisited.put(target.getName(), true));
+            for(Target target : path){
+                if(!isVisited.get(target.getName())){
+                    isVisited.put(target.getName(), true);
+                    ++res;
+                }
+            }
+        }
+        return res;
+    }
+
 
     private Map<String, Boolean> makeIsVisitedMap() {
         Map <String, Boolean> isVisited = new HashMap<>();

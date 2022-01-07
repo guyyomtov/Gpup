@@ -2,6 +2,7 @@ package DataManager;
 
 import DataManager.consumerData.ProcessInfo;
 import GpupClassesEx2.GPUPDescriptor;
+import Graph.process.Minion;
 import Graph.process.Simulation;
 import Graph.process.Task;
 import errors.ErrorUtils;
@@ -183,7 +184,6 @@ public class BackDataManager implements DataManager {
         }
     }
 
-
     public String findCircle(String name) throws ErrorUtils {
         try{
             return this.graph.findCircle(name);
@@ -214,4 +214,9 @@ public class BackDataManager implements DataManager {
         return this.graph.getmSerialSets();
     }
 
+    public void startPro(List<Minion> minions) {
+
+       // javafx.concurrent.Task<Boolean>
+
+    }
 }

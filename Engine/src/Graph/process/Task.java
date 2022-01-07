@@ -147,10 +147,10 @@ public abstract class Task implements Serializable {
     public abstract void setName();
 
     public void makeQueue() {
+
         for(Minion curM : this.minions)
             if(curM.getCanIRun())
                 waitingList.add(curM);
-
     }
 
 }

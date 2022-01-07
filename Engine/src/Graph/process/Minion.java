@@ -90,6 +90,18 @@ public class Minion implements Serializable, Runnable {
         return res;
     }
 
+    public static List<Minion> returnMinionsWhoAreWaitingFrom(List<Minion> allMinios){
+
+        List<Minion> res = new ArrayList<>();
+
+        for(Minion curM : allMinios){
+
+            if(curM.getMyStatus().equals("WAITING"))
+                res.add(curM);
+        }
+        return res;
+    }
+
     public void setiAmFinished(Boolean iAmFinished) { this.iAmFinished = iAmFinished; }
 
     public void setCanIRun(Boolean canIRun) { this.canIRun = canIRun;}
@@ -135,6 +147,8 @@ public class Minion implements Serializable, Runnable {
 
     public List<String> runMe(Map<String,Minion> allMinions, Consumer cUI)  {
 
+        this.myStatus = "IN PROCESS";
+
         List<String> resData = new ArrayList<>();
         String openedParents = new String();
         ConsumerTaskInfo cTI = new ConsumerTaskInfo(this.target.getName());
@@ -157,7 +171,10 @@ public class Minion implements Serializable, Runnable {
                 this.myStatus = "WARNING"; //success with warning
             else
                 this.myStatus = "SUCCESS";
-            openedParents = this.iOpened(this.parentsNames, allMinions);
+
+            synchronized(this){
+            openedParents = this.iOpened(this.parentsNames, allMinions);}
+
         }
         else
             this.myStatus = "FAILURE";
@@ -253,7 +270,8 @@ public class Minion implements Serializable, Runnable {
         return resData;
     }
 
-    private String iOpened(List<String> parentsNames, Map<String,Minion> allMinions){
+    private String iOpened(List<String> parentsNames, Map<String,Minion> allMinions)
+    {
 
         String resNames = new String();
         Boolean addThisDad = true;
@@ -283,8 +301,16 @@ public class Minion implements Serializable, Runnable {
                 if(!curKid.getMyStatus().equals("SUCCESS") && !curKid.getMyStatus().equals("WARNING"))
                     addThisDad = false;
             }
-            if(addThisDad)
-                resNames +=  " " + curDadName;
+            if(addThisDad) {
+
+                //make res string
+                resNames += " " + curDadName;
+
+                //update status of dad
+                Minion curDad = allMinions.get(curDadName);
+                curDad.setMyStatus("WAITING");
+                curDad.setCanIRun(true);
+            }
         }
         return resNames;
     }
@@ -305,6 +331,12 @@ public class Minion implements Serializable, Runnable {
     @Override
     public void run(){
 
+        this.cUI = new Consumer() {
+            @Override
+            public void accept(Object o) {
+                System.out.println(o);
+            }
+        };
         this.tryToRunMe(myKids, allNamesToMinions,this.cUI);
 
         this.checkIfToAddMyParents();
@@ -315,15 +347,24 @@ public class Minion implements Serializable, Runnable {
 
             FormatAllTask.updateCounter(myPData.get(3));// the status
         }
+        Simulation.threadCounter = Simulation.threadCounter - 1 ;
     }
 
     private void checkIfToAddMyParents() {
 
-        if(this.ISucceeded())
-        {
+        if(this.ISucceeded()) {
+
             for(Minion curD : this.parents) {
-                if(curD.getCanIRun())
-                    Task.waitingList.add(curD);
+                if(curD.getCanIRun()) {
+
+                    int y = 5;
+
+                    if(!Task.waitingList.contains(curD))
+                        Task.waitingList.add(curD);
+
+  //                  curD.run();
+                    int x = 5;
+                }
             }
         }
     }

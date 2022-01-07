@@ -177,8 +177,11 @@ public class BackDataManager implements DataManager {
         // Choose process
         if(dSP.flagger.processIsSimulation){
 
-            Task simulation = new Simulation(dSP);
-            simulation.run();
+            for(Minion curM : dSP.minionsChoosenByUser){
+                curM.setMyStatus("dick");
+            }
+            Simulation simulation = new Simulation(dSP);
+            new Thread(simulation).start();
         }
         else if(dSP.flagger.processIsCompilation){
 

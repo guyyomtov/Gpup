@@ -79,7 +79,7 @@ public class MainController {
                 this.taskButton, this.InterrogatorButton);
 
         // SKINS
-        SkinsUtils.initSkinsButton(this.skinsChoiceBox, this.changeSkins);
+      //  SkinsUtils.initSkinsButton(this.skinsChoiceBox, this.changeSkins);
 
         // start child components
         this.initInteragatorComponent();
@@ -150,22 +150,36 @@ public class MainController {
     }
 
 
+//    @FXML
+//    void changeSkins(ActionEvent event) {
+//
+//        //get wanted colors
+//        this.wantedColor = this.skinsChoiceBox.getValue();
+//        SkinsUtils.Colors enumWantedColor = SkinsUtils.makeColorsEnum(this.wantedColor);
+//
+//        // change in all child components
+//        this.setButtonsColors(enumWantedColor);
+//        this.intController.setButtonsColors(enumWantedColor);
+//        this.taskController.setButtonsColors(enumWantedColor);
+//    }
+
+//    public void setButtonsColors(SkinsUtils.Colors enumWantedColor){
+//
+//        SkinsUtils.changeButtonColorTo(enumWantedColor, this.buttons);
+//    }
+
     @FXML
-    void changeSkins(ActionEvent event) {
+    void redSkinAction(ActionEvent event) {
 
-        //get wanted colors
-        this.wantedColor = this.skinsChoiceBox.getValue();
-        SkinsUtils.Colors enumWantedColor = SkinsUtils.makeColorsEnum(this.wantedColor);
+    }
+    @FXML
+    void blueSkinAction(ActionEvent event) {
 
-        // change in all child components
-        this.setButtonsColors(enumWantedColor);
-        this.intController.setButtonsColors(enumWantedColor);
-        this.taskController.setButtonsColors(enumWantedColor);
     }
 
-    public void setButtonsColors(SkinsUtils.Colors enumWantedColor){
+    @FXML
+    void defualtSkinAction(ActionEvent event) {
 
-        SkinsUtils.changeButtonColorTo(enumWantedColor, this.buttons);
     }
 
     @FXML

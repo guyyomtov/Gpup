@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-public class Simulation extends Task implements Serializable {
+public class Simulation extends Task implements Serializable, Runnable {
 
     public Simulation(DataSetupProcess dSp) throws ErrorUtils {
 
@@ -28,6 +28,7 @@ public class Simulation extends Task implements Serializable {
         taskFile.makeTaskDir(this.taskName);
     }
 
+    @Override
     public void run(){
 
         //setup data part 1
@@ -56,21 +57,22 @@ public class Simulation extends Task implements Serializable {
         // go over all targets:
 
         // 1) start with independents
-        this.runTheseTargetsByType(independents,namesToMinions);
+//        this.runTheseTargetsByType(independents,namesToMinions);
 
         // ----------- needed to be fixed !!!
-        //this.makeQueue();
-       //this.runTheseTasks(namesToMinions);
+        this.makeQueue();
+       this.runMinions();
 
         // move to leaves
-        this.runTheseTargetsByType(leaves,namesToMinions);
+//        this.runTheseTargetsByType(leaves,namesToMinions);
 
         // then to middle
-        this.runTheseTargetsByType(middles,namesToMinions);
+  //      this.runTheseTargetsByType(middles,namesToMinions);
 
         // then to root
-        this.runTheseTargetsByType(roots,namesToMinions);
+    //    this.runTheseTargetsByType(roots,namesToMinions);
 
+        System.out.println("process finished");
         FormatAllTask.end = Instant.now();
         FormatAllTask.sendData(cUI);
 
@@ -104,12 +106,12 @@ public class Simulation extends Task implements Serializable {
 
         if(!curMinions.keySet().isEmpty()) {
 
-            while (!curMinionsFinished) {
+        //    while (!curMinionsFinished) {
 
                 this.runTheseTasks(new ArrayList<>(curMinions.values()), namesToMinions); // go over all cur tasks and get the needed data back
 
                 curMinionsFinished = checkIfWeFinished(new ArrayList<>(curMinions.values())); // go over all cur tasks and check if finished (with get
-            }
+          //  }
         }
     }
 
@@ -120,6 +122,7 @@ public class Simulation extends Task implements Serializable {
         List<String> curTaskData = new ArrayList<>();
         List<Minion> kids = new ArrayList<Minion>();
 
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
         for(Minion curM : minions){
 
             if(this.iAllReadyRan(curM))
@@ -127,7 +130,7 @@ public class Simulation extends Task implements Serializable {
             else{
 
                 kids = findMyKids(curM, namesToMinions);
-                curTaskData = curM.tryToRunMe(kids, namesToMinions, this.cUI);
+                executorService.execute(curM); //curTaskData = curM.tryToRunMe(kids, namesToMinions, this.cUI);
                 if(!curTaskData.isEmpty()) {
                     this.targetNameToSummeryProcess.put(curM.getName(), curTaskData);
                     FormatAllTask.updateCounter(curTaskData.get(3));// the status
@@ -200,4 +203,54 @@ public class Simulation extends Task implements Serializable {
     public void setName(){this.taskName = "simulation";}
 
 
+    public static Integer threadCounter = 0;
+    public void runMinions(){
+       /* we have first queue
+       ==> therdspools
+       ==> run on Q and dont stop until all threads are back.
+                threadPolls.excutre(minion)
+                        ==> in minion update Q if my run open relevant minion add minion
+        */
+
+        Integer numOfThreads = 3;
+        ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
+
+        //first case
+        Minion minion = waitingList.poll();
+        executorService.execute(minion);
+        threadCounter++;
+
+        // go out of while when: no thread exist & queue is empty
+        while(threadCounter != 0 || !waitingList.isEmpty()) {
+
+            minion = waitingList.poll();
+
+            if(minion != null) {
+
+                executorService.execute(minion);
+
+                threadCounter++;
+            }
+            else{
+                try {
+                    Thread.sleep(300);
+                }catch (InterruptedException e) {
+                   // e.printStackTrace();
+                }
+            }
+        }
+        int x = 5;
+    }
+
+    public List<Minion> getMinionsWhoArntInWaitingList(List<Minion> minions){
+
+        List<Minion> res = new ArrayList<>();
+
+        for(Minion curM : minions){
+
+            if(!waitingList.contains(curM))
+                res.add(curM);
+        }
+        return res;
+    }
 }

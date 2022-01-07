@@ -125,34 +125,43 @@ public class TaskController {
     void startButtonAction(ActionEvent event) throws ErrorUtils {
 
 
-        /* ---------- EXAMPLE PROCESS FROM --------------
+        // ---------- EXAMPLE PROCESS FROM --------------
+        // start flagger (which is a MUST part of dSP)
+//        Flagger flagger = new Flagger().builder()
+//                .processIsSimulation(true)
+//                .processFromScratch(true)
+//                .chancesIsRandomInProcess(false);
+//
+//        //start more needed data
+//        DataSetupProcess dSP = new DataSetupProcess().builder()
+//                .flagger(flagger)
+//                .chancesToSucceed(100)
+//                .chancesToBeAWarning(100)
+//                .timeToRun(3000);
+//
+//        this.bDM.startProcess(dSP);
+
+        minions.get(0).setMyStatus("fff11111");
+        //---------- EXAMPLE PROCESS FOR RANDOM USER TARGETS --------------
+
         // start flagger (which is a MUST part of dSP)
         Flagger flagger = new Flagger().builder()
                 .processIsSimulation(true)
-                .processFromScratch(true)
+                .processFromRandomTargets(false)
                 .chancesIsRandomInProcess(true);
 
         //start more needed data
         DataSetupProcess dSP = new DataSetupProcess().builder()
                 .flagger(flagger)
-                .timeToRun(2);
+                .timeToRun(2000)
+                .chancesToBeAWarning(100)
+                .chancesToSucceed(100);
+        if (!this.minions.isEmpty())
+            dSP.minionsChoosenByUser(this.minions);
 
         this.bDM.startProcess(dSP);
-         */
-
-        /* ---------- EXAMPLE PROCESS FOR RANDOM USER TARGETS --------------
-
-        // start flagger (which is a MUST part of dSP)
-        Flagger flagger = new Flagger().builder()
-                .processIsSimulation(true)
-                .processFromRandomTargets(true)
-                .chancesIsRandomInProcess(true);
-
-        //start more needed data
-        DataSetupProcess dSP = new DataSetupProcess().builder()
-                .flagger(flagger)
-                .timeToRun(2);
-    void startButtonAction(ActionEvent event) {
+    }
+    /*void startButtonAction(ActionEvent event) {
         if(minions.isEmpty())
             return;
 
@@ -162,14 +171,8 @@ public class TaskController {
         this.pauseButton.setDisable(false);
         this.bDM.startPro(minions);
 
-        if(!this.minions.isEmpty())
-            dSP.minionsChoosenByUser(this.minions);
-
-        this.bDM.startProcess(dSP);
-
-         */
     }
-
+*/
     public void setButtonsColors(SkinsUtils.Colors wantedColors){
 
         SkinsUtils.changeButtonColorTo(wantedColors, this.buttons);
@@ -191,6 +194,7 @@ public class TaskController {
             }
         }
         tableProcessController.initTable(minions);
+        minions.get(0).setMyStatus("fff");
     }
 
     public void setbDM(BackDataManager bDM) {

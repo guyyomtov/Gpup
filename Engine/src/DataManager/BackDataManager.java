@@ -182,7 +182,7 @@ public class BackDataManager implements DataManager {
         }
         else if(dSP.flagger.processIsCompilation){
 
-            simulation.run();
+
         }
     }
 

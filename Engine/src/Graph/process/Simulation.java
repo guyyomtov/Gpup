@@ -28,17 +28,6 @@ public class Simulation extends Task implements Serializable {
         taskFile.makeTaskDir(this.taskName);
     }
 
-    // incremental
-    public Simulation(List<Target> targets, Task oldTask, int timeToRun, int chancesToSucceed, int chancesToBeAWarning, boolean isTimeRandom, Consumer cUI) {
-
-        super(targets, oldTask, timeToRun, chancesToSucceed, chancesToBeAWarning, isTimeRandom, cUI);
-
-        this.setName();
-
-        TaskFile taskFile = new TaskFile();
-        taskFile.makeTaskDir(this.taskName);
-    }
-
     public void run(){
 
         //setup data part 1

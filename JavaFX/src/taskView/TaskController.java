@@ -57,26 +57,12 @@ public class TaskController {
     private SimpleBooleanProperty isPause;
 
     private List<Button> buttons = new ArrayList<>();
-    @FXML private Button updateTargetListButton;
-    @FXML private Button startButton;
-    @FXML private Button pauseButton;
-    @FXML private GridPane gridPaneSettingTab;
-    @FXML private RadioButton simulationButton;
-    @FXML private RadioButton compilationButton;
-    @FXML private Spinner<Integer> threadsSpinner;
-    @FXML private RadioButton incrementalButton;
-    @FXML private RadioButton fromScratchButton;
-    @FXML private Label errorMessegeForIncremental;
-    @FXML private Text infoForTarget;
-    @FXML private Label summaryLabel;
-    @FXML private Parent tableProcess;
-    @FXML private TableForProcessController tableProcessController;
     private BackDataManager bDM;
     private List<Minion> minions = new ArrayList<>();
     private SimulationComponentController simulationComponentController;
 
     private Parent simulationComponent;
-    private List<Minion> minions = new ArrayList<>();
+
 
 
 
@@ -137,6 +123,7 @@ public class TaskController {
 
     @FXML
     void startButtonAction(ActionEvent event) throws ErrorUtils {
+
 
         /* ---------- EXAMPLE PROCESS FROM --------------
         // start flagger (which is a MUST part of dSP)
@@ -210,20 +197,6 @@ public class TaskController {
         this.bDM = bDM;
     }
 
-    public void initTaskView()
-    {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("simulationComponent/simulationComponentFxml.fxml"));
-            simulationComponent = loader.load();
-            simulationComponentController = loader.getController();
-            simulationComponentController.initSimulation();
-            this.initThreadsSpinner();
-
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private void initThreadsSpinner() {
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Task.maxParallelism, 1);

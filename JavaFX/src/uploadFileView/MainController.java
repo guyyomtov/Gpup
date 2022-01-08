@@ -15,6 +15,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -35,14 +37,11 @@ public class MainController {
     @FXML private Button graphInfoButton;
     @FXML private Button InterrogatorButton;
     @FXML private Button taskButton;
-    @FXML private Button changeSkins;
     @FXML private MenuItem UploadFile;
     @FXML private ScrollPane welcomeView;
     @FXML private Label msgAfterUploadFile;
     public static Stage primaryStage;
     private BackDataManager bDM = new BackDataManager();
-    private TaskController taskController;
-    private Parent taskView;
     @FXML private ChoiceBox<String> skinsChoiceBox;
     private String wantedColor = new String();
     private Paint textColor = Color.BLACK;
@@ -50,9 +49,10 @@ public class MainController {
 
     private GraphInfoController graphInfoController;
     private Parent graphInfoView;
-
     private InterrogatorController intController;
     private Parent interrogatorView;
+    private TaskController taskController;
+    private Parent taskView;
 
 
 
@@ -75,11 +75,8 @@ public class MainController {
         this.msgAfterUploadFile.setText("The file " + selectedFile.getAbsolutePath() + " upload successfully");
         this.taskController = null;
 
-        this.buttons = Arrays.asList(this.changeSkins, this.graphInfoButton,
+        this.buttons = Arrays.asList(this.graphInfoButton,
                 this.taskButton, this.InterrogatorButton);
-
-        // SKINS
-      //  SkinsUtils.initSkinsButton(this.skinsChoiceBox, this.changeSkins);
 
         // start child components
         this.initInteragatorComponent();
@@ -149,37 +146,56 @@ public class MainController {
         this.MainBorderPane.setCenter(this.taskView);
     }
 
+    public void setButtonsColors(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
-//    @FXML
-//    void changeSkins(ActionEvent event) {
-//
-//        //get wanted colors
-//        this.wantedColor = this.skinsChoiceBox.getValue();
-//        SkinsUtils.Colors enumWantedColor = SkinsUtils.makeColorsEnum(this.wantedColor);
-//
-//        // change in all child components
-//        this.setButtonsColors(enumWantedColor);
-//        this.intController.setButtonsColors(enumWantedColor);
-//        this.taskController.setButtonsColors(enumWantedColor);
-//    }
-
-//    public void setButtonsColors(SkinsUtils.Colors enumWantedColor){
-//
-//        SkinsUtils.changeButtonColorTo(enumWantedColor, this.buttons);
-//    }
-
-    @FXML
-    void redSkinAction(ActionEvent event) {
-
-    }
-    @FXML
-    void blueSkinAction(ActionEvent event) {
-
+        SkinsUtils.changeButtonColorTo(enumWantedColor, this.buttons);
     }
 
-    @FXML
-    void defualtSkinAction(ActionEvent event) {
+    public void changeSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
+        // set this component colors
+        this.setButtonsColors(enumWantedColor);
+        this.setBoarderSkins(enumWantedColor);
+
+        //set kids component colors
+        this.intController.setSkins(enumWantedColor);
+        this.taskController.setSkins(enumWantedColor);
+        this.graphInfoController.setSkins(enumWantedColor);
+    }
+
+    private void setBoarderSkins(SkinsUtils.Colors enumWantedColor) {
+
+        if(enumWantedColor != SkinsUtils.Colors.DEFAULT) {
+            this.MainBorderPane.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
+            this.welcomeView.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
+        }
+        else {//make default
+            this.MainBorderPane.setBackground(new Background(new BackgroundFill(null, null, null)));
+            this.welcomeView.setBackground(new Background(new BackgroundFill(null, null, null)));
+        }
+    }
+
+    @FXML
+    void redSkinAction(ActionEvent event) throws ErrorUtils {
+
+        SkinsUtils.Colors enumWantedColor = SkinsUtils.makeColorsEnum("RED");
+
+        this.changeSkins(enumWantedColor);
+    }
+    @FXML
+    void blueSkinAction(ActionEvent event) throws ErrorUtils {
+
+        SkinsUtils.Colors enumWantedColor = SkinsUtils.makeColorsEnum("BLUE");
+
+        this.changeSkins(enumWantedColor);
+    }
+
+    @FXML
+    void defualtSkinAction(ActionEvent event) throws ErrorUtils {
+
+        SkinsUtils.Colors enumWantedColor = SkinsUtils.makeColorsEnum("DEFAULT");
+
+        this.changeSkins(enumWantedColor);
     }
 
     @FXML

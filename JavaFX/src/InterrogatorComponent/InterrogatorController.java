@@ -4,6 +4,7 @@ package InterrogatorComponent;
         import DataManager.BackDataManager;
         import FindPathComponent.FindPathController;
         import WhatIfComponent.WhatIfController;
+        import errors.ErrorUtils;
         import javafx.beans.value.ObservableValue;
         import javafx.event.ActionEvent;
         import javafx.fxml.FXML;
@@ -13,6 +14,8 @@ package InterrogatorComponent;
         import javafx.scene.control.ChoiceBox;
         import javafx.scene.input.MouseEvent;
         import javafx.scene.layout.AnchorPane;
+        import javafx.scene.layout.Background;
+        import javafx.scene.layout.BackgroundFill;
         import javafx.scene.layout.BorderPane;
         import javafx.scene.paint.Color;
         import javafx.scene.paint.Paint;
@@ -30,18 +33,17 @@ public class InterrogatorController {
     @FXML private AnchorPane mainSplitPane;
     @FXML private BorderPane mainBoarderPain;
     @FXML private ChoiceBox<String> skinsChoiceBox;
-    @FXML private Button changeSkins;
     private BackDataManager bDM;
     private String wantedColor = new String();
     private Paint textColor = Color.BLACK;
-    private FindCircleComponent.FindCircleController fCController;
-    private FindPathController fPController;
-    private WhatIfController wIController;
     private Parent findCircleView;
     private Parent findPathView;
     private Parent whatIfView;
     private String pathName = new String();
     private FXMLLoader loader;
+    private FindCircleComponent.FindCircleController fCController;
+    private FindPathController fPController;
+    private WhatIfController wIController;
 
 
     public void init(BackDataManager other) throws IOException {
@@ -57,8 +59,9 @@ public class InterrogatorController {
        this.buttons = Arrays.asList(this.circleButton, this.pathButton, this.whatIfButton);
     }
 
-    public void setButtonsColors(SkinsUtils.Colors wantedColors){
+    public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {
 
+        // set my buttons skins
         SkinsUtils.changeButtonColorTo(wantedColors, this.buttons);
     }
 
@@ -101,19 +104,6 @@ public class InterrogatorController {
         this.fCController.initFindCircleController(this.bDM);
     }
 
-    private void setKidComponentButtonSkins() {
-
-        this.fCController.setSkins(this.wantedColor, this.textColor);
-        this.fPController.setSkins(this.wantedColor, this.textColor);
-        this.wIController.setSkins(this.wantedColor, this.textColor);
-    }
-
-    @FXML
-    void changeSkins(ActionEvent event) {
-
-       // this.changeButtonColorTo(this.skinsChoiceBox.getValue());
-    }
-
     @FXML
     void circleButtonAction(ActionEvent event) throws IOException {
 
@@ -132,60 +122,29 @@ public class InterrogatorController {
         this.mainBoarderPain.setCenter(whatIfView);
     }
 
-    @FXML
-    void whatIfOnMOuseEntered(MouseEvent event) {
+    public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
-        this.whatIfButton.setTextFill(Color.BLACK);
-        this.whatIfButton.setStyle(null);
+        //set buttons colors
+        this.setButtonsColors(enumWantedColor);
+
+        // set my label skins
+
+        //set background colors
+        this.setBackRoundColors(enumWantedColor);
+
+        // set my kids skins
+        this.fCController.setSkins(enumWantedColor);
+        this.fPController.setSkins(enumWantedColor);
+        this.wIController.setSkins(enumWantedColor);
     }
 
-    @FXML
-    void whatIfOnMOuseExist(MouseEvent event) {
+    private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {
 
-        this.whatIfButton.setStyle(this.wantedColor);
-        this.whatIfButton.setTextFill(this.textColor);
-    }
-
-    @FXML
-    void pathOnMOuseEntered(MouseEvent event) {
-
-        this.pathButton.setTextFill(Color.BLACK);
-        this.pathButton.setStyle(null);
-    }
-
-    @FXML
-    void pathOnMOuseExist(MouseEvent event) {
-
-        this.pathButton.setStyle(this.wantedColor);
-        this.pathButton.setTextFill(this.textColor);
-    }
-
-    @FXML
-    void circleOnMOuseEntered(MouseEvent event) {
-
-        this.circleButton.setTextFill(Color.BLACK);
-        this.circleButton.setStyle(null);
-    }
-
-    @FXML
-    void circleOnMOuseExist(MouseEvent event) {
-
-        this.circleButton.setStyle(this.wantedColor);
-        this.circleButton.setTextFill(this.textColor);
-    }
-
-    @FXML
-    void changeSkinfOnMouseEntered(MouseEvent event) {
-
-        this.changeSkins.setTextFill(Color.BLACK);
-        this.changeSkins.setStyle(null);
-    }
-
-    @FXML
-    void changeSkinfOnMouseExist(MouseEvent event) {
-
-        this.changeSkins.setTextFill(this.textColor);
-        this.changeSkins.setStyle(this.wantedColor);
+        //set background colors
+        if(enumWantedColor != SkinsUtils.Colors.DEFAULT)
+            this.mainBoarderPain.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
+        else
+            this.mainBoarderPain.setBackground(new Background(new BackgroundFill(null, null, null)));
     }
 }
 

@@ -1,5 +1,6 @@
 package FindPathComponent;
 
+        import AnimationComponent.SkinsUtils;
         import DataManager.BackDataManager;
         import Graph.Target;
         import errors.ErrorUtils;
@@ -22,6 +23,7 @@ public class FindPathController {
     @FXML private ChoiceBox<String> dstTargetButton;
     @FXML private ChoiceBox<String> relationshipButton;
     @FXML private Button findPathButton;
+    private List<Button> buttons = new ArrayList<>();
     @FXML private ListView<String> pathListView;
     @FXML private Label thereIsNoPathMessege;
     private BackDataManager bDM;
@@ -30,6 +32,18 @@ public class FindPathController {
     private String backroundColor = new String();
     private Paint textColor;
 
+
+
+    public void init(BackDataManager other){
+
+        this.bDM = other;
+        this.targets = other.getAllTargets();
+
+        this.buttons = Arrays.asList(this.findPathButton);
+
+        this.initTargetsButtons();
+        this.initRelationshipButton();
+    }
 
     @FXML
     void findPathAction(ActionEvent event) throws ErrorUtils {
@@ -108,14 +122,6 @@ public class FindPathController {
         }
 
         return res;
-    }
-
-    public void init(BackDataManager other){
-
-        this.bDM = other;
-        this.targets = other.getAllTargets();
-        this.initTargetsButtons();
-        this.initRelationshipButton();
     }
 
     private void initRelationshipButton() {
@@ -204,5 +210,27 @@ public class FindPathController {
      //   this.srcTargetButton.setStyle(null);
     }
 
+    public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {
+
+        SkinsUtils.changeButtonColorTo(wantedColors, this.buttons);
+    }
+
+    public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
+
+
+        //set buttons colors
+        this.setButtonsColors(enumWantedColor);
+
+        // set my label skins
+
+        //set background colors
+        this.setBackRoundColors(enumWantedColor);
+
+        // set my kids skins
+    
+    }
+
+    private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {
+    }
 }
 

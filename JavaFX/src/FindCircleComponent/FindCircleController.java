@@ -1,5 +1,6 @@
 package FindCircleComponent;
 
+import AnimationComponent.SkinsUtils;
 import DataManager.BackDataManager;
 import Graph.Target;
 import errors.ErrorUtils;
@@ -12,9 +13,12 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +26,7 @@ public class FindCircleController {
 
     @FXML private ChoiceBox<String> targetList;
     @FXML private Button findCircleButton;
+    private List<Button> myButtons = new ArrayList<>();
     @FXML private TextArea resultPrintArea;
     private BackDataManager bDM;
     private List<Target> targets;
@@ -29,6 +34,15 @@ public class FindCircleController {
     private String backroundColor = new String();
     private Paint textColor;
 
+
+    public void initFindCircleController(BackDataManager bDM){
+
+        this.bDM = bDM;
+
+        this.myButtons = Arrays.asList(this.findCircleButton);
+
+        this.initTargetListButton(this.bDM.getAllTargets());
+    }
 
     @FXML
     void findCircleAction(ActionEvent event) throws ErrorUtils {
@@ -48,13 +62,6 @@ public class FindCircleController {
 
             resultPrintArea.setText(res);
         }
-    }
-
-    public void initFindCircleController(BackDataManager bDM){
-
-        this.bDM = bDM;
-
-        this.initTargetListButton(this.bDM.getAllTargets());
     }
 
     public void initTargetListButton(List<Target> targets){
@@ -101,5 +108,30 @@ public class FindCircleController {
     void tOnMOuseExist(MouseEvent event) {
 
       //  this.targetList.setStyle(this.backroundColor);
+    }
+
+    public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {
+
+        // set my buttons skins
+        SkinsUtils.changeButtonColorTo(wantedColors, this.myButtons);
+
+        // set my kids buttons skins
+    }
+
+    public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
+
+        //set buttons colors
+        this.setButtonsColors(enumWantedColor);
+
+        // set my label skins
+
+        //set background colors
+        this.setBackRoundColors(enumWantedColor);
+
+        // set my kids skins
+    }
+
+    private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {
+
     }
 }

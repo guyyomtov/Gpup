@@ -31,51 +31,19 @@ public class Simulation extends Task implements Serializable, Runnable {
     @Override
     public void run(){
 
-        //setup data part 1
-        Map<String, Target> namesToTargetsMap = Target.initNameToTargetFrom(this.targets);
-        Map<String, Minion> namesToMinions     = Minion.startMinionMapFrom(this.minions);
-        Map<String, Map<String, Minion>>    typeOfTargetToTargetNameToHisTask   = this.startMinionMapByTargetType(namesToMinions, namesToTargetsMap);
-
-        // setup data part 2
-        Map<String,Minion> independents = typeOfTargetToTargetNameToHisTask.get("Independent");
-        Map<String,Minion> leaves = typeOfTargetToTargetNameToHisTask.get("Leaf");
-        Map<String,Minion> middles = typeOfTargetToTargetNameToHisTask.get("Middle");
-        Map<String,Minion> roots = typeOfTargetToTargetNameToHisTask.get("Root");
-
         this.cUI = new Consumer() {
             @Override
-            public void accept(Object o) {
-                System.out.println(o);
-            }
+            public void accept(Object o) {System.out.println(o);}
         };
 
         FormatAllTask.restartMap();
         FormatAllTask.start = Instant.now();
 
-        // start process
-
-        // go over all targets:
-
-        // 1) start with independents
-//        this.runTheseTargetsByType(independents,namesToMinions);
-
-        // ----------- needed to be fixed !!!
         this.makeQueue();
-       this.runMinions();
+        this.runMinions();
 
-        // move to leaves
-//        this.runTheseTargetsByType(leaves,namesToMinions);
-
-        // then to middle
-  //      this.runTheseTargetsByType(middles,namesToMinions);
-
-        // then to root
-    //    this.runTheseTargetsByType(roots,namesToMinions);
-
-        System.out.println("process finished");
         FormatAllTask.end = Instant.now();
         FormatAllTask.sendData(cUI);
-
 
         FormatAllTask.sendData(cUI, this.targetNameToSummeryProcess);
         ProcessInfo.setOldTask(this);

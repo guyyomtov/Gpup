@@ -18,6 +18,8 @@ import java.util.function.Consumer;
 
 public class Simulation extends Task implements Serializable, Runnable {
 
+    public static Integer threadCounter = 0;
+
     public Simulation(DataSetupProcess dSp) throws ErrorUtils {
 
         super(dSp);
@@ -170,18 +172,9 @@ public class Simulation extends Task implements Serializable, Runnable {
     
     public void setName(){this.taskName = "simulation";}
 
-
-    public static Integer threadCounter = 0;
     public void runMinions(){
-       /* we have first queue
-       ==> therdspools
-       ==> run on Q and dont stop until all threads are back.
-                threadPolls.excutre(minion)
-                        ==> in minion update Q if my run open relevant minion add minion
-        */
 
-        Integer numOfThreads = 3;
-        ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
+        ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
 
         //first case
         Minion minion = waitingList.poll();
@@ -207,7 +200,6 @@ public class Simulation extends Task implements Serializable, Runnable {
                 }
             }
         }
-        int x = 5;
     }
 
     public List<Minion> getMinionsWhoArntInWaitingList(List<Minion> minions){

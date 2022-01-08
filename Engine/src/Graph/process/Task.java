@@ -36,6 +36,7 @@ public abstract class Task implements Serializable {
         this.timeIRun = dSp.timeToRun;
         this.chancesISucceed = dSp.chancesToSucceed;
         this.chancesImAWarning = dSp.chancesToBeAWarning;
+        maxParallelism = dSp.amountOfThreads;
 
         if (dSp.flagger.processFromScratch) {
 

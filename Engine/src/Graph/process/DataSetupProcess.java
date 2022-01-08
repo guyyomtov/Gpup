@@ -6,7 +6,9 @@ import errors.ErrorUtils;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class DataSetupProcess {
@@ -23,6 +25,7 @@ public class DataSetupProcess {
     public String dTargetFolderPath;
     public String cpTargetFolderPath;
     public String pathToJavaFile;
+    public Map<String, Set<Target>> serialSets;
 
     public DataSetupProcess builder(){ return this;}
 
@@ -46,6 +49,13 @@ public class DataSetupProcess {
     public DataSetupProcess timeToRun(Integer timeToRun){
 
         this.timeToRun = timeToRun;
+
+        return this;
+    }
+
+    public DataSetupProcess serialSets(Map<String, Set<Target>> serialSets){
+
+        this.serialSets = serialSets;
 
         return this;
     }

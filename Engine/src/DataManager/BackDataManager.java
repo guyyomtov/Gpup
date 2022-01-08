@@ -175,6 +175,7 @@ public class BackDataManager implements DataManager {
 
         //give more needed data
         dSP.allGraphTargets(this.graph.getAllTargets());
+        dSP.serialSets(this.graph.getmSerialSets());
 
         // Choose process
         if(dSP.flagger.processIsSimulation){

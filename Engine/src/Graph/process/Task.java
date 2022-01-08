@@ -24,6 +24,8 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
     protected static Queue<Minion> waitingList = new LinkedList<>();
     public static int maxParallelism;
     public static Integer threadCounter = 0;
+    protected Map<String, Minion> namesToCurRunningMinions = new HashMap<>();
+    protected Map<String, Set<Target>> serialSetsNameToTargets;
 
 
     public Task(DataSetupProcess dSp) throws ErrorUtils {
@@ -39,6 +41,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         this.chancesISucceed = dSp.chancesToSucceed;
         this.chancesImAWarning = dSp.chancesToBeAWarning;
         maxParallelism = dSp.amountOfThreads;
+        this.serialSetsNameToTargets = dSp.serialSets;
 
         if (dSp.flagger.processFromScratch) {
 
@@ -91,7 +94,6 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         this.minionsChosenByUser = userMinions;
         this.updateMinions();
     }
-
 
     public List<Minion> getMinions() { return minions; }
 
@@ -165,4 +167,111 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
                 waitingList.add(curM);
     }
 
+    protected Boolean iCanRunSerialSet(Minion minionToRun){
+
+        Boolean canHeRun = true;
+        String curMinionName = minionToRun.getName();
+
+        // check to see if i'm a part of a serial set
+        if(this.iAmInASerialSet(minionToRun)){
+
+            // get all relevant serial sets which are relevant to me (could be a part of more than one)
+            Map<String, Set<Target>> relevantSerials = this.getRelevantSerialsTo(minionToRun);
+
+            // go over all relevant serial sets:
+            for(String curSerialName : relevantSerials.keySet()){
+
+                //get cur targets
+                Set<String> targetNames = this.getTargetsNamesUsing(curSerialName);
+
+                // remove minion name, isn't relevant for the check
+                targetNames.remove(curMinionName);
+
+                for(String curTName : targetNames){
+
+                    if(this.targetIsCurentlyInProcess(curTName)){
+
+                        canHeRun = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+       return canHeRun;
+    }
+
+    private boolean targetIsCurentlyInProcess(String curTName) {
+
+        Boolean curTIsRunningNow = false;
+
+        // if he is in map of cur process
+        if (this.namesToCurRunningMinions.containsKey(curTName)) {
+
+            Minion curMinion = this.namesToCurRunningMinions.get(curTName);
+
+            // cur minion is running & is still in process
+            if (!curMinion.imFinished()) {
+
+                curTIsRunningNow = true;
+            }
+            else{// cur T is in map of process, but he finished the process
+
+                // take out of in process list
+                this.namesToCurRunningMinions.remove(curTName);
+            }
+        }
+        return curTIsRunningNow;
+    }
+
+    private Map<String, Set<Target>> getRelevantSerialsTo(Minion minionToRun) {
+
+        Map<String, Set<Target>> res = new HashMap<>();
+        String curMinionName = minionToRun.getName();
+
+        // go over all serial sets
+        for(String curSerialName : this.serialSetsNameToTargets.keySet()){
+
+            Set<String> curTsNames =  this.getTargetsNamesUsing(curSerialName);
+
+            // go over each set of targets
+            for(String curTName : curTsNames){
+
+                // if minion name is in cur serial set, add it to the list
+                if(curMinionName == curTName)
+                    res.put(curSerialName, this.serialSetsNameToTargets.get(curSerialName));
+            }
+        }
+        return res;
+    }
+
+    private Set<String> getTargetsNamesUsing(String curSerialName){
+
+        Set<Target> curTargets = this.serialSetsNameToTargets.get(curSerialName);
+
+        return Target.getTargetNamesFrom(new ArrayList<Target>(curTargets));
+    }
+
+    private boolean iAmInASerialSet(Minion minionToRun) {
+
+        boolean iAmInASerialSet = false;
+        String curMinionName = minionToRun.getName();
+
+        // go over all serial sets
+        for(String curSerialName : this.serialSetsNameToTargets.keySet()){
+
+            Set<String> curTsNames =  this.getTargetsNamesUsing(curSerialName);
+
+            // go over all current serial sets targets
+            for(String curTName : curTsNames){
+
+                if(curMinionName == curTName){
+
+                    iAmInASerialSet = true;
+                    break;
+                }
+            }
+        }
+        return iAmInASerialSet;
+    }
 }

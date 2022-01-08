@@ -12,6 +12,7 @@ package InterrogatorComponent;
         import javafx.scene.Parent;
         import javafx.scene.control.Button;
         import javafx.scene.control.ChoiceBox;
+        import javafx.scene.control.ScrollPane;
         import javafx.scene.input.MouseEvent;
         import javafx.scene.layout.AnchorPane;
         import javafx.scene.layout.Background;
@@ -27,6 +28,7 @@ package InterrogatorComponent;
 public class InterrogatorController {
 
     @FXML private Button circleButton;
+    @FXML private ScrollPane scrollPane;
     @FXML private Button pathButton;
     @FXML private Button whatIfButton;
     private List<Button> buttons = new ArrayList<>();
@@ -141,10 +143,13 @@ public class InterrogatorController {
     private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {
 
         //set background colors
-        if(enumWantedColor != SkinsUtils.Colors.DEFAULT)
+        if(enumWantedColor != SkinsUtils.Colors.DEFAULT) {
             this.mainBoarderPain.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
-        else
+            this.scrollPane.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
+        }
+        else {
             this.mainBoarderPain.setBackground(new Background(new BackgroundFill(null, null, null)));
+        }
     }
 }
 

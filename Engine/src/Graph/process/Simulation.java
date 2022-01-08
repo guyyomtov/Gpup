@@ -241,6 +241,7 @@ public class Simulation extends Task implements Serializable, Runnable {
     @Override
     protected Object call() throws Exception {
 
+        Map<String, Minion> test = new HashMap<>();
         ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
 
         //first case
@@ -257,32 +258,35 @@ public class Simulation extends Task implements Serializable, Runnable {
 
             minion = waitingList.poll();
 
-            if(this.iCanRunSerialSet(minion)) {
-
                 totalMinionsThatFinished = updateTotalMinionsThatFinished();
                 updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
                 //  updateMessage(message);
 
                 if (minion != null) {
 
-                    executorService.execute(minion);
+                    if(this.iCanRunSerialSet(minion)) {
 
-                    threadCounter++;
-                    this.namesToCurRunningMinions.put(minion.getName(), minion);
+                        executorService.execute(minion);
 
-                } else {
+                        threadCounter++;
+                        this.namesToCurRunningMinions.put(minion.getName(), minion);
+                    }
+                    else{// cur minion can't run because of serial set, put back in queue
+                        waitingList.add(minion);
+                    }
+                }
+                else {
                     try {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {// e.printStackTrace();
                     }
                 }
+                test = this.namesToCurRunningMinions;
             }
-            else{// cur minion can't run because of serial set, put back in queue
-                waitingList.add(minion);
-            }
-        }
         totalMinionsThatFinished = updateTotalMinionsThatFinished();
         updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
+
+        this.namesToCurRunningMinions.clear();
 
         return true;
     }

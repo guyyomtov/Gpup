@@ -23,32 +23,22 @@ public class Target implements Serializable {
     }
 
     private String name;
-
     private Integer countOfDependency;
-
     private String generalInfo;
-
     private Type targetType;
-
     private List<Target> dependsOn = new ArrayList<Target>();
-
     private List<Target> requiredFor = new ArrayList<Target>();;
-
     private Integer totalDependsOn = 0;
-
     private Integer totalRequiredFor = 0;
-
     private Integer totalSerialSets = 0;
-
     private CheckBox remark = new CheckBox();
 
-    public Integer getTotalSerialSets() {return totalSerialSets;}
 
+    public Integer getTotalSerialSets() {return totalSerialSets;}
     public Integer getTotalRequiredFor() {
        return totalRequiredFor;
     }
-
-   public Integer getTotalDependsOn() {
+    public Integer getTotalDependsOn() {
        return totalDependsOn;
     }
 

@@ -18,7 +18,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import tableForProcess.TableForProcessController;
 import tableView.TableController;
@@ -41,28 +44,25 @@ public class TaskController {
     @FXML private RadioButton fromScratchButton;
     @FXML private Label errorMessegeForIncremental;
     @FXML private Label infoForTarget;
+    @FXML private Label summaryLabel;
+    @FXML private Label precentOfProgressBar;
+    private List<Label> labels = new ArrayList<>();
     @FXML private Button updateTargetListButton;
     @FXML private Button startButton;
     @FXML private Button pauseButton;
     @FXML private Button resumeButton;
-    @FXML private Label summaryLabel;
+    private List<Button> buttons = new ArrayList<>();
     @FXML private Parent tableProcess;
     @FXML private TableForProcessController tableProcessController;
     @FXML private TextArea textAreaProcessInfo;
     @FXML ProgressBar progressBar;
-    @FXML private Label precentOfProgressBar;
-
-
     private SimpleIntegerProperty precentOfProgress;
     private SimpleStringProperty updateInfoForUI;
     private SimpleStringProperty targetInfo;
     private SimpleBooleanProperty isPause;
-
-    private List<Button> buttons = new ArrayList<>();
     private BackDataManager bDM;
     private List<Minion> minions = new ArrayList<>();
     private SimulationComponentController simulationComponentController;
-
     private Parent simulationComponent;
 
 
@@ -84,9 +84,12 @@ public class TaskController {
 
         this.buttons = Arrays.asList(this.pauseButton, this.startButton,
                 this.updateTargetListButton);
+
+        this.labels = Arrays.asList(this.infoForTarget, this.errorMessegeForIncremental, this.precentOfProgressBar);
     }
 
     public TaskController(){
+
         precentOfProgress = new SimpleIntegerProperty(0);
         updateInfoForUI = new SimpleStringProperty("");
         isPause = new SimpleBooleanProperty(false);
@@ -177,7 +180,7 @@ public class TaskController {
 
     }
 */
-    public void setButtonsColors(SkinsUtils.Colors wantedColors){
+    public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {
 
         SkinsUtils.changeButtonColorTo(wantedColors, this.buttons);
     }
@@ -231,6 +234,27 @@ public class TaskController {
     }
 
 
+    public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
+        //set buttons colors
+        this.setButtonsColors(enumWantedColor);
 
+        // set my label skins
+        SkinsUtils.changeLabelsTextColorTo(enumWantedColor, this.labels);
+
+        //set background colors
+        this.setBackRoundColors(enumWantedColor);
+
+        //set kids skins
+        this.simulationComponentController.setSkins(enumWantedColor);
+    }
+
+    private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {
+
+        //set background colors
+        if(enumWantedColor != SkinsUtils.Colors.DEFAULT)
+            this.gridPaneSettingTab.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
+        else
+            this.gridPaneSettingTab.setBackground(new Background(new BackgroundFill(null, null, null)));
+    }
 }

@@ -1,5 +1,6 @@
 package WhatIfComponent;
 
+        import AnimationComponent.SkinsUtils;
         import DataManager.BackDataManager;
         import Graph.Target;
         import errors.ErrorUtils;
@@ -28,6 +29,7 @@ public class WhatIfController {
     @FXML private ChoiceBox<String> targetListButton;
     @FXML private ChoiceBox<String> dependenciesType;
     @FXML private Button findButton;
+    private List<Button> buttons = new ArrayList<>();
     @FXML private TableColumn<String, String> resTable;
     @FXML private TableView<String> tableView;
     private BackDataManager bDM;
@@ -37,6 +39,17 @@ public class WhatIfController {
     private Paint textColor;
     private List<String> resPaths = new ArrayList<>();
 
+
+    public void init(BackDataManager other){
+
+        this.bDM = other;
+        this.targets = other.getAllTargets();
+
+        this.buttons = Arrays.asList(this.findButton);
+
+        this.initTargetListButton();
+        this.initDependenciesTypeButton();
+    }
 
     @FXML
     void findButtonAction(ActionEvent event) throws ErrorUtils {
@@ -95,15 +108,6 @@ public class WhatIfController {
             this.resTargets = this.bDM.whatIf(targetListButton.getValue(), relationshipType);
 
         }
-    }
-
-    public void init(BackDataManager other){
-
-        this.bDM = other;
-        this.targets = other.getAllTargets();
-
-        this.initTargetListButton();
-        this.initDependenciesTypeButton();
     }
 
     private void initDependenciesTypeButton() {
@@ -173,4 +177,25 @@ public class WhatIfController {
       //  this.targetListButton.setStyle(this.backroundColor);
     }
 
+    public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {
+
+        SkinsUtils.changeButtonColorTo(wantedColors, this.buttons);
+    }
+
+    public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
+
+        //set buttons colors
+        this.setButtonsColors(enumWantedColor);
+
+        // set my label skins
+
+        //set background colors
+        this.setBackRoundColors(enumWantedColor);
+
+        // set my kids skins
+
+    }
+
+    private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {
+    }
 }

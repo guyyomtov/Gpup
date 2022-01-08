@@ -1,9 +1,11 @@
 package graphInfoView;
 
 import AnimationComponent.AnimationController;
+import AnimationComponent.SkinsUtils;
 import DataManager.BackDataManager;
 import Graph.Target;
 import Graph.Target;
+import errors.ErrorUtils;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,16 +15,16 @@ import javafx.scene.Parent;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import tableView.TableController;
 import Flagger.Flagger;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class GraphInfoController {
@@ -30,17 +32,19 @@ public class GraphInfoController {
     @FXML private ScrollPane welcomeView;
     @FXML private GridPane gridPane;
     @FXML private ChoiceBox<String> choiceBoxSerialSets;
-    @FXML private Label resultOfChoiceBox;
     @FXML private BarChart<String, Integer> barChart;
+    @FXML private Label resultOfChoiceBox;
     @FXML private Label summaryTable;
     @FXML private Label summaryBy;
-    @FXML private Parent tableComponent;
-    @FXML private TableController tableComponentController;
+    private List<Label> labels = new ArrayList<>();
     @FXML private CheckBox whatIfCheckBox;
+    private List<CheckBox> checkBoxes = new ArrayList<>();
     @FXML private RadioButton dependsOnButton;
     @FXML private RadioButton requiredForButton;
+    private List<RadioButton> radioButtons = new ArrayList<>();
     private boolean tableIsFull = false;
-
+    @FXML private Parent tableComponent;
+    @FXML private TableController tableComponentController;
     private BackDataManager bDM = new BackDataManager();
     private AnimationController aniController;
 
@@ -52,6 +56,10 @@ public class GraphInfoController {
         this.initSummary();;
         this.initChoiceBox();
         this.initBarChart();
+
+        this.radioButtons = Arrays.asList(this.dependsOnButton, this.requiredForButton);
+        this.checkBoxes = Arrays.asList(this.whatIfCheckBox);
+        this.labels = Arrays.asList(this.resultOfChoiceBox, this.summaryBy, this.summaryTable);
 
         this.initAnimation();
     }
@@ -121,9 +129,6 @@ public class GraphInfoController {
         }
     }
 
-
-
-
     public TableView<Target> getTable(){
 
         if(tableIsFull)
@@ -148,6 +153,36 @@ public class GraphInfoController {
 
     public BackDataManager getbDM(){
         return this.bDM;
+    }
+
+    public void setButtonsColors(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
+
+        // set my buttons skins
+        SkinsUtils.changeRadioButtonTextColorTo(enumWantedColor, this.radioButtons);
+        SkinsUtils.changeCheckBoxButtonTextColorTo(enumWantedColor, this.checkBoxes);
+
+        // set my kids buttons skins
+        this.aniController.setSkins(enumWantedColor);
+    }
+
+    public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
+
+        //set buttons colors
+        this.setButtonsColors(enumWantedColor);
+
+        // set my label skins
+        SkinsUtils.changeLabelsTextColorTo(enumWantedColor, this.labels);
+
+        //set background colors
+        this.setBackRoundColors(enumWantedColor);
+    }
+
+    private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {
+
+        if(enumWantedColor != SkinsUtils.Colors.DEFAULT)
+            this.gridPane.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
+        else
+            this.gridPane.setBackground(new Background(new BackgroundFill(null, null, null)));
     }
 }
 

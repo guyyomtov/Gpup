@@ -1,5 +1,6 @@
 package AnimationComponent;
 
+import errors.ErrorUtils;
 import javafx.animation.*;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -10,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -19,6 +22,10 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class AnimationController {
 
@@ -26,6 +33,7 @@ public class AnimationController {
     @FXML private Button animationButton1;
     @FXML private Button animationButton2;
     @FXML private Button stopAnimationButton;
+    private List<Button> myButtons = new ArrayList<>();
     private Node square;
     private Node circle;
     private Text textAno1;
@@ -36,6 +44,8 @@ public class AnimationController {
 
         this.textAno1 = new Text("Serial Set: None");
         this.textCircle = new Text("CLICK ME!");
+
+        this.myButtons = Arrays.asList(this.animationButton1, this.animationButton2, this.stopAnimationButton);
 
         this.initAnimation1();
         this.initCircle();
@@ -154,5 +164,32 @@ public class AnimationController {
 
         this.textAno1.setVisible(false);
         this.square.setVisible(false);
+    }
+
+    public void setButtonsColors(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
+
+        // set my skins buttons
+        SkinsUtils.changeButtonColorTo(enumWantedColor, this.myButtons);
+
+        // set my kids buttons
+    }
+
+    public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
+
+        //set buttons colors
+        this.setButtonsColors(enumWantedColor);
+
+        // set my label skins
+
+        //set background colors
+        this.setBackRoundColors(enumWantedColor);
+    }
+
+    private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {
+
+        if(enumWantedColor != SkinsUtils.Colors.DEFAULT)
+            this.boarderPane.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
+        else
+            this.boarderPane.setBackground(new Background(new BackgroundFill(null, null, null)));
     }
 }

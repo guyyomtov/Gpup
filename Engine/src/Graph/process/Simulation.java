@@ -19,7 +19,6 @@ import java.util.function.Consumer;
 
 public class Simulation extends Task implements Serializable, Runnable {
 
-
     public Simulation(DataSetupProcess dSp) throws ErrorUtils {
 
         super(dSp);
@@ -32,6 +31,17 @@ public class Simulation extends Task implements Serializable, Runnable {
 
     @Override
     public void run(){
+
+        //setup data part 1
+        Map<String, Target> namesToTargetsMap = Target.initNameToTargetFrom(this.targets);
+        Map<String, Minion> namesToMinions     = Minion.startMinionMapFrom(this.minions);
+        Map<String, Map<String, Minion>>    typeOfTargetToTargetNameToHisTask   = this.startMinionMapByTargetType(namesToMinions, namesToTargetsMap);
+
+        // setup data part 2
+        Map<String,Minion> independents = typeOfTargetToTargetNameToHisTask.get("Independent");
+        Map<String,Minion> leaves = typeOfTargetToTargetNameToHisTask.get("Leaf");
+        Map<String,Minion> middles = typeOfTargetToTargetNameToHisTask.get("Middle");
+        Map<String,Minion> roots = typeOfTargetToTargetNameToHisTask.get("Root");
 
         this.cUI = new Consumer() {
             @Override
@@ -75,6 +85,41 @@ public class Simulation extends Task implements Serializable, Runnable {
         ProcessInfo.setOldTask(this);
     }
 
+    private Map<String, Map<String,Minion>> startMinionMapByTargetType(Map<String, Minion> namesToTasks, Map<String, Target> namesToTarget) {
+
+        String curTargetType = new String();
+        Map<String, Map<String,Minion>> resM = new HashMap<>();
+
+        resM.put("Independent", new HashMap<>());
+        resM.put("Leaf", new HashMap<>());
+        resM.put("Middle", new HashMap<>());
+        resM.put("Root", new HashMap<>());
+
+        for(String curTaskName : namesToTasks.keySet()){
+
+            curTargetType = namesToTarget.get(curTaskName).getTargetType().toString();
+
+            resM.get(curTargetType).put(curTaskName, namesToTasks.get(curTaskName));
+        }
+        return resM;
+    }
+
+    private void runTheseTargetsByType(Map<String,Minion> curMinions, Map<String, Minion> namesToMinions){
+
+        Boolean curMinionsFinished = false;
+
+        if(!curMinions.keySet().isEmpty()) {
+
+        //    while (!curMinionsFinished) {
+
+                this.runTheseTasks(new ArrayList<>(curMinions.values()), namesToMinions); // go over all cur tasks and get the needed data back
+
+                curMinionsFinished = checkIfWeFinished(new ArrayList<>(curMinions.values())); // go over all cur tasks and check if finished (with get
+          //  }
+        }
+    }
+
+
     private void runTheseTasks(List<Minion> minions, Map<String, Minion> namesToMinions){
 
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,
@@ -94,6 +139,19 @@ public class Simulation extends Task implements Serializable, Runnable {
                     this.targetNameToSummeryProcess.put(curM.getName(), curTaskData);
                     FormatAllTask.updateCounter(curTaskData.get(3));// the status
                 }
+            }
+        }
+    }
+
+    private void checkIfToAddMyParents(Minion curM, Map<String, Minion> namesToMinions) {
+
+        if(curM.ISucceeded())
+        {
+            List<Minion> parents = Minion.getMinionsByName(curM.getParentsNames(), namesToMinions);
+
+            for(Minion curD : parents) {
+                if(curD.getCanIRun())
+                    this.waitingList.add(curD);
             }
         }
     }
@@ -148,15 +206,11 @@ public class Simulation extends Task implements Serializable, Runnable {
     
     public void setName(){this.taskName = "simulation";}
 
+
+    public static Integer threadCounter = 0;
     public void runMinions(){
-       /* we have first queue
-       ==> therdspools
-       ==> run on Q and dont stop until all threads are back.
-                threadPolls.excutre(minion)
-                        ==> in minion update Q if my run open relevant minion add minion
-        */
-        Integer numOfThreads = 3;
-        ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
 
         //first case
         Minion minion = waitingList.poll();

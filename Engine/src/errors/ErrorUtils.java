@@ -10,9 +10,13 @@ public class ErrorUtils extends Exception {
        // super(s);
     }
 
+    public static final String LIBRARY_DOSENT_EXSIST_IN_PROJECT = "Library doesn't exist in project.";
+    public static final String MISSING_COMPILATION_NEEDED_DATA = "Missing compilation needed data.";
+    public static final String BUTTON_IS_NULL = "Button given is null.";
     public static final String NEEDED_DATA_IS_NULL = "Basic needed data for process is null";
     public static final String TYPE_OF_PROCESS = "Process can't be of two types";
     public static final String PROCESS_RANDOM = "Appropriate flag wasn't started or was the oppisite from wanted";
+    public static final String INVALID_INPUT = "The input given is invalid.";
 
     public static String invalidProcess(){ return "Two types of diffrent process can't work together";}
 

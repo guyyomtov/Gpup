@@ -187,7 +187,9 @@ public class BackDataManager implements DataManager {
         }
         else if(dSP.flagger.processIsCompilation){
 
+            if(dSP.compilationProcessHasNeededData()){
 
+            }
         }
 
     }

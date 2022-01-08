@@ -1,9 +1,9 @@
 package AnimationComponent;
 
+import errors.ErrorUtils;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -42,8 +42,37 @@ public class SkinsUtils {
         );
     }
 
+    public static void changeLabelsTextColorTo(Colors wantedColor, List<Label> buttons) throws ErrorUtils {
 
-    public static void changeButtonColorTo(Colors wantedColor, List<Button> buttons) {
+        Paint textColor = Color.BLACK;
+
+        switch (wantedColor){
+
+            case RED:
+                textColor = Color.WHITE;
+                break;
+            case BLUE:
+                textColor = Color.YELLOW;
+                break;
+            case DEFAULT:
+                textColor = Color.BLACK;
+                break;
+        }
+        changeLabelSkins(textColor, buttons);
+    }
+
+    private static void changeLabelSkins(Paint textColor, List<Label> buttons) throws ErrorUtils {
+
+        for(Label curB : buttons){
+
+            if(curB == null)
+                throw new ErrorUtils(ErrorUtils.BUTTON_IS_NULL);
+            curB.setTextFill(textColor);
+        }
+    }
+
+
+    public static void changeButtonColorTo(Colors wantedColor, List<Button> buttons) throws ErrorUtils {
 
         String buttonColor = wantedColor.toString();
         Paint textColor = Color.BLACK;
@@ -66,10 +95,77 @@ public class SkinsUtils {
         changeButtonSkins(buttonColor, textColor, buttons);
     }
 
+    public static void changeCheckBoxButtonTextColorTo(Colors wantedColor, List<CheckBox> buttons) throws ErrorUtils {
 
-    private static List<Button> changeButtonSkins(String wantedColor, Paint textColor, List<Button> buttons) {
+        String buttonColor = wantedColor.toString();
+        Paint textColor = Color.BLACK;
+
+        switch (wantedColor){
+
+            case RED:
+                textColor = Color.WHITE;
+                break;
+            case BLUE:
+                textColor = Color.YELLOW;
+                break;
+            case DEFAULT:
+                textColor = Color.BLACK;
+                break;
+        }
+        changeCheckBoxButtonSkins(buttonColor, textColor, buttons);
+    }
+
+    private static List<CheckBox> changeCheckBoxButtonSkins(String wantedColor, Paint textColor, List<CheckBox> buttons) throws ErrorUtils {
+
+        for(CheckBox curB : buttons){
+
+            if(curB == null)
+                throw new ErrorUtils(ErrorUtils.BUTTON_IS_NULL);
+
+            curB.setTextFill(textColor);
+        }
+        return buttons;
+    }
+
+    public static void changeRadioButtonTextColorTo(Colors wantedColor, List<RadioButton> buttons) throws ErrorUtils {
+
+        String buttonColor = wantedColor.toString();
+        Paint textColor = Color.BLACK;
+
+        switch (wantedColor){
+
+            case RED:
+                textColor = Color.WHITE;
+                break;
+            case BLUE:
+                textColor = Color.YELLOW;
+                break;
+            case DEFAULT:
+                textColor = Color.BLACK;
+                break;
+        }
+        changeRadioButtonSkins(buttonColor, textColor, buttons);
+    }
+
+    private static List<RadioButton> changeRadioButtonSkins(String wantedColor, Paint textColor, List<RadioButton> buttons) throws ErrorUtils {
+
+        for(RadioButton curB : buttons){
+
+            if(curB == null)
+                throw new ErrorUtils(ErrorUtils.BUTTON_IS_NULL);
+
+            curB.setTextFill(textColor);
+        }
+        return buttons;
+    }
+
+
+    private static List<Button> changeButtonSkins(String wantedColor, Paint textColor, List<Button> buttons) throws ErrorUtils {
 
         for(Button curB : buttons){
+
+            if(curB == null)
+                throw new ErrorUtils(ErrorUtils.BUTTON_IS_NULL);
 
             curB.setStyle(wantedColor);
             curB.setTextFill(textColor);

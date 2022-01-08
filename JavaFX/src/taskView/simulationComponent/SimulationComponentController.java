@@ -1,5 +1,7 @@
 package taskView.simulationComponent;
 
+import AnimationComponent.SkinsUtils;
+import errors.ErrorUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
@@ -8,26 +10,28 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.input.DragEvent;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SimulationComponentController {
 
-    @FXML
-    private Spinner<Integer> chooseTimeSpinner;
-
-    @FXML
-    private RadioButton randomButton;
-
-    @FXML
-    private RadioButton manualButton;
-
-    @FXML
-    private Spinner<Integer> succsesSpinner;
-
-    @FXML
-    private Spinner<Integer> warningSpinner;
+    @FXML private Spinner<Integer> chooseTimeSpinner;
+    @FXML private RadioButton randomButton;
+    @FXML private RadioButton manualButton;
+    private List<RadioButton> radioButtons = new ArrayList<>();
+    @FXML private Spinner<Integer> succsesSpinner;
+    @FXML private Spinner<Integer> warningSpinner;
 
 
 
+    public void initSimulation(){
+        this.initTimeSpinner();
+        this.initSpinner(this.succsesSpinner);
+        this.initSpinner(this.warningSpinner);
+
+        this.radioButtons = Arrays.asList(randomButton, this.manualButton);
+    }
 
     @FXML
     void manualButtonAction(ActionEvent event) {
@@ -39,13 +43,6 @@ public class SimulationComponentController {
     void randomButtonAction(ActionEvent event) {
         succsesSpinner.setDisable(true);
         warningSpinner.setDisable(true);
-    }
-
-
-    public void initSimulation(){
-      this.initTimeSpinner();
-      this.initSpinner(this.succsesSpinner);
-      this.initSpinner(this.warningSpinner);
     }
 
     private void initSpinner(Spinner<Integer> spinner) {
@@ -71,4 +68,20 @@ public class SimulationComponentController {
     public Integer getChancesToSuccessWithWarning(){return this.warningSpinner.getValue();}
 
     public boolean getIfRandom(){return this.randomButton.isSelected();}
+
+    public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
+
+
+        //set buttons colors
+        this.setButtonsColors(enumWantedColor);
+
+        // set my label skins
+
+        //set background colors
+    }
+
+    public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {
+
+        SkinsUtils.changeRadioButtonTextColorTo(wantedColors, this.radioButtons);
+    }
 }

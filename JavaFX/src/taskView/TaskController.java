@@ -66,8 +66,6 @@ public class TaskController {
     private Parent simulationComponent;
 
 
-
-
     public void initTaskView()
     {
         try {
@@ -162,7 +160,8 @@ public class TaskController {
                 .flagger(flagger)
                 .timeToRun(2000)
                 .chancesToBeAWarning(100)
-                .chancesToSucceed(100);
+                .chancesToSucceed(100)
+                .amountOfThreads(3);
         if (!this.minions.isEmpty())
             dSP.minionsChoosenByUser(this.minions);
 

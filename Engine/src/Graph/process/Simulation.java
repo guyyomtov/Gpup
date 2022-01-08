@@ -207,7 +207,6 @@ public class Simulation extends Task implements Serializable, Runnable {
     public void setName(){this.taskName = "simulation";}
 
 
-    public static Integer threadCounter = 0;
     public void runMinions(){
 
         ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);

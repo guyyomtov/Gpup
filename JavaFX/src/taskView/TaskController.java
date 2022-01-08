@@ -173,6 +173,7 @@ public class TaskController {
         Flagger flagger = new Flagger().builder()
                 .processIsSimulation(true)
                 .processFromRandomTargets(true)
+                .thereIsSerialSets(true)
                 .chancesIsRandomInProcess(false);
 
         //start more needed data

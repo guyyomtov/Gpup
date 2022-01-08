@@ -12,6 +12,7 @@ public class Flagger {
     public Boolean chancesIsRandomInProcess;
     public Boolean processIsSimulation;
     public Boolean processIsCompilation;
+    public boolean thereIsSerialSets = false;
 
 
     public Flagger builder(){return this;}
@@ -42,6 +43,13 @@ public class Flagger {
 
         this.processFromScratch = !b;
         this.processFromRandomTargets = !b;
+
+        return this;
+    }
+
+    public Flagger thereIsSerialSets(Boolean thereIsSerialSets){
+
+        this.thereIsSerialSets = thereIsSerialSets;
 
         return this;
     }

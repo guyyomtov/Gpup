@@ -241,35 +241,44 @@ public class Simulation extends Task implements Serializable, Runnable {
     @Override
     protected Object call() throws Exception {
 
-        Integer numOfThreads = 3;
-        ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
+        ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
 
         //first case
         Minion minion = waitingList.poll();
         executorService.execute(minion);
+
         threadCounter++;
+        this.namesToCurRunningMinions.put(minion.getName(), minion);
+
         Integer totalMinionsThatFinished = updateTotalMinionsThatFinished();
-        //updateMessage("skdsk");
 
         // go out of while when: no thread exist & queue is empty
         while(threadCounter != 0 || !waitingList.isEmpty()) {
 
             minion = waitingList.poll();
-            totalMinionsThatFinished = updateTotalMinionsThatFinished();
-            updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
-          //  updateMessage(message);
 
-            if(minion != null) {
+            if(this.iCanRunSerialSet(minion)) {
 
-                executorService.execute(minion);
-                threadCounter++;
-            }
-            else{
-                try {
-                    Thread.sleep(300);
-                }catch (InterruptedException e) {
-                    // e.printStackTrace();
+                totalMinionsThatFinished = updateTotalMinionsThatFinished();
+                updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
+                //  updateMessage(message);
+
+                if (minion != null) {
+
+                    executorService.execute(minion);
+
+                    threadCounter++;
+                    this.namesToCurRunningMinions.put(minion.getName(), minion);
+
+                } else {
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {// e.printStackTrace();
+                    }
                 }
+            }
+            else{// cur minion can't run because of serial set, put back in queue
+                waitingList.add(minion);
             }
         }
         totalMinionsThatFinished = updateTotalMinionsThatFinished();

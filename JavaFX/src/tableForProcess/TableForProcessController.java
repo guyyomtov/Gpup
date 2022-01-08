@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 
@@ -34,7 +35,7 @@ public class TableForProcessController {
     private TableColumn<Minion, StringProperty> statusColumn;
 
 
-    public void initTable(List<Minion> minions){
+    public void initTable(List<Minion> minions, TextArea targetInfo){
 
         ObservableList<Minion> data =
                 FXCollections.observableArrayList(minions);
@@ -51,7 +52,13 @@ public class TableForProcessController {
 
         tableForProcess.setEditable(true);
         tableForProcess.setItems(data);
+        this.addListener(targetInfo);
 
+    }
+
+    private void addListener(TextArea targetInfo) {
+
+      //  targetInfo.textProperty().addListener();
     }
 
 

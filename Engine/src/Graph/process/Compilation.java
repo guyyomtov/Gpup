@@ -5,7 +5,7 @@ import errors.ErrorUtils;
 
 import java.io.Serializable;
 
-public class Compilation extends Task implements Serializable, Runnable{
+public class Compilation extends Task implements Serializable{
 
     public Compilation(DataSetupProcess dSp) throws ErrorUtils {
         super(dSp);
@@ -18,6 +18,17 @@ public class Compilation extends Task implements Serializable, Runnable{
 
     @Override
     public void setName() {
+
+    }
+
+
+    @Override
+    protected Object call() throws Exception {
+        return null;
+    }
+
+    @Override
+    public void accept(String s) {
 
     }
 }

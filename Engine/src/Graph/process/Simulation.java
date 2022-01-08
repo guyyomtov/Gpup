@@ -75,7 +75,6 @@ public class Simulation extends Task implements Serializable, Runnable {
         ProcessInfo.setOldTask(this);
     }
 
-
     private void runTheseTasks(List<Minion> minions, Map<String, Minion> namesToMinions){
 
         // Date: [0]->sleep time, [1]->Target name, [2]->Target general info, [3]-> Target status in process, [4]-> Targets that depends and got released,

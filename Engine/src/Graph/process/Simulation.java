@@ -5,6 +5,7 @@ import DataManager.consumerData.FormatAllTask;
 import DataManager.consumerData.ProcessInfo;
 import errors.ErrorUtils;
 import fileHandler.TaskFile;
+import javafx.application.Platform;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -18,6 +19,7 @@ import java.util.function.Consumer;
 
 public class Simulation extends Task implements Serializable, Runnable {
 
+
     public Simulation(DataSetupProcess dSp) throws ErrorUtils {
 
         super(dSp);
@@ -30,17 +32,6 @@ public class Simulation extends Task implements Serializable, Runnable {
 
     @Override
     public void run(){
-
-        //setup data part 1
-        Map<String, Target> namesToTargetsMap = Target.initNameToTargetFrom(this.targets);
-        Map<String, Minion> namesToMinions     = Minion.startMinionMapFrom(this.minions);
-        Map<String, Map<String, Minion>>    typeOfTargetToTargetNameToHisTask   = this.startMinionMapByTargetType(namesToMinions, namesToTargetsMap);
-
-        // setup data part 2
-        Map<String,Minion> independents = typeOfTargetToTargetNameToHisTask.get("Independent");
-        Map<String,Minion> leaves = typeOfTargetToTargetNameToHisTask.get("Leaf");
-        Map<String,Minion> middles = typeOfTargetToTargetNameToHisTask.get("Middle");
-        Map<String,Minion> roots = typeOfTargetToTargetNameToHisTask.get("Root");
 
         this.cUI = new Consumer() {
             @Override
@@ -61,7 +52,10 @@ public class Simulation extends Task implements Serializable, Runnable {
 
         // ----------- needed to be fixed !!!
         this.makeQueue();
-       this.runMinions();
+       //this.runMinions();
+        try {
+            this.call();
+        }catch (Exception e){}
 
         // move to leaves
 //        this.runTheseTargetsByType(leaves,namesToMinions);
@@ -79,40 +73,6 @@ public class Simulation extends Task implements Serializable, Runnable {
 
         FormatAllTask.sendData(cUI, this.targetNameToSummeryProcess);
         ProcessInfo.setOldTask(this);
-    }
-
-    private Map<String, Map<String,Minion>> startMinionMapByTargetType(Map<String, Minion> namesToTasks, Map<String, Target> namesToTarget) {
-
-        String curTargetType = new String();
-        Map<String, Map<String,Minion>> resM = new HashMap<>();
-
-        resM.put("Independent", new HashMap<>());
-        resM.put("Leaf", new HashMap<>());
-        resM.put("Middle", new HashMap<>());
-        resM.put("Root", new HashMap<>());
-
-        for(String curTaskName : namesToTasks.keySet()){
-
-            curTargetType = namesToTarget.get(curTaskName).getTargetType().toString();
-
-            resM.get(curTargetType).put(curTaskName, namesToTasks.get(curTaskName));
-        }
-        return resM;
-    }
-
-    private void runTheseTargetsByType(Map<String,Minion> curMinions, Map<String, Minion> namesToMinions){
-
-        Boolean curMinionsFinished = false;
-
-        if(!curMinions.keySet().isEmpty()) {
-
-        //    while (!curMinionsFinished) {
-
-                this.runTheseTasks(new ArrayList<>(curMinions.values()), namesToMinions); // go over all cur tasks and get the needed data back
-
-                curMinionsFinished = checkIfWeFinished(new ArrayList<>(curMinions.values())); // go over all cur tasks and check if finished (with get
-          //  }
-        }
     }
 
 
@@ -135,19 +95,6 @@ public class Simulation extends Task implements Serializable, Runnable {
                     this.targetNameToSummeryProcess.put(curM.getName(), curTaskData);
                     FormatAllTask.updateCounter(curTaskData.get(3));// the status
                 }
-            }
-        }
-    }
-
-    private void checkIfToAddMyParents(Minion curM, Map<String, Minion> namesToMinions) {
-
-        if(curM.ISucceeded())
-        {
-            List<Minion> parents = Minion.getMinionsByName(curM.getParentsNames(), namesToMinions);
-
-            for(Minion curD : parents) {
-                if(curD.getCanIRun())
-                    this.waitingList.add(curD);
             }
         }
     }
@@ -202,8 +149,6 @@ public class Simulation extends Task implements Serializable, Runnable {
     
     public void setName(){this.taskName = "simulation";}
 
-
-    public static Integer threadCounter = 0;
     public void runMinions(){
        /* we have first queue
        ==> therdspools
@@ -211,7 +156,6 @@ public class Simulation extends Task implements Serializable, Runnable {
                 threadPolls.excutre(minion)
                         ==> in minion update Q if my run open relevant minion add minion
         */
-
         Integer numOfThreads = 3;
         ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
 
@@ -242,15 +186,58 @@ public class Simulation extends Task implements Serializable, Runnable {
         int x = 5;
     }
 
-    public List<Minion> getMinionsWhoArntInWaitingList(List<Minion> minions){
+    @Override
+    protected Object call() throws Exception {
 
-        List<Minion> res = new ArrayList<>();
+        Integer numOfThreads = 3;
+        ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
 
-        for(Minion curM : minions){
+        //first case
+        Minion minion = waitingList.poll();
+        executorService.execute(minion);
+        threadCounter++;
+        Integer totalMinionsThatFinished = updateTotalMinionsThatFinished();
+        //updateMessage("skdsk");
 
-            if(!waitingList.contains(curM))
-                res.add(curM);
+        // go out of while when: no thread exist & queue is empty
+        while(threadCounter != 0 || !waitingList.isEmpty()) {
+
+            minion = waitingList.poll();
+            totalMinionsThatFinished = updateTotalMinionsThatFinished();
+            updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
+          //  updateMessage(message);
+
+            if(minion != null) {
+
+                executorService.execute(minion);
+                threadCounter++;
+            }
+            else{
+                try {
+                    Thread.sleep(300);
+                }catch (InterruptedException e) {
+                    // e.printStackTrace();
+                }
+            }
+        }
+        totalMinionsThatFinished = updateTotalMinionsThatFinished();
+        updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
+
+        return true;
+    }
+
+    private Integer updateTotalMinionsThatFinished() {
+        Integer res = 0;
+        for(Minion minion : minionsChosenByUser){
+            if(minion.imFinished())
+                ++res;
         }
         return res;
+    }
+
+    @Override
+      public void accept(String s) {
+        if(s != "")
+            Platform.runLater(()-> updateMessage(getMessage() + "\n" + s));
     }
 }

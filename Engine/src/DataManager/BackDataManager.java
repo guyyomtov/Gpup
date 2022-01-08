@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 
 import Graph.*;
+import taskView.TaskController;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -32,6 +33,7 @@ public class BackDataManager implements DataManager {
 //    private final static String JAXB_XML_GAME_PACKAGE_NAME = "schemaXmlFile";
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "GpupClassesEx2";
 
+    private TaskController taskController;
 
     // for console application
     public boolean checkFile(String fileName) throws ErrorUtils {
@@ -177,16 +179,17 @@ public class BackDataManager implements DataManager {
         // Choose process
         if(dSP.flagger.processIsSimulation){
 
-            for(Minion curM : dSP.minionsChoosenByUser){
-                curM.setMyStatus("dick");
-            }
             Simulation simulation = new Simulation(dSP);
+
+            this.taskController.bindTaskToUIComponents(simulation);
+
             new Thread(simulation).start();
         }
         else if(dSP.flagger.processIsCompilation){
 
 
         }
+
     }
 
     public String findCircle(String name) throws ErrorUtils {
@@ -217,6 +220,10 @@ public class BackDataManager implements DataManager {
 
     public Map<String, Set<Target>> getSerialSets() {
         return this.graph.getmSerialSets();
+    }
+
+    public void setTaskController(TaskController taskController) {
+        this.taskController = taskController;
     }
 
 }

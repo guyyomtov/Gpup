@@ -2,13 +2,21 @@ package tableForProcess;
 
 import Graph.Target;
 import Graph.process.Minion;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TableForProcessController {
@@ -23,7 +31,7 @@ public class TableForProcessController {
     private TableColumn<Minion, Target.Type> levelColumn;
 
     @FXML
-    private TableColumn<Minion, String> statusColumn;
+    private TableColumn<Minion, StringProperty> statusColumn;
 
 
     public void initTable(List<Minion> minions){
@@ -32,17 +40,19 @@ public class TableForProcessController {
                 FXCollections.observableArrayList(minions);
 
         targetNameColumn.setCellValueFactory(
-                new PropertyValueFactory<>("targetName")
+                new PropertyValueFactory<Minion, String>("targetName")
         );
         levelColumn.setCellValueFactory(
-                new PropertyValueFactory<>("targetType")
+                new PropertyValueFactory<Minion, Target.Type>("targetType")
         );
         statusColumn.setCellValueFactory(
-                new PropertyValueFactory<>("myStatus")
+                new PropertyValueFactory<Minion, StringProperty>("status")
         );
 
+        tableForProcess.setEditable(true);
         tableForProcess.setItems(data);
 
     }
+
 
 }

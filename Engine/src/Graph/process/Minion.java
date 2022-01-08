@@ -4,6 +4,9 @@ import DataManager.consumerData.FormatAllTask;
 import Graph.Target;
 import DataManager.consumerData.ConsumerTaskInfo;
 import fileHandler.TaskFile;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.CheckBox;
 
 import java.io.Serializable;
@@ -11,6 +14,7 @@ import java.lang.reflect.Type;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
+import javafx.concurrent.Task;
 
 public class Minion implements Serializable, Runnable {
 
@@ -18,6 +22,7 @@ public class Minion implements Serializable, Runnable {
     private String targetName;
     private Target.Type targetType;
     private String myStatus = new String();
+    private StringProperty status;
     private Boolean canIRun;
     private Boolean iAmFinished;
     private List<String> parentsNames = new ArrayList<>();
@@ -30,6 +35,8 @@ public class Minion implements Serializable, Runnable {
     protected Integer chancesISucceed;
     protected Integer chancesImAWarning;
     private Map<String, Minion> allNamesToMinions;
+    private Consumer<String> simulationConsumer;
+
 
 
     public Minion(Target target, Integer maxTime, Integer chancesISucceed, Integer chancesImAWarning){
@@ -39,6 +46,7 @@ public class Minion implements Serializable, Runnable {
         this.targetType = target.getTargetType();
         this.myStatus = this.myStartStatus(target.getTargetType().toString());
         this.canIRun = this.myStatus.equals("WAITING") ? true : false;
+        this.status = new SimpleStringProperty(this, "status", myStatus );
         this.iAmFinished = false;
         this.chancesISucceed = chancesISucceed;
         this.chancesImAWarning = chancesImAWarning;
@@ -61,10 +69,7 @@ public class Minion implements Serializable, Runnable {
         this.timeIRun = 0;
     }
 
-    public static Minion startMinionWithSuccessFrom(Target target){
-
-        return new Minion(target);
-    }
+    public static Minion startMinionWithSuccessFrom(Target target){return new Minion(target);}
 
     public static List<Minion> getMinionsByName(List<String> minionsNames, Map<String, Minion> namesToMinions) {
 
@@ -125,7 +130,7 @@ public class Minion implements Serializable, Runnable {
         return "FROZEN";
     }
 
-    public List<String> tryToRunMe(List<Minion> myKids, Map<String,Minion> allMinions, Consumer cUI){
+    public List<String> tryToRunMe(List<Minion> myKids, Map<String,Minion> allMinions, Consumer cUI) {
 
         String myS = this.myStatus;
 
@@ -138,9 +143,11 @@ public class Minion implements Serializable, Runnable {
             this.myPData = this.giveMyData();
         }
 
-        if(this.myStatus.equals("WAITING"))
-            this.myPData = this.runMe(allMinions, cUI);
-
+        if(this.myStatus.equals("WAITING")) {
+            try {
+                this.runMe(allMinions, cUI);//this.myPData = (List<String>) this.call();
+            }catch (Exception e){}
+        }
 
         return this.myPData;
     }
@@ -148,19 +155,31 @@ public class Minion implements Serializable, Runnable {
     public List<String> runMe(Map<String,Minion> allMinions, Consumer cUI)  {
 
         this.myStatus = "IN PROCESS";
+        this.setStatus(myStatus);
 
         List<String> resData = new ArrayList<>();
         String openedParents = new String();
         ConsumerTaskInfo cTI = new ConsumerTaskInfo(this.target.getName());
-        cTI.getInfo(cUI, "The target " + this.target.getName() + " about to run.");
 
+        cTI.getInfo(cUI, "The target " + this.target.getName() + " about to run.");
+        try {
+            Thread.sleep(100);
+        }catch (InterruptedException e) {
+           // e.printStackTrace();
+        }
+
+        simulationConsumer.accept("The target " + this.target.getName() + " about to run.");
+
+       // Platform.runLater();
         Duration t = Duration.ofMillis(timeIRun);
         cTI.getInfo(cUI, "The system is going to sleep for: " + String.format("%02d:%02d:%02d" ,t.toHours(), t.toMinutes(), t.getSeconds()));
+        simulationConsumer.accept("The system is going to sleep for: " + String.format("%02d:%02d:%02d" ,t.toHours(), t.toMinutes(), t.getSeconds()));
         try {
             Thread.sleep(timeIRun);
         }catch(InterruptedException e){}
 
         cTI.getInfo(cUI, "The system finished the task on target " + this.getName());
+        simulationConsumer.accept("The system finished the task on target " + this.getName());
         //  cUI.accept("The system finished the task on target " + this.myTargetName);
 
         Random rand = new Random();
@@ -172,6 +191,7 @@ public class Minion implements Serializable, Runnable {
             else
                 this.myStatus = "SUCCESS";
 
+
             synchronized(this){
             openedParents = this.iOpened(this.parentsNames, allMinions);}
 
@@ -181,8 +201,11 @@ public class Minion implements Serializable, Runnable {
 
         this.iAmFinished = true;
         cTI.getInfo(cUI, "the result: " + this.myStatus);
-        if(this.myStatus.equals("SUCCESS") || this.myStatus.equals("WARNING"))
-            cTI.getInfo(cUI, "The targets that opened to run: " + (openedParents.isEmpty() ? "nobody": openedParents ));
+        simulationConsumer.accept("The result of the target " + this.targetName + " is: " + this.myStatus);
+        if(this.myStatus.equals("SUCCESS") || this.myStatus.equals("WARNING")) {
+            cTI.getInfo(cUI, "The targets that opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
+            simulationConsumer.accept("The target " + targetName +  " opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
+        }
 
         cTI.getInfo(cUI, "----------------------------------------");
 
@@ -194,6 +217,9 @@ public class Minion implements Serializable, Runnable {
         resData.add(4, openedParents);
         // add targets names the got free
         TaskFile.closeFile();
+      //  this.aTask.updateUser();
+        this.setStatus(myStatus);
+
         return resData;
     }
 
@@ -212,9 +238,7 @@ public class Minion implements Serializable, Runnable {
             this.myKidsNames.add(curT.getName());
     }
 
-    public Boolean getCanIRun() {
-        return canIRun;
-    }
+    public Boolean getCanIRun() {return canIRun;}
 
     private String checkStatusOfMyKidsAndUpdateMe(List<Minion> myKids){
 
@@ -327,7 +351,6 @@ public class Minion implements Serializable, Runnable {
         return resM;
     }
 
-
     @Override
     public void run(){
 
@@ -348,6 +371,7 @@ public class Minion implements Serializable, Runnable {
             FormatAllTask.updateCounter(myPData.get(3));// the status
         }
         Simulation.threadCounter = Simulation.threadCounter - 1 ;
+        this.iAmFinished = true;
     }
 
     private void checkIfToAddMyParents() {
@@ -357,13 +381,10 @@ public class Minion implements Serializable, Runnable {
             for(Minion curD : this.parents) {
                 if(curD.getCanIRun()) {
 
-                    int y = 5;
-
-                    if(!Task.waitingList.contains(curD))
-                        Task.waitingList.add(curD);
+                    if(!Graph.process.Task.waitingList.contains(curD))
+                        Graph.process.Task.waitingList.add(curD);
 
   //                  curD.run();
-                    int x = 5;
                 }
             }
         }
@@ -401,20 +422,26 @@ public class Minion implements Serializable, Runnable {
         this.allNamesToMinions = allNamesToMinions;
     }
 
-    public List<String> getMyPData() {
-        return myPData;
+    public List<String> getMyPData() {return myPData;}
+
+    public void setcUI(Consumer cUI) { this.cUI = cUI;}
+
+    public String getTargetName() {return targetName;}
+
+    public Target.Type getTargetType() {return targetType;}
+
+    public void setConsumer(Consumer<String> simulationConsumer){this.simulationConsumer = simulationConsumer;}
+
+    public String getStatus() {
+        return status.get();
     }
 
-    public void setcUI(Consumer cUI) {
-        this.cUI = cUI;
+    public StringProperty statusProperty() {
+        return status;
     }
 
-    public String getTargetName() {
-        return targetName;
-    }
-
-    public Target.Type getTargetType() {
-        return targetType;
+    public void setStatus(String status) {
+        this.status.set(status);
     }
 
 }

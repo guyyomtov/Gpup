@@ -146,8 +146,9 @@
                               <ProgressBar fx:id="progressBar" prefHeight="31.0" prefWidth="762.0" progress="0.0" />
                            </children>
                         </VBox>
-                        <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label fx:id="infoForTarget" prefHeight="110.0" prefWidth="473.0" text="Label" GridPane.rowIndex="2" />
+                        <TextArea fx:id="textAreaProcessInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextArea fx:id="textAreaProcessInfo1" layoutX="459.0" layoutY="73.0" prefHeight="200.0" prefWidth="200.0" />
                      </children>
                   </GridPane>
                </content>

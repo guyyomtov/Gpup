@@ -7,6 +7,7 @@ import Graph.Target;
 import Graph.process.DataSetupProcess;
 import Graph.process.Minion;
 import Graph.process.Task;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class TaskController {
@@ -46,7 +48,7 @@ public class TaskController {
     @FXML private Label summaryLabel;
     @FXML private Parent tableProcess;
     @FXML private TableForProcessController tableProcessController;
-    @FXML private TextArea textArea;
+    @FXML private TextArea textAreaProcessInfo;
     @FXML ProgressBar progressBar;
     @FXML private Label precentOfProgressBar;
 
@@ -74,6 +76,7 @@ public class TaskController {
             simulationComponentController = loader.getController();
             simulationComponentController.initSimulation();
             this.initThreadsSpinner();
+            this.bDM.setTaskController(this);
 
         }catch (IOException e) {
             e.printStackTrace();
@@ -85,14 +88,16 @@ public class TaskController {
 
     public TaskController(){
         precentOfProgress = new SimpleIntegerProperty(0);
-        updateInfoForUI = new SimpleStringProperty();
+        updateInfoForUI = new SimpleStringProperty("");
         isPause = new SimpleBooleanProperty(false);
         targetInfo = new SimpleStringProperty();
+
     }
 
     @FXML
     private void initialize(){
         infoForTarget.textProperty().bind(targetInfo);
+        //textAreaProcessInfo.textProperty().bind(updateInfoForUI);
     }
 
     @FXML
@@ -141,14 +146,13 @@ public class TaskController {
 //
 //        this.bDM.startProcess(dSP);
 
-        minions.get(0).setMyStatus("fff11111");
         //---------- EXAMPLE PROCESS FOR RANDOM USER TARGETS --------------
 
         // start flagger (which is a MUST part of dSP)
         Flagger flagger = new Flagger().builder()
                 .processIsSimulation(true)
-                .processFromRandomTargets(false)
-                .chancesIsRandomInProcess(true);
+                .processFromRandomTargets(true)
+                .chancesIsRandomInProcess(false);
 
         //start more needed data
         DataSetupProcess dSP = new DataSetupProcess().builder()
@@ -190,11 +194,30 @@ public class TaskController {
         for(Target target : targets){
             if(target.getRemark().isSelected())
             {
-                minions.add(new Minion(target, maxTime, chancesISucceed, chancesImAWarning));
+                Minion minion = new Minion(target, maxTime, chancesISucceed, chancesImAWarning);
+                minions.add(minion);
             }
         }
         tableProcessController.initTable(minions);
-        minions.get(0).setMyStatus("fff");
+    }
+
+    public void bindTaskToUIComponents(javafx.concurrent.Task<Object> aTask) {
+        // task message
+        textAreaProcessInfo.textProperty().bind(aTask.messageProperty());
+        // task progress bar
+
+        progressBar.progressProperty().bind(aTask.progressProperty());
+
+        // task percent label
+        precentOfProgressBar.textProperty().bind(
+                Bindings.concat(
+                        Bindings.format(
+                                "%.0f",
+                                Bindings.multiply(
+                                        aTask.progressProperty(),
+                                        100)),
+                        " %"));
+
     }
 
     public void setbDM(BackDataManager bDM) {

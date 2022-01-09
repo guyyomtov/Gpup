@@ -1,13 +1,8 @@
 package DataManager;
 
-import DataManager.consumerData.ProcessInfo;
-import Flagger.Flagger;
 import GpupClassesEx2.GPUPDescriptor;
 import Graph.process.DataSetupProcess;
-import Graph.process.Minion;
-import Graph.process.Minion;
 import Graph.process.Simulation;
-import Graph.process.Task;
 import errors.ErrorUtils;
 import fileHandler.HandlerLoadFile;
 import fileHandler.HandlerSaveFile;
@@ -15,12 +10,11 @@ import fileHandler.HandlerXmlFile;
 
 import java.io.*;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
 import Graph.*;
-import fileHandler.schemaXmlFile.GraphizHHandler;
+import fileHandler.GraphizHHandler;
 import taskView.TaskController;
 
 import javax.xml.bind.JAXBContext;

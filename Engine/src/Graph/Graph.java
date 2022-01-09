@@ -58,8 +58,10 @@ public class Graph implements Serializable {
 
     private void makeDotAndPNGFile(String wantedUserPath, String res) throws IOException {
 
+        String s = "../taskView/taskViewFxml.fxml C:/Users/heres";
+
         String userHomeFolder = System.getProperty("user.home");
-        File textFile = new File(userHomeFolder, "curGraph.dot");
+        File textFile = new File(userHomeFolder, "curGraph.viz");
         BufferedWriter out = new BufferedWriter(new FileWriter(textFile));
 
         out.write(res);

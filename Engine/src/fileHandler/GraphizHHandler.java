@@ -1,4 +1,4 @@
-package fileHandler.schemaXmlFile;
+package fileHandler;
 
 import Graph.Graph;
 import Graph.Target;

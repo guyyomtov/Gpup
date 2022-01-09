@@ -1,11 +1,7 @@
 package Graph;
 import GpupClassesEx2.GPUPDescriptor;
 import errors.ErrorUtils;
-import fileHandler.schemaXmlFile.GraphizHHandler;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import java.util.List;

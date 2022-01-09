@@ -46,7 +46,6 @@ public class MainController {
     private String wantedColor = new String();
     private Paint textColor = Color.BLACK;
     private List<Button> buttons = new ArrayList<>();
-
     private GraphInfoController graphInfoController;
     private Parent graphInfoView;
     private InterrogatorController intController;
@@ -67,6 +66,12 @@ public class MainController {
         try {
             this.bDM.checkFile(absolutePath);
         }catch (ErrorUtils e){
+
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Input not valid");
+            errorAlert.setContentText(ErrorUtils.invalidFile());
+            errorAlert.showAndWait();
+
              this.msgAfterUploadFile.setText(e.getMessage());
              return;
        }
@@ -83,7 +88,8 @@ public class MainController {
         this.initGraphInfoComponent();
         this.initTaskComponent();
 
-        //    this.msgAfterUploadFile.setVisible(true);
+        // refresh\ show current graph table
+        MainBorderPane.setCenter(this.graphInfoView);
     }
 
     private void setDisableButtonBeforeGraph(){
@@ -98,7 +104,7 @@ public class MainController {
         try {
             if (taskController == null) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("../taskView/taskViewFxml.fxml"));
-                taskView = loader.load();
+                taskView = loader.load(); // was null
                 this.taskController = loader.getController();
                 this.taskController.setbDM(this.bDM);
                 this.taskController.initTaskView();
@@ -154,7 +160,7 @@ public class MainController {
     public void changeSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
         // set this component colors
-        this.setButtonsColors(enumWantedColor);
+       // this.setButtonsColors(enumWantedColor);
         this.setBoarderSkins(enumWantedColor);
 
         //set kids component colors
@@ -166,6 +172,7 @@ public class MainController {
     private void setBoarderSkins(SkinsUtils.Colors enumWantedColor) {
 
         if(enumWantedColor != SkinsUtils.Colors.DEFAULT) {
+            this.MainBorderPane.getStylesheets().add("uploadFileView/testSheet.css");
             this.MainBorderPane.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
             this.welcomeView.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
         }

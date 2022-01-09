@@ -55,6 +55,11 @@ public class GraphInfoController {
 
     public void initGraphInfo() throws IOException {
 
+        // clear data from old table if exist
+        if(this.tableComponentController != null) {
+            this.tableComponentController.getTableView().getItems().clear();
+        }
+
         this.tableComponentController.initTable(this.bDM.getAllTargets());
         this.tableComponentController.setGraphInfoController(this);
         this.initSummary();;
@@ -172,13 +177,13 @@ public class GraphInfoController {
     public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
         //set buttons colors
-        this.setButtonsColors(enumWantedColor);
+        //this.setButtonsColors(enumWantedColor);
 
         // set my label skins
-        SkinsUtils.changeLabelsTextColorTo(enumWantedColor, this.labels);
+        //SkinsUtils.changeLabelsTextColorTo(enumWantedColor, this.labels);
 
         //set background colors
-        this.setBackRoundColors(enumWantedColor);
+        //this.setBackRoundColors(enumWantedColor);
     }
 
     private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {

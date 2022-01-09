@@ -127,17 +127,17 @@ public class InterrogatorController {
     public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
         //set buttons colors
-        this.setButtonsColors(enumWantedColor);
+       // this.setButtonsColors(enumWantedColor);
 
         // set my label skins
 
         //set background colors
-        this.setBackRoundColors(enumWantedColor);
+       // this.setBackRoundColors(enumWantedColor);
 
         // set my kids skins
-        this.fCController.setSkins(enumWantedColor);
-        this.fPController.setSkins(enumWantedColor);
-        this.wIController.setSkins(enumWantedColor);
+       // this.fCController.setSkins(enumWantedColor);
+        //this.fPController.setSkins(enumWantedColor);
+        //this.wIController.setSkins(enumWantedColor);
     }
 
     private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {

@@ -39,14 +39,14 @@
                            <children>
                               <VBox prefHeight="200.0" prefWidth="444.0">
                                  <children>
-                                    <Label alignment="TOP_LEFT" text="Choose task">
+                                    <Label fx:id="chooseTask" alignment="TOP_LEFT" text="Choose task">
                                        <padding>
                                           <Insets left="5.0" />
                                        </padding>
                                     </Label>
                                     <HBox spacing="10.0">
                                        <children>
-                                          <Label alignment="TOP_LEFT" text="task name:" />
+                                          <Label fx:id="taskName" alignment="TOP_LEFT" text="task name:" />
                                           <RadioButton fx:id="simulationButton" mnemonicParsing="false" onAction="#simulationButtonAction" selected="true" text="Simulation">
                                              <toggleGroup>
                                                 <ToggleGroup fx:id="taskName" />

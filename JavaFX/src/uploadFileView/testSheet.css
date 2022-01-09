@@ -1,0 +1,37 @@
+.button {
+    -fx-background-color: purple;
+    -fx-text-fill: white;
+}
+
+.label {
+    color: black;
+    padding: 8px;
+    -fx-text-fill: purple;
+}
+
+.root {
+    -fx-background-color:#000;
+}
+
+.radio-button .radio {
+    -fx-border-width: 1px;
+    -fx-border-color: purple;
+    -fx-background-color: white;
+    -fx-background-image: null;
+}
+.radio-button .radio:selected {
+    -fx-background-color: purple;
+    -fx-background-image: null;
+}
+.radio-button -radio:armed {
+    -fx-background-color: purple;
+    -fx-background-image: null;
+}
+.radio-button -radio:determinate {
+    -fx-background-color: purple;
+    -fx-background-image: null;
+}
+.radio-button -radio:indeterminate {
+    -fx-background-color: purple;
+    -fx-background-image: null;
+}

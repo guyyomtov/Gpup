@@ -44,7 +44,6 @@ public class GraphizHHandler {
     private static void makeDotAndPNGFile(String wantedUserPath, String res) throws IOException {
 
         // make text file
-        //String userHomeFolder = System.getProperty("user.home"); --> to save
         File textFile = new File(wantedUserPath, "curGraph.viz");
         BufferedWriter out = new BufferedWriter(new FileWriter(textFile));
         out.write(res);

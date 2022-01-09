@@ -42,9 +42,11 @@ public class TaskController {
     @FXML private RadioButton incrementalButton;
     @FXML private RadioButton fromScratchButton;
     @FXML private Label errorMessegeForIncremental;
-    @FXML private TextArea textAreaTargetInfo;
     @FXML private Label summaryLabel;
     @FXML private Label precentOfProgressBar;
+//    @FXML private Label taskName;
+//    @FXML private Label chooseTask;
+    @FXML private TextArea textAreaTargetInfo;
     @FXML private Button updateTargetListButton;
     @FXML private Button startButton;
     @FXML private Button pauseButton;
@@ -54,7 +56,6 @@ public class TaskController {
     @FXML private TableForProcessController tableProcessController;
     @FXML private TextArea textAreaProcessInfo;
     @FXML ProgressBar progressBar;
-
     private List<Label> labels = new ArrayList<>();
     private BooleanProperty startButtonProperty;
     private BooleanProperty resumeProperty;
@@ -64,6 +65,7 @@ public class TaskController {
     private List<Minion> minions = new ArrayList<>();
     private SimulationComponentController simulationComponentController;
     private Parent simulationComponent;
+    private List<RadioButton> radionButtons = new ArrayList<>();
 
     public TaskController(){
 
@@ -89,10 +91,12 @@ public class TaskController {
             e.printStackTrace();
         }
 
+       // this.radionButtons = Arrays.asList(this.compilationButton, this.fromScratchButton, this.incrementalButton, this.simulationButton);
+
         this.buttons = Arrays.asList(this.pauseButton, this.startButton,
                 this.updateTargetListButton);
 
-        this.labels = Arrays.asList(this.errorMessegeForIncremental, this.precentOfProgressBar);
+        //this.labels = Arrays.asList(this.errorMessegeForIncremental, this.precentOfProgressBar, this.taskName, this.chooseTask);
     }
 
     private void initButtonsListener() {
@@ -205,6 +209,7 @@ public class TaskController {
     public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {
 
         SkinsUtils.changeButtonColorTo(wantedColors, this.buttons);
+       // SkinsUtils.changeRadioButtonTextColorTo(wantedColors, this.radionButtons);
     }
 
     @FXML
@@ -259,17 +264,17 @@ public class TaskController {
 
     public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
-        //set buttons colors
-        this.setButtonsColors(enumWantedColor);
-
-        // set my label skins
-        SkinsUtils.changeLabelsTextColorTo(enumWantedColor, this.labels);
-
-        //set background colors
-        this.setBackRoundColors(enumWantedColor);
-
-        //set kids skins
-        this.simulationComponentController.setSkins(enumWantedColor);
+//        //set buttons colors
+//        this.setButtonsColors(enumWantedColor);
+//
+//        // set my label skins
+//        SkinsUtils.changeLabelsTextColorTo(enumWantedColor, this.labels);
+//
+//        //set background colors
+//        this.setBackRoundColors(enumWantedColor);`
+//
+//        //set kids skins
+//        this.simulationComponentController.setSkins(enumWantedColor);
     }
 
     private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {

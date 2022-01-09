@@ -61,9 +61,11 @@ public class BackDataManager implements DataManager {
 
                     this.mTypeToTargets = this.makeMap(this.graph.getAllTargets());
 
-                }catch(ErrorUtils e){throw e;}
+                }catch(ErrorUtils e){throw e;} catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            } catch (JAXBException | FileNotFoundException e) {throw new ErrorUtils(ErrorUtils.invalidFile("the given file doesnt exist"));}
+        } catch (JAXBException | FileNotFoundException e) {throw new ErrorUtils(ErrorUtils.invalidFile("the given file doesnt exist"));}
 
         return fileSuccess;
     }

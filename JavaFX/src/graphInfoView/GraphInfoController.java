@@ -39,6 +39,7 @@ public class GraphInfoController {
     @FXML private Label resultOfChoiceBox;
     @FXML private Label summaryTable;
     @FXML private Label summaryBy;
+    @FXML private TextField wantedUserPath;
     private List<Label> labels = new ArrayList<>();
     @FXML private CheckBox whatIfCheckBox;
     private List<CheckBox> checkBoxes = new ArrayList<>();
@@ -121,24 +122,6 @@ public class GraphInfoController {
     }
 
     @FXML
-    void createGraphizAction(ActionEvent event){
-
-        Parent root;
-//        try {
-//            root = FXMLLoader.load(getClass().getClassLoader().getResource("path/to/other/view.fxml"), resources);
-//            Stage stage = new Stage();
-//            stage.setTitle("My New Stage Title");
-//            stage.setScene(new Scene(root, 450, 450));
-//            stage.show();
-//            // Hide this current window (if this is what you want)
-//            ((Node)(event.getSource())).getScene().getWindow().hide();
-//        }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
-    }
-
-    @FXML
     void whatIfCheckBoxAction(ActionEvent event){
         if(this.whatIfCheckBox.isSelected()) {
             this.dependsOnButton.setDisable(false);
@@ -204,6 +187,15 @@ public class GraphInfoController {
             this.gridPane.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
         else
             this.gridPane.setBackground(new Background(new BackgroundFill(null, null, null)));
+    }
+
+    @FXML
+    void getGraphizAction(ActionEvent event) throws IOException, ErrorUtils {
+
+        if(this.wantedUserPath == null || this.wantedUserPath.getText().isEmpty())
+            throw new ErrorUtils(ErrorUtils.NEEDED_DATA_IS_NULL);
+
+        this.bDM.makeGraphizImage(this.wantedUserPath.getText());
     }
 }
 

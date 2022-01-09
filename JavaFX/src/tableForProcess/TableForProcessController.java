@@ -64,5 +64,9 @@ public class TableForProcessController {
 
     }
 
+    public List<Minion> getMinionsFromTable(){
+        return new ArrayList<>(this.tableForProcess.getItems());
+    }
+
 
 }

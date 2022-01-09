@@ -1,6 +1,7 @@
 package DataManager;
 
 import GpupClassesEx2.GPUPDescriptor;
+import Graph.process.Compilation;
 import Graph.process.DataSetupProcess;
 import Graph.process.Simulation;
 import errors.ErrorUtils;
@@ -186,7 +187,11 @@ public class BackDataManager implements DataManager {
         else if(dSP.flagger.processIsCompilation){
 
             if(dSP.compilationProcessHasNeededData()){
+                Compilation compilation = new Compilation(dSP);
 
+                this.taskController.bindTaskToUIComponents(compilation);
+
+                new Thread(compilation).start();
             }
         }
 

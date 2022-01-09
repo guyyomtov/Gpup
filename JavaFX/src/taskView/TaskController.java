@@ -10,8 +10,6 @@ import Graph.process.Task;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import errors.ErrorUtils;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,17 +19,14 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import tableForProcess.TableForProcessController;
-import tableView.TableController;
+import taskView.compilationComponent.CompilationController;
 import taskView.simulationComponent.SimulationComponentController;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 public class TaskController {
 
@@ -42,11 +37,9 @@ public class TaskController {
     @FXML private RadioButton incrementalButton;
     @FXML private RadioButton fromScratchButton;
     @FXML private Label errorMessegeForIncremental;
+    @FXML private TextArea textAreaTargetInfo;
     @FXML private Label summaryLabel;
     @FXML private Label precentOfProgressBar;
-//    @FXML private Label taskName;
-//    @FXML private Label chooseTask;
-    @FXML private TextArea textAreaTargetInfo;
     @FXML private Button updateTargetListButton;
     @FXML private Button startButton;
     @FXML private Button pauseButton;
@@ -56,6 +49,9 @@ public class TaskController {
     @FXML private TableForProcessController tableProcessController;
     @FXML private TextArea textAreaProcessInfo;
     @FXML ProgressBar progressBar;
+    private CompilationController compilationController;
+    private Parent compilationComponent;
+
     private List<Label> labels = new ArrayList<>();
     private BooleanProperty startButtonProperty;
     private BooleanProperty resumeProperty;
@@ -65,12 +61,14 @@ public class TaskController {
     private List<Minion> minions = new ArrayList<>();
     private SimulationComponentController simulationComponentController;
     private Parent simulationComponent;
+    private javafx.concurrent.Task<Object> task;
+    private DataSetupProcess dSP;
     private List<RadioButton> radionButtons = new ArrayList<>();
 
     public TaskController(){
 
         resumeProperty = new SimpleBooleanProperty(this, "pauseAndResume", true);
-        pauseProperty =  new SimpleBooleanProperty(this, "pauseAndResume", true);
+        pauseProperty =  new SimpleBooleanProperty(this, "pauseAndResume", false);
         startButtonProperty = new SimpleBooleanProperty(this, "start", true );
         targetInfo = new SimpleStringProperty();
 
@@ -82,6 +80,10 @@ public class TaskController {
             simulationComponent = loader.load();
             simulationComponentController = loader.getController();
             simulationComponentController.initSimulation();
+
+            FXMLLoader loaderCom = new FXMLLoader(getClass().getResource("compilationComponent/compilationControllerFxml.fxml"));
+            compilationComponent = loaderCom.load();
+            compilationController = loaderCom.getController();
             this.initThreadsSpinner();
             this.bDM.setTaskController(this);
             gridPaneSettingTab.add(simulationComponent, 0, 1);
@@ -100,15 +102,12 @@ public class TaskController {
     }
 
     private void initButtonsListener() {
-        this.progressBar.progressProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if(newValue.intValue() == 100) {
-                    startButtonProperty.setValue(false);
-                    pauseProperty.setValue(true);
-                    resumeProperty.setValue(true);
-                }
-                //else
+        precentOfProgressBar.textProperty().addListener((v, oldV, newV) ->  {
+            String[] value = precentOfProgressBar.textProperty().getValue().split(" ");
+            if( Integer.valueOf(value[0]) == 100) {
+                startButtonProperty.setValue(false);
+                pauseProperty.setValue(true);
+                resumeProperty.setValue(true);
             }
         });
         this.startButton.disableProperty().bind(this.startButtonProperty);
@@ -125,24 +124,33 @@ public class TaskController {
     void compilationButtonAction(ActionEvent event) {
         try {
             gridPaneSettingTab.getChildren().removeAll(simulationComponent);
-            gridPaneSettingTab.add(summaryLabel, 0, 1);
+            gridPaneSettingTab.add(compilationComponent, 0, 1);
         }catch (Exception e){}
     }
 
     @FXML
     void resumeButtonAction(ActionEvent event) {
+        pauseProperty.set(false);
+        resumeProperty.set(true);
+        List<Minion> updateMinions = this.tableProcessController.getMinionsFromTable();
+        try {
+            dSP.setLastProcessTextArea(this.textAreaProcessInfo.getText());
+            this.bDM.startProcess(dSP);
+        }catch (ErrorUtils e) { // last update}
+        }
 
     }
 
     @FXML
     void pauseButtonAction(ActionEvent event) {
-
+        pauseProperty.set(true);
+        resumeProperty.set(false);
     }
 
     @FXML
     void simulationButtonAction(ActionEvent event) {
         try {
-            gridPaneSettingTab.getChildren().removeAll(summaryLabel);
+            gridPaneSettingTab.getChildren().removeAll(compilationComponent);
             gridPaneSettingTab.add(simulationComponent, 0, 1);
         }catch (Exception e){}
     }
@@ -170,23 +178,27 @@ public class TaskController {
 
         // start flagger (which is a MUST part of dSP)
 
-
         this.updateTargetListButtonAction(event);
         this.pauseProperty.setValue(false);
         this.startButtonProperty.setValue(true);
         Flagger flagger = new Flagger().builder()
-                .processIsSimulation(true)
+                .processIsSimulation(simulationButton.isSelected())
+                .processIsCompilation(compilationButton.isSelected())
                 .processFromRandomTargets(true)
                 .thereIsSerialSets(true)
-                .chancesIsRandomInProcess(false);
+                .chancesIsRandomInProcess(this.simulationComponentController.getIfRandom());
 
         //start more needed data
-        DataSetupProcess dSP = new DataSetupProcess().builder()
+         dSP = new DataSetupProcess().builder()
                 .flagger(flagger)
-                .timeToRun(2000)
-                .chancesToBeAWarning(100)
-                .chancesToSucceed(100)
-                .amountOfThreads(3);
+                .timeToRun(this.simulationComponentController.getMaxTime())
+                .chancesToBeAWarning(this.simulationComponentController.getChancesToSuccessWithWarning())
+                .chancesToSucceed(this.simulationComponentController.getChancesToSuccess())
+                .pauseTaskProperty(pauseProperty)
+                .amountOfThreads(this.threadsSpinner.getValue())
+                 .setFullPathSource(this.compilationController.getFullPathSource())
+                 .setFullPathDestination(this.compilationController.getFullPathDestination());
+
         if (!this.minions.isEmpty())
             dSP.minionsChoosenByUser(this.minions);
 
@@ -209,7 +221,6 @@ public class TaskController {
     public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {
 
         SkinsUtils.changeButtonColorTo(wantedColors, this.buttons);
-       // SkinsUtils.changeRadioButtonTextColorTo(wantedColors, this.radionButtons);
     }
 
     @FXML
@@ -225,7 +236,10 @@ public class TaskController {
         for(Target target : targets){
             if(target.getRemark().isSelected())
             {
-                Minion minion = new Minion(target, maxTime, chancesISucceed, chancesImAWarning);
+                // if minion is simulation --> make simulation minion
+                // if minon is compilation --> make compilation minon
+
+                Minion minion = new Minion(target, maxTime, chancesISucceed, chancesImAWarning, this.simulationButton.isSelected());
                 minions.add(minion);
             }
         }
@@ -250,6 +264,10 @@ public class TaskController {
                                         aTask.progressProperty(),
                                         100)),
                         " %"));
+
+        this.task = aTask;
+        //pauseProperty.addListener((v, oldV, newV) -> aTask.cancel(true));
+
 
     }
 

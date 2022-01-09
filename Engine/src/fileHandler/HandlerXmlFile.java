@@ -17,7 +17,9 @@ public class HandlerXmlFile {
 
     public void buildMe(GPUPDescriptor information) throws ErrorUtils {
 
-        try {this.initGraphFromFile(information);}
+        try {
+            this.initGraphFromFile(information);
+        }
         catch (ErrorUtils e) {throw e;}
     }
 

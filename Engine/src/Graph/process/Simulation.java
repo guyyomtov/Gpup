@@ -219,8 +219,6 @@ public class Simulation extends Task implements Serializable, Runnable {
 
             minion = waitingList.poll();
 
-            Minion.MinionLiveData minionLiveData =  minion.new MinionLiveData();
-
             if(minion != null) {
 
                 executorService.execute(minion);
@@ -242,6 +240,7 @@ public class Simulation extends Task implements Serializable, Runnable {
     protected Object call() throws Exception {
 
         Instant start, end;
+        Map<String, Minion> test = new HashMap<>();
         ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
         Minion.MinionLiveData minionLiveData;
 
@@ -257,7 +256,6 @@ public class Simulation extends Task implements Serializable, Runnable {
         // go out of while when: no thread exist & queue is empty
         while(threadCounter != 0 || !waitingList.isEmpty()) {
 
-            start = Instant.now();
             minion = waitingList.poll();
 
             if(this.iCanRunSerialSet(minion)) {
@@ -268,6 +266,18 @@ public class Simulation extends Task implements Serializable, Runnable {
 
                 if (minion != null) {
 
+                    if(this.iCanRunSerialSet(minion)) {
+
+                        executorService.execute(minion);
+
+                        threadCounter++;
+                        this.namesToCurRunningMinions.put(minion.getName(), minion);
+                    }
+                    else{// cur minion can't run because of serial set, put back in queue
+                        waitingList.add(minion);
+                    }
+                }
+                else {
                     minionLiveData = minion.getMinionLiveData();
                     end = Instant.now();
                     this.updateHowLongMinionWaiting(minionLiveData, start, end);
@@ -282,6 +292,7 @@ public class Simulation extends Task implements Serializable, Runnable {
                     } catch (InterruptedException e) {// e.printStackTrace();
                     }
                 }
+                test = this.namesToCurRunningMinions;
             }
             else{ // cur minion can't run because of serial set, put back in queue
                 waitingList.add(minion);
@@ -297,6 +308,8 @@ public class Simulation extends Task implements Serializable, Runnable {
 
         totalMinionsThatFinished = updateTotalMinionsThatFinished();
         updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
+
+        this.namesToCurRunningMinions.clear();
 
         return true;
     }

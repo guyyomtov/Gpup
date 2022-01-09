@@ -32,8 +32,6 @@ public class Target implements Serializable {
     private Integer totalRequiredFor = 0;
     private Integer totalSerialSets = 0;
     private CheckBox remark = new CheckBox();
-
-
     public Integer getTotalSerialSets() {return totalSerialSets;}
     public Integer getTotalRequiredFor() {
        return totalRequiredFor;
@@ -70,6 +68,20 @@ public class Target implements Serializable {
         this.countOfDependency =0;
         this.generalInfo = generalInfo;
     }
+
+    public static List<Target> getTargetByType(List<Target> targets, Type wantedType) {
+
+        List<Target> res = new ArrayList<Target>();
+
+        for(Target curT : targets){
+
+            if(curT.getTargetType() == wantedType)
+                res.add(curT);
+        }
+
+        return res;
+    }
+
 
     public String getName() {
         return name;

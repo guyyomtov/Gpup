@@ -117,6 +117,10 @@ public class Graph implements Serializable {
 
         // get to serial sets
         GPUPDescriptor.GPUPSerialSets gpupTmpMap = information.getGPUPSerialSets();
+
+        if(gpupTmpMap == null) // if there isn't serial set.
+            return serialNameToTargets;
+
         List<GPUPDescriptor.GPUPSerialSets.GPUPSerialSet> tmp = gpupTmpMap.getGPUPSerialSet();
 
         // add each serial set to res map

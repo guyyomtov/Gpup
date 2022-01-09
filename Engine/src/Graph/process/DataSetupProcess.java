@@ -4,6 +4,7 @@ import DataManager.BackDataManager;
 import Flagger.Flagger;
 import Graph.Target;
 import errors.ErrorUtils;
+import javafx.beans.property.BooleanProperty;
 
 import java.io.File;
 import java.util.List;
@@ -28,6 +29,10 @@ public class DataSetupProcess {
     public String pathToJavaFile;
     public Map<String, Set<Target>> serialSets;
     public BackDataManager bDM;
+    public BooleanProperty pauseTask;
+    public String lastProcessTextArea;
+    public String fullPathSource = new String();
+    public String fullPathDestination = new String();
 
     public DataSetupProcess builder(){ return this;}
 
@@ -51,6 +56,20 @@ public class DataSetupProcess {
     public DataSetupProcess timeToRun(Integer timeToRun){
 
         this.timeToRun = timeToRun;
+
+        return this;
+    }
+
+    public DataSetupProcess setLastProcessTextArea(String lastProcessTextArea) {
+
+        this.lastProcessTextArea = lastProcessTextArea;
+
+        return this;
+    }
+
+    public DataSetupProcess pauseTaskProperty(BooleanProperty pause){
+
+        this.pauseTask = pause;
 
         return this;
     }
@@ -186,14 +205,21 @@ public class DataSetupProcess {
 
         // one of the three needed inputs is missing
         // user gave thread count
-        if(this.cpTargetFolderPath == null || this.cpTargetFolderPath.isEmpty() ||
-            this.pathToJavaFile == null || this.pathToJavaFile.isEmpty() ||
-                this.dTargetFolderPath== null || this.dTargetFolderPath.isEmpty()||
-            this.amountOfThreads !=null) {
-
+        if(this.fullPathSource == null || this.fullPathDestination == null ||
+                this.fullPathSource.isEmpty() || this.fullPathDestination.isEmpty()) {
             return false;
         }
 
         return true;
+    }
+
+    public DataSetupProcess setFullPathSource(String fullPathSource) {
+        this.fullPathSource = fullPathSource;
+        return this;
+    }
+
+    public DataSetupProcess setFullPathDestination(String fullPathDestination) {
+        this.fullPathDestination = fullPathDestination;
+        return this;
     }
 }

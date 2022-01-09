@@ -1,12 +1,20 @@
 package Graph.process;
 
 import DataManager.BackDataManager;
+import DataManager.consumerData.FormatAllTask;
+import DataManager.consumerData.ProcessInfo;
 import Flagger.Flagger;
 import Graph.Target;
 import errors.ErrorUtils;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
@@ -28,24 +36,22 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
     protected Map<String, Minion> namesToCurRunningMinions = new HashMap<>();
     protected Map<String, Set<Target>> serialSetsNameToTargets;
     protected BackDataManager bDM;
+    protected BooleanProperty pauseTaskProperty;
+    protected String infoOfLastProcess;
 
 
     public Task(DataSetupProcess dSp) throws ErrorUtils {
 
-        if(dSp.allGraphTargets == null || dSp.timeToRun == null
-        || dSp.chancesToSucceed == null || dSp.chancesToBeAWarning == null){
-
-            throw new ErrorUtils(ErrorUtils.NEEDED_DATA_IS_NULL);
-        }
-
         this.bDM = dSp.bDM;
         this.targets = dSp.allGraphTargets;
-        this.timeIRun = dSp.timeToRun;
-        this.chancesISucceed = dSp.chancesToSucceed;
-        this.chancesImAWarning = dSp.chancesToBeAWarning;
+        //this.timeIRun = dSp.timeToRun;
+        //this.chancesISucceed = dSp.chancesToSucceed;
+        //this.chancesImAWarning = dSp.chancesToBeAWarning;
         maxParallelism = dSp.amountOfThreads;
         this.serialSetsNameToTargets = dSp.serialSets;
-
+        this.pauseTaskProperty = dSp.pauseTask;
+        this.infoOfLastProcess = dSp.lastProcessTextArea != null ? dSp.lastProcessTextArea : "";
+        //
         if (dSp.flagger.processFromScratch) {
 
             // make all minions from scratch
@@ -67,15 +73,16 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
     // from scratch
     private void startMinions(){
 
-        this.minions = Minion.makeMinionsFrom(this.targets, this.timeIRun, this.chancesISucceed, this.chancesImAWarning);
+        this.minions = Minion.makeMinionsFrom(this.targets, this.timeIRun, this.chancesISucceed, this.chancesImAWarning, minionsChosenByUser.get(0).getImSimulation());
         this.minionsChosenByUser = this.minions;
         this.updateMinionLiveDataSerialSet();
         this.updateMinions();
     }
 
     private void updateMinions() {
-        for(Minion minion : minions)
+        for(Minion minion : minions) {
             minion.setConsumer(this);
+        }
     }
 
     private void startMinions(Task oldTask){
@@ -118,8 +125,6 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
     public List<Minion> getMinions() { return minions; }
 
-    public abstract void run();
-
     public Consumer getcUI() { return cUI; }
 
     public Map<String, List<String>> getLastPData(){ return this.targetNameToSummeryProcess; }
@@ -130,6 +135,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
         for(Minion curM : this.minions) {
             curM.initMyKindsAndParents(this.minions);
+            curM.checkAndUpdateWhoImClosedTORunning(curM, false);
             curM.setAllNamesToMinions(namesToMinions);
             curM.setcUI(this.cUI);
         }
@@ -146,7 +152,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
             oldStatus =  curOldMin.getMyStatus();
             targetType = curOldMin.getTarget().getTargetType().toString();
 
-            Minion newMin = new Minion(curOldMin.getTarget(), this.timeIRun, this.chancesISucceed, this.chancesImAWarning);
+            Minion newMin = new Minion(curOldMin.getTarget(), this.timeIRun, this.chancesISucceed, this.chancesImAWarning, curOldMin.getImSimulation());
 
             // if success || warning --> give it to new minions
             if(oldStatus.equals("WARNING") || oldStatus.equals("SUCCESS")){
@@ -294,6 +300,118 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
             }
         }
         return iAmInASerialSet;
+    }
+
+    @Override
+    protected Object call() throws Exception {
+
+        updateMessage(infoOfLastProcess);
+        Instant start , end;
+        //Map<String, Minion> test = new HashMap<>();
+        ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
+        Minion.MinionLiveData minionLiveData;
+
+        //first case
+        Minion minion = waitingList.poll();
+        executorService.execute(minion);
+
+        threadCounter++;
+        this.namesToCurRunningMinions.put(minion.getName(), minion);
+
+        Integer totalMinionsThatFinished = updateTotalMinionsThatFinished();
+
+        // go out of while when: no thread exist & queue is empty
+        while((threadCounter != 0 || !waitingList.isEmpty()) && !pauseTaskProperty.getValue()) {
+
+            start = Instant.now();
+            minion = waitingList.poll();
+
+            totalMinionsThatFinished = updateTotalMinionsThatFinished();
+            updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
+            //  updateMessage(message);
+
+            if (minion != null) {
+
+                if(this.iCanRunSerialSet(minion)) {
+
+                    executorService.execute(minion);
+
+                    threadCounter++;
+                    this.namesToCurRunningMinions.put(minion.getName(), minion);
+                }
+                else{// cur minion can't run because of serial set, put back in queue
+                    waitingList.add(minion);
+                    end = Instant.now();
+                    minionLiveData = minion.getMinionLiveData();
+                    this.updateHowLongMinionWaiting(minionLiveData, start, end);
+                }
+
+            }
+            else {
+
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {/* e.printStackTrace();*/ }
+
+            }
+
+        }
+
+        totalMinionsThatFinished = updateTotalMinionsThatFinished();
+        updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
+
+        this.namesToCurRunningMinions.clear();
+
+        return true;
+    }
+
+    private Integer updateTotalMinionsThatFinished() {
+        Integer res = 0;
+        for(Minion minion : minionsChosenByUser){
+            if(minion.imFinished())
+                ++res;
+        }
+        return res;
+    }
+
+    private void updateHowLongMinionWaiting(Minion.MinionLiveData minionLiveData, Instant start, Instant end){
+        Duration timeElapsed = Duration.between(start, end);
+        minionLiveData.setTimeISWaiting(timeElapsed.toMillis());
+    }
+
+    @Override
+    public void accept(String s) {
+        if(s != "")
+            Platform.runLater(()-> updateMessage(getMessage() + "\n" + s));
+    }
+
+    @Override
+    public void run(){
+
+        this.cUI = new Consumer() {
+            @Override
+            public void accept(Object o) {
+                System.out.println(o);
+            }
+        };
+
+        FormatAllTask.restartMap();
+        FormatAllTask.start = Instant.now();
+
+        this.makeQueue();
+        //this.runMinions();
+        try {
+            this.call();
+        }catch (Exception e){}
+
+
+        System.out.println("process finished");
+        FormatAllTask.end = Instant.now();
+        FormatAllTask.sendData(cUI);
+
+
+        FormatAllTask.sendData(cUI, this.targetNameToSummeryProcess);
+        ProcessInfo.setOldTask(this);
     }
 
 }

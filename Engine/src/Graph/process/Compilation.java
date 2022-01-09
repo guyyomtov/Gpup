@@ -7,23 +7,18 @@ import java.io.Serializable;
 
 public class Compilation extends Task implements Serializable{
 
+    private String fullPathSource;
+    private String fullPathDestination;
     public Compilation(DataSetupProcess dSp) throws ErrorUtils {
-        super(dSp);
+        super(dSp); //
+        this.fullPathSource = dSp.fullPathSource;
+        this.fullPathDestination = dSp.fullPathDestination;
     }
 
-    @Override
-    public void run() {
-
-    }
 
     @Override
     public void setName() {
 
-    }
-
-    @Override
-    protected Object call() throws Exception {
-        return null;
     }
 
     @Override

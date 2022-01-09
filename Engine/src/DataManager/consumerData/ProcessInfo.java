@@ -1,16 +1,17 @@
 package DataManager.consumerData;
 
 import Graph.process.Simulation;
+import Graph.process.Task;
 
 public class ProcessInfo {
 
-    private static Simulation oldTask;
+    private static Task oldTask;
 
-    public static Simulation getOldTask() {
+    public static Task getOldTask() {
         return oldTask;
     }
 
-    public static void setOldTask(Simulation oldT) {
+    public static void setOldTask(Task oldT) {
         ProcessInfo.oldTask = oldT;
     }
 

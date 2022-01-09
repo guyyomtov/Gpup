@@ -36,6 +36,35 @@ public class Minion implements Serializable, Runnable {
     protected Integer chancesImAWarning;
     private Map<String, Minion> allNamesToMinions;
     private Consumer<String> simulationConsumer;
+    private MinionLiveData minionLiveData = new MinionLiveData();
+
+    public class MinionLiveData{
+        private String targetName = new String();
+        private StringProperty status = new SimpleStringProperty();
+        private long timeInProcess;
+        private long timeISWaiting;
+        private Set<String> minionsNameThatMinionRequiredFor = new HashSet<>();
+        private List<String> namesOfSerialSetsThatMinionInclude = new ArrayList<>();
+
+        public void initMinionData(){
+            this.targetName = Minion.this.targetName;
+            this.status.setValue(Minion.this.status.getValue());
+        }
+        public void setTimeInProcess(long timeInProcess) {
+            this.timeInProcess = timeInProcess;
+        }
+
+        public void setTimeISWaiting(long timeISWaiting) {
+            this.timeISWaiting += timeISWaiting;
+        }
+
+        public Set<String> getMinionsNameThatMinionRequiredFor(){
+            return this.minionsNameThatMinionRequiredFor;}
+    }
+
+    public MinionLiveData getMinionLiveData(){
+        return minionLiveData;
+    }
 
 
 
@@ -53,6 +82,7 @@ public class Minion implements Serializable, Runnable {
         this.setMyKidsNames();
         this.setMyParentsNames();
         this.timeIRun = maxTime;
+        this.minionLiveData.initMinionData();
     }
 
     public Minion(Target target){
@@ -157,6 +187,7 @@ public class Minion implements Serializable, Runnable {
         this.myStatus = "IN PROCESS";
         this.setStatus(myStatus);
 
+
         List<String> resData = new ArrayList<>();
         String openedParents = new String();
         ConsumerTaskInfo cTI = new ConsumerTaskInfo(this.target.getName());
@@ -194,14 +225,17 @@ public class Minion implements Serializable, Runnable {
 
             synchronized(this){
             openedParents = this.iOpened(this.parentsNames, allMinions);}
+        }
+        else {
+            this.myStatus = "FAILURE";
+            checkAndUpdateWhoImClosedTORunning(this);
 
         }
-        else
-            this.myStatus = "FAILURE";
 
         this.iAmFinished = true;
         cTI.getInfo(cUI, "the result: " + this.myStatus);
         simulationConsumer.accept("The result of the target " + this.targetName + " is: " + this.myStatus);
+
         if(this.myStatus.equals("SUCCESS") || this.myStatus.equals("WARNING")) {
             cTI.getInfo(cUI, "The targets that opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
             simulationConsumer.accept("The target " + targetName +  " opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
@@ -218,6 +252,7 @@ public class Minion implements Serializable, Runnable {
         // add targets names the got free
         TaskFile.closeFile();
       //  this.aTask.updateUser();
+
         this.setStatus(myStatus);
 
         return resData;
@@ -360,6 +395,7 @@ public class Minion implements Serializable, Runnable {
                 System.out.println(o);
             }
         };
+
         this.tryToRunMe(myKids, allNamesToMinions,this.cUI);
 
         this.checkIfToAddMyParents();
@@ -443,5 +479,27 @@ public class Minion implements Serializable, Runnable {
     public void setStatus(String status) {
         this.status.set(status);
     }
+
+    public List<Minion> getParents() {
+        return parents;
+    }
+
+    private void checkAndUpdateWhoImClosedTORunning(Minion minion) {
+       // this.minionLiveData.minionsNameThatMinionRequiredFor;
+        List<Minion> dads = minion.parents;
+        if(dads.isEmpty())
+            return;
+        else {
+            for(Minion dad : dads){
+                dad.status.setValue("SKIPPED");
+                dad.setiAmFinished(true);
+                dad.minionLiveData.minionsNameThatMinionRequiredFor.add(minion.getName());
+                dad.minionLiveData.minionsNameThatMinionRequiredFor.addAll(minion.minionLiveData.minionsNameThatMinionRequiredFor);
+                checkAndUpdateWhoImClosedTORunning(dad);
+            }
+
+        }
+    }
+
 
 }

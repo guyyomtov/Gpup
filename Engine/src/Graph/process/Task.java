@@ -1,5 +1,6 @@
 package Graph.process;
 
+import DataManager.BackDataManager;
 import Flagger.Flagger;
 import Graph.Target;
 import errors.ErrorUtils;
@@ -26,6 +27,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
     public static Integer threadCounter = 0;
     protected Map<String, Minion> namesToCurRunningMinions = new HashMap<>();
     protected Map<String, Set<Target>> serialSetsNameToTargets;
+    protected BackDataManager bDM;
 
 
     public Task(DataSetupProcess dSp) throws ErrorUtils {
@@ -36,6 +38,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
             throw new ErrorUtils(ErrorUtils.NEEDED_DATA_IS_NULL);
         }
 
+        this.bDM = dSp.bDM;
         this.targets = dSp.allGraphTargets;
         this.timeIRun = dSp.timeToRun;
         this.chancesISucceed = dSp.chancesToSucceed;
@@ -274,4 +277,5 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         }
         return iAmInASerialSet;
     }
+
 }

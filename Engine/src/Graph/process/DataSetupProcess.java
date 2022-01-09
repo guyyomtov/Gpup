@@ -1,5 +1,6 @@
 package Graph.process;
 
+import DataManager.BackDataManager;
 import Flagger.Flagger;
 import Graph.Target;
 import errors.ErrorUtils;
@@ -26,6 +27,7 @@ public class DataSetupProcess {
     public String cpTargetFolderPath;
     public String pathToJavaFile;
     public Map<String, Set<Target>> serialSets;
+    public BackDataManager bDM;
 
     public DataSetupProcess builder(){ return this;}
 

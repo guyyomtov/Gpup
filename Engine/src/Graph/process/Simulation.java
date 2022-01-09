@@ -8,11 +8,9 @@ import fileHandler.TaskFile;
 import javafx.application.Platform;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -221,6 +219,8 @@ public class Simulation extends Task implements Serializable, Runnable {
 
             minion = waitingList.poll();
 
+            Minion.MinionLiveData minionLiveData =  minion.new MinionLiveData();
+
             if(minion != null) {
 
                 executorService.execute(minion);
@@ -241,7 +241,9 @@ public class Simulation extends Task implements Serializable, Runnable {
     @Override
     protected Object call() throws Exception {
 
+        Instant start, end;
         ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
+        Minion.MinionLiveData minionLiveData;
 
         //first case
         Minion minion = waitingList.poll();
@@ -255,6 +257,7 @@ public class Simulation extends Task implements Serializable, Runnable {
         // go out of while when: no thread exist & queue is empty
         while(threadCounter != 0 || !waitingList.isEmpty()) {
 
+            start = Instant.now();
             minion = waitingList.poll();
 
             if(this.iCanRunSerialSet(minion)) {
@@ -265,8 +268,11 @@ public class Simulation extends Task implements Serializable, Runnable {
 
                 if (minion != null) {
 
-                    executorService.execute(minion);
+                    minionLiveData = minion.getMinionLiveData();
+                    end = Instant.now();
+                    this.updateHowLongMinionWaiting(minionLiveData, start, end);
 
+                    executorService.execute(minion);
                     threadCounter++;
                     this.namesToCurRunningMinions.put(minion.getName(), minion);
 
@@ -277,14 +283,27 @@ public class Simulation extends Task implements Serializable, Runnable {
                     }
                 }
             }
-            else{// cur minion can't run because of serial set, put back in queue
+            else{ // cur minion can't run because of serial set, put back in queue
                 waitingList.add(minion);
+                end = Instant.now();
+                if(minion != null) {
+                    minionLiveData = minion.getMinionLiveData();
+                    this.updateHowLongMinionWaiting(minionLiveData, start, end);
+                }
+
             }
         }
+
+
         totalMinionsThatFinished = updateTotalMinionsThatFinished();
         updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
 
         return true;
+    }
+
+    private void updateHowLongMinionWaiting(Minion.MinionLiveData minionLiveData, Instant start, Instant end){
+        Duration timeElapsed = Duration.between(start, end);
+        minionLiveData.setTimeISWaiting(timeElapsed.toMillis());
     }
 
     private Integer updateTotalMinionsThatFinished() {
@@ -292,6 +311,47 @@ public class Simulation extends Task implements Serializable, Runnable {
         for(Minion minion : minionsChosenByUser){
             if(minion.imFinished())
                 ++res;
+//            if(minion.getMyStatus() == "FAILURE")
+//            {
+//                res+= this.updateMyParents(minion);
+//            }
+        }
+        return res;
+    }
+
+    private int updateMyParents(Minion minionThatFailed) {
+        Set<List<Target>> allPath;
+        final int [] howManySkipped = {0};
+        try {
+            allPath = this.bDM.whatIf(minionThatFailed.getName(), "R");
+            for(Minion minionToUpdate : minionsChosenByUser){
+                Target targetToUpdate = minionToUpdate.getTarget();
+                allPath.stream().filter((targets) -> targets.contains(targetToUpdate) && minionThatFailed.getTarget() != targetToUpdate).forEach( (targets) ->{
+                    minionToUpdate.statusProperty().setValue("SKIPPED");
+                    ++howManySkipped[0];});
+            }
+
+            return howManySkipped[0];
+        }catch (ErrorUtils errorUtils) {
+            errorUtils.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<String> checkDependencies(List<Target> targets, Target currTarget, int[] howManySkipped ){
+
+        List<String> res = new ArrayList<>();
+        Boolean add = false;
+        for(int i = 0; i <targets.size() ; i++ ){
+            if(add) {
+                res.add(targets.get(i).getName());
+                //++howManySkipped[0];
+            }
+
+            if(targets.get(i) == currTarget) {
+                add = true;
+            }
+
         }
         return res;
     }

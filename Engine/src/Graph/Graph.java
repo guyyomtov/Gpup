@@ -158,11 +158,11 @@ public class Graph implements Serializable {
         return foundDouble;
     }
 
-    public  Set<List<Target>> whatIf(String targetName, String connection) throws ErrorUtils{
+    public Set<List<Target>> whatIf(String targetName, String connection) throws ErrorUtils{
 
         List<String> allDependencies = new ArrayList<>();
         Map<String, Boolean> isVisited = new HashMap<>();
-        isVisited = this.makeIsVisitedMap();
+        isVisited = makeIsVisitedMap();
         if(!targetExist(targetName))
             throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + targetName + "doesn't exist"));
 

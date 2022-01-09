@@ -11,7 +11,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
@@ -19,6 +21,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import tableView.TableController;
 import Flagger.Flagger;
 
@@ -115,6 +118,24 @@ public class GraphInfoController {
         series.getData().add(new XYChart.Data<>("Root", this.bDM.getNumOfRoots()));
         barChart.getData().addAll(series);
 
+    }
+
+    @FXML
+    void createGraphizAction(ActionEvent event){
+
+        Parent root;
+//        try {
+//            root = FXMLLoader.load(getClass().getClassLoader().getResource("path/to/other/view.fxml"), resources);
+//            Stage stage = new Stage();
+//            stage.setTitle("My New Stage Title");
+//            stage.setScene(new Scene(root, 450, 450));
+//            stage.show();
+//            // Hide this current window (if this is what you want)
+//            ((Node)(event.getSource())).getScene().getWindow().hide();
+//        }
+//        catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @FXML

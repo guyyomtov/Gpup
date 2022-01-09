@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 
 import Graph.*;
+import fileHandler.schemaXmlFile.GraphizHHandler;
 import taskView.TaskController;
 
 import javax.xml.bind.JAXBContext;
@@ -77,7 +78,6 @@ public class BackDataManager implements DataManager {
 
         return (GPUPDescriptor) u.unmarshal(in);
     }
-
 
     private Map<String, Set<Target>> makeMap(List<Target> targets){
 
@@ -232,4 +232,8 @@ public class BackDataManager implements DataManager {
         this.taskController = taskController;
     }
 
+    public void makeGraphizImage(String wantedSavingPath) throws IOException {
+
+        GraphizHHandler.makeGraphizPNGFrom(wantedSavingPath, this.graph);
+    }
 }

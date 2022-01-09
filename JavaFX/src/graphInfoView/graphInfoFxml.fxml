@@ -11,6 +11,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -38,6 +39,13 @@
             <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <VBox fx:id="summaryByType" alignment="TOP_CENTER" minHeight="300.0" minWidth="250.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label text="Enter Save path:" />
+                        <TextField fx:id="wantedUserPath" prefHeight="25.0" prefWidth="155.0" />
+                        <Button mnemonicParsing="false" onAction="#getGraphizAction" text="Get Graphiz" />
+                     </children>
+                  </VBox>
                   <Label text="Serial sets:">
                      <font>
                         <Font size="30.0" />
@@ -108,7 +116,6 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </HBox>
-            <Button mnemonicParsing="false" onAction="#createGraphizAction" text="Create Graphiz" GridPane.columnIndex="2" />
          </children>
       </GridPane>
    </content>

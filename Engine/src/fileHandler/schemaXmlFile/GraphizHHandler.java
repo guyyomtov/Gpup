@@ -10,10 +10,16 @@ import java.util.Set;
 public class GraphizHHandler {
 
 
-    static public void makeGraphizPNGFrom(String creatIn, Graph curGraph) throws IOException {
+    static public void makeGraphizPNGFrom(String savePhotoPath, Graph curGraph) throws IOException {
+
+        List<Target> targets = curGraph.getAllTargets();
+
+        makeGraphizPNGFrom(savePhotoPath, targets);
+    }
+
+    static public void makeGraphizPNGFrom(String savePhotoPath, List<Target> targets) throws IOException {
 
         String res  = new String();
-        List<Target> targets = curGraph.getAllTargets();
 
         res = "digraph G {\n\n";
 
@@ -21,31 +27,31 @@ public class GraphizHHandler {
         List<Target> roots = Target.getTargetByType(targets, Target.Type.ROOT);
 
         /// for each call rec function
-//        for(Target curRoot : roots)
-//           res = makeDotFormatString(curRoot, res);
-//
-//        List<Target> independents = Target.getTargetByType(targets, Target.Type.INDEPENDENT);
-//
-//        //get independents & add them to text
-//        for(Target curIndepend : independents)
-//            res += "\n"+ curIndepend.getName() + ";";
-//
-//        res += "\n}";
+        for(Target curRoot : roots)
+            res = makeDotFormatString(curRoot, res);
 
-        makeDotAndPNGFile(creatIn, res);
+        List<Target> independents = Target.getTargetByType(targets, Target.Type.INDEPENDENT);
+
+        //get independents & add them to text
+        for(Target curIndepend : independents)
+            res += "\n"+ curIndepend.getName() + ";";
+
+        res += "\n}";
+
+        makeDotAndPNGFile(savePhotoPath, res);
     }
 
     private static void makeDotAndPNGFile(String wantedUserPath, String res) throws IOException {
 
-        String s = "../taskView/taskViewFxml.fxml C:/Users/heres";
-
-        String userHomeFolder = System.getProperty("user.home");
-        File textFile = new File(userHomeFolder, "curGraph.viz");
+        // make text file
+        //String userHomeFolder = System.getProperty("user.home"); --> to save
+        File textFile = new File(wantedUserPath, "curGraph.viz");
         BufferedWriter out = new BufferedWriter(new FileWriter(textFile));
         out.write(res);
         out.close();
         textFile.mkdir();
 
+        // make image from text file
         FileOutputStream file = new FileOutputStream(textFile);
         PrintStream Output = new PrintStream(file);
         Output.print(res);
@@ -57,7 +63,7 @@ public class GraphizHHandler {
         Process p = Runtime.getRuntime().exec(c);
     }
 
-    public String makeDotFormatString(Target curT, String res){
+    static private String makeDotFormatString(Target curT, String res){
 
         String curTName = curT.getName();
 
@@ -81,6 +87,4 @@ public class GraphizHHandler {
 
         return res;
     }
-
-
 }

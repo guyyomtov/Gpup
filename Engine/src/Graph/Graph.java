@@ -1,6 +1,7 @@
 package Graph;
 import GpupClassesEx2.GPUPDescriptor;
 import errors.ErrorUtils;
+import fileHandler.schemaXmlFile.GraphizHHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -20,6 +21,7 @@ public class Graph implements Serializable {
 
 
     public Graph(List<Target> targets, Map<String, Target> mNameToTarget, Map<String, Set<Target>> mSerialSets) throws ErrorUtils, IOException {
+
         this.targets = targets;
         this.mNameToTarget = mNameToTarget;
         this.mSerialSets = mSerialSets;
@@ -27,118 +29,7 @@ public class Graph implements Serializable {
             this.pathFinder.startMe(this.targets.size(), this.targets);
         }catch(ErrorUtils e){throw e;}
 
-        this.makeGraphizText(null);
-
-    }
-
-    private void makeGraphizText(String wantedUserPath) throws IOException {
-
-        String res  = new String();
-
-        res = "digraph G {\n\n";
-
-        // get list of roots
-        List<Target> roots = Target.getTargetByType(this.targets, Target.Type.ROOT);
-
-        /// for each call rec function
-        for(Target curRoot : roots)
-            res = this.makeDotFormatString(curRoot, res);
-
-        List<Target> independents = Target.getTargetByType(this.targets, Target.Type.INDEPENDENT);
-
-        //get independents & add them to text
-        for(Target curIndepend : independents)
-            res += "\n"+ curIndepend.getName() + ";";
-
-        res += "\n}";
-
-        this.makeDotAndPNGFile(wantedUserPath, res);
-
-    }
-
-    private void makeDotAndPNGFile(String wantedUserPath, String res) throws IOException {
-
-        String s = "../taskView/taskViewFxml.fxml C:/Users/heres";
-
-        String userHomeFolder = System.getProperty("user.home");
-        File textFile = new File(userHomeFolder, "curGraph.viz");
-        BufferedWriter out = new BufferedWriter(new FileWriter(textFile));
-
-        out.write(res);
-        out.close();
-
-        textFile.mkdir();
-
-
-
-        FileOutputStream file = new FileOutputStream(textFile);
-        PrintStream Output = new PrintStream(file);
-        Output.print(res);
-        Output.close();
-        File f = new File(textFile.getAbsolutePath());
-        String arg1 = f.getAbsolutePath();
-        String arg2 = arg1 + ".png";
-        String[] c = {"dot", "-Tpng", arg1, "-o", arg2};
-        Process p = Runtime.getRuntime().exec(c);
-
-//        int width = 250;
-//        int height = 250;
-//
-//        // Constructs a BufferedImage of one of the predefined image types.
-//        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-//
-//        // Create a graphics which can be used to draw into the buffered image
-//        Graphics2D g2d = bufferedImage.createGraphics();
-//
-//        // fill all the image with white
-//        g2d.setColor(Color.white);
-//        g2d.fillRect(0, 0, width, height);
-//
-//        // create a circle with black
-//        g2d.setColor(Color.black);
-//        g2d.fillOval(0, 0, width, height);
-//
-//        // create a string with yellow
-//        g2d.setColor(Color.yellow);
-//        g2d.drawString("Java Code Geeks", 50, 120);
-//
-//        // Disposes of this graphics context and releases any system resources that it is using.
-//        g2d.dispose();
-//
-//        // Save as PNG
-//        File file = new File("myimage.png");
-//        ImageIO.write(bufferedImage, "png", file);
-//
-//        // Save as JPEG
-//        file = new File("myimage.jpg");
-//        ImageIO.write(bufferedImage, "jpg", file);
-//
-//        file.mkdir();
-    }
-
-    public String makeDotFormatString(Target curT, String res){
-
-        String curTName = curT.getName();
-
-        // if i have no kids
-        if(curT.getDependsOn().isEmpty())
-            return res;
-
-        //get & add kids to string
-        Set<String> kidNames = Target.getTargetNamesFrom(curT.getDependsOn());
-        for(String curKidName : kidNames){
-
-            if(res.contains(curTName+" -> "+curKidName+";\n"))
-                continue;
-
-            res += curTName+" -> "+curKidName+";\n";
-        }
-
-        // do the same to each kid
-        for(Target curKid : curT.getDependsOn())
-            res = makeDotFormatString(curKid, res);
-
-        return res;
+//        GraphizHHandler.makeGraphizPNGFrom(null, this);
     }
 
     public List<Target> getTargets() {return targets;}

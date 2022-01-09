@@ -12,9 +12,12 @@ import javafx.scene.control.CheckBox;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Consumer;
 import javafx.concurrent.Task;
+
+import javax.xml.stream.events.EndDocument;
 
 public class Minion implements Serializable, Runnable {
 
@@ -37,19 +40,26 @@ public class Minion implements Serializable, Runnable {
     private Map<String, Minion> allNamesToMinions;
     private Consumer<String> simulationConsumer;
     private MinionLiveData minionLiveData = new MinionLiveData();
+    private Map<String, Set<Target>> mSerialSets;
 
-    public class MinionLiveData{
+    public class MinionLiveData {
         private String targetName = new String();
         private StringProperty status = new SimpleStringProperty();
-        private long timeInProcess;
-        private long timeISWaiting;
+        private long timeInProcess = 0;
+        private long timeISWaiting = 0;
         private Set<String> minionsNameThatMinionRequiredFor = new HashSet<>();
         private List<String> namesOfSerialSetsThatMinionInclude = new ArrayList<>();
 
-        public void initMinionData(){
+        public void initMinionData() {
             this.targetName = Minion.this.targetName;
             this.status.setValue(Minion.this.status.getValue());
+
         }
+
+        public void setNamesOfSerialSetsThatMinionInclude(List<String> namesOfSerialSetsThatMinionInclude) {
+            this.namesOfSerialSetsThatMinionInclude = namesOfSerialSetsThatMinionInclude;
+        }
+
         public void setTimeInProcess(long timeInProcess) {
             this.timeInProcess = timeInProcess;
         }
@@ -58,8 +68,39 @@ public class Minion implements Serializable, Runnable {
             this.timeISWaiting += timeISWaiting;
         }
 
-        public Set<String> getMinionsNameThatMinionRequiredFor(){
-            return this.minionsNameThatMinionRequiredFor;}
+        public Set<String> getMinionsNameThatMinionRequiredFor() {
+            return this.minionsNameThatMinionRequiredFor;
+        }
+
+        public String getMinionLiveDataToString() {
+            String res = "Target name: " + targetName + "\n"
+                    + "Target type " + target.getTargetType().toString() + "\n";
+
+            if (namesOfSerialSetsThatMinionInclude.size() > 0) {
+                res += "Serial sets: " + namesOfSerialSetsThatMinionInclude.toString();
+            }
+
+            switch (status.getValue()) {
+                case "FROZEN":
+
+                    break;
+                case "WAITING":
+                    res += "Target waiting " + timeISWaiting;
+                    break;
+                case "SKIPPED":
+                    res += "Target skipped because " + minionsNameThatMinionRequiredFor.toString();
+                    break;
+                case "IN PROCESS":
+                    res += "Target in process " + timeInProcess;
+                    break;
+                // status is finished! warning/ succses
+                default:
+                    res += "Target status: " + statusProperty().getValue();
+                    break;
+            }
+
+            return res;
+        }
     }
 
     public MinionLiveData getMinionLiveData(){
@@ -184,6 +225,8 @@ public class Minion implements Serializable, Runnable {
 
     public List<String> runMe(Map<String,Minion> allMinions, Consumer cUI)  {
 
+        Instant start, end;
+        start = Instant.now();
         this.myStatus = "IN PROCESS";
         this.setStatus(myStatus);
 
@@ -255,6 +298,8 @@ public class Minion implements Serializable, Runnable {
 
         this.setStatus(myStatus);
 
+        end = Instant.now();
+        this.minionLiveData.setTimeInProcess(Duration.between(start, end).toMillis());
         return resData;
     }
 

@@ -239,7 +239,7 @@ public class Simulation extends Task implements Serializable, Runnable {
     @Override
     protected Object call() throws Exception {
 
-        Instant start, end;
+        Instant start , end;
         Map<String, Minion> test = new HashMap<>();
         ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
         Minion.MinionLiveData minionLiveData;
@@ -256,53 +256,38 @@ public class Simulation extends Task implements Serializable, Runnable {
         // go out of while when: no thread exist & queue is empty
         while(threadCounter != 0 || !waitingList.isEmpty()) {
 
+            start = Instant.now();
             minion = waitingList.poll();
 
-            if(this.iCanRunSerialSet(minion)) {
+            totalMinionsThatFinished = updateTotalMinionsThatFinished();
+            updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
+            //  updateMessage(message);
 
-                totalMinionsThatFinished = updateTotalMinionsThatFinished();
-                updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
-                //  updateMessage(message);
+            if (minion != null) {
 
-                if (minion != null) {
-
-                    if(this.iCanRunSerialSet(minion)) {
-
-                        executorService.execute(minion);
-
-                        threadCounter++;
-                        this.namesToCurRunningMinions.put(minion.getName(), minion);
-                    }
-                    else{// cur minion can't run because of serial set, put back in queue
-                        waitingList.add(minion);
-                    }
-                }
-                else {
-                    minionLiveData = minion.getMinionLiveData();
-                    end = Instant.now();
-                    this.updateHowLongMinionWaiting(minionLiveData, start, end);
+                if(this.iCanRunSerialSet(minion)) {
 
                     executorService.execute(minion);
+
                     threadCounter++;
                     this.namesToCurRunningMinions.put(minion.getName(), minion);
-
-                } else {
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException e) {// e.printStackTrace();
+                }
+                else{// cur minion can't run because of serial set, put back in queue
+                        waitingList.add(minion);
+                        end = Instant.now();
+                        minionLiveData = minion.getMinionLiveData();
+                        this.updateHowLongMinionWaiting(minionLiveData, start, end);
                     }
+
                 }
-                test = this.namesToCurRunningMinions;
-            }
-            else{ // cur minion can't run because of serial set, put back in queue
-                waitingList.add(minion);
-                end = Instant.now();
-                if(minion != null) {
-                    minionLiveData = minion.getMinionLiveData();
-                    this.updateHowLongMinionWaiting(minionLiveData, start, end);
+            else {
+
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {/* e.printStackTrace();*/ }
+
                 }
 
-            }
         }
 
 

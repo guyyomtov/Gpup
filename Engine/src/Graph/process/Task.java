@@ -69,6 +69,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
         this.minions = Minion.makeMinionsFrom(this.targets, this.timeIRun, this.chancesISucceed, this.chancesImAWarning);
         this.minionsChosenByUser = this.minions;
+        this.updateMinionLiveDataSerialSet();
         this.updateMinions();
     }
 
@@ -95,7 +96,24 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         // process wanted minions
         this.minions.addAll(userMinions);
         this.minionsChosenByUser = userMinions;
+        this.updateMinionLiveDataSerialSet(); // todo to add this in all the function that start minions!!!!
         this.updateMinions();
+    }
+
+    private void updateMinionLiveDataSerialSet() {
+        for(Minion minion : minionsChosenByUser){
+            minion.getMinionLiveData().setNamesOfSerialSetsThatMinionInclude(this.serialSetsThatIncluded(minion));
+        }
+    }
+
+    private List<String> serialSetsThatIncluded(Minion currMinion) {
+        List<String> namesOfSerialSet = new ArrayList<>();
+        Target currTarget = currMinion.getTarget();
+        for(String nSerialSet : serialSetsNameToTargets.keySet()){
+            if(serialSetsNameToTargets.get(nSerialSet).contains(currTarget))
+                namesOfSerialSet.add(nSerialSet);
+        }
+        return namesOfSerialSet;
     }
 
     public List<Minion> getMinions() { return minions; }

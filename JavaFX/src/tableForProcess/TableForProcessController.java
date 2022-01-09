@@ -58,7 +58,10 @@ public class TableForProcessController {
 
     private void addListener(TextArea targetInfo) {
 
-      //  targetInfo.textProperty().addListener();
+        tableForProcess.getSelectionModel().selectedItemProperty().addListener((v, oldV, newV) ->
+                targetInfo.setText(tableForProcess.getSelectionModel().getSelectedItem()
+                        .getMinionLiveData().getMinionLiveDataToString()));
+
     }
 
 

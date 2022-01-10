@@ -1,14 +1,10 @@
 package uploadFileView;
 
-import AnimationComponent.AnimationController;
 import AnimationComponent.SkinsUtils;
 import DataManager.BackDataManager;
-import FindPathComponent.FindPathController;
 import InterrogatorComponent.InterrogatorController;
-import WhatIfComponent.WhatIfController;
 import errors.ErrorUtils;
 import graphInfoView.GraphInfoController;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -154,31 +150,27 @@ public class MainController {
 
     public void setButtonsColors(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
-        SkinsUtils.changeButtonColorTo(enumWantedColor, this.buttons);
+        //SkinsUtils.changeButtonColorTo(enumWantedColor, this.buttons);
     }
 
     public void changeSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
-        // set this component colors
-       // this.setButtonsColors(enumWantedColor);
         this.setBoarderSkins(enumWantedColor);
-
-        //set kids component colors
-        this.intController.setSkins(enumWantedColor);
-        this.taskController.setSkins(enumWantedColor);
-        this.graphInfoController.setSkins(enumWantedColor);
     }
 
     private void setBoarderSkins(SkinsUtils.Colors enumWantedColor) {
 
-        if(enumWantedColor != SkinsUtils.Colors.DEFAULT) {
-            this.MainBorderPane.getStylesheets().add("uploadFileView/testSheet.css");
-            this.MainBorderPane.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
-            this.welcomeView.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
-        }
-        else {//make default
-            this.MainBorderPane.setBackground(new Background(new BackgroundFill(null, null, null)));
-            this.welcomeView.setBackground(new Background(new BackgroundFill(null, null, null)));
+        switch (enumWantedColor){
+
+            case RED:
+                this.MainBorderPane.getStylesheets().add("AnimationComponent/redMode.css");
+                break;
+            case BLUE:
+                this.MainBorderPane.getStylesheets().add("AnimationComponent/blueMode.css");
+                break;
+            case DEFAULT:
+                this.MainBorderPane.getStylesheets().add("AnimationComponent/defaultMode.css");
+                break;
         }
     }
 

@@ -56,7 +56,7 @@ public class TaskController {
     private BooleanProperty startButtonProperty;
     private BooleanProperty resumeProperty;
     private BooleanProperty pauseProperty;
-    private SimpleStringProperty targetInfo;
+    private StringProperty targetInfo;
     private BackDataManager bDM;
     private List<Minion> minions = new ArrayList<>();
     private SimulationComponentController simulationComponentController;
@@ -70,7 +70,7 @@ public class TaskController {
         resumeProperty = new SimpleBooleanProperty(this, "pauseAndResume", true);
         pauseProperty =  new SimpleBooleanProperty(this, "pauseAndResume", false);
         startButtonProperty = new SimpleBooleanProperty(this, "start", true );
-        targetInfo = new SimpleStringProperty();
+       // targetInfo = new SimpleStringProperty("");
 
     }
 

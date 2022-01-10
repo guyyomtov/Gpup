@@ -1,0 +1,10 @@
+
+.labeled{
+    -fx-text-fill: black;
+}
+
+.label {
+    color: black;
+    padding: 8px;
+    -fx-text-fill: black;
+}

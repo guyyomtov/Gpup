@@ -203,8 +203,16 @@ public class TaskController {
         if (!this.minions.isEmpty())
             dSP.minionsChoosenByUser(this.minions);
 
-        this.bDM.startProcess(dSP);
+        try {
+            this.bDM.startProcess(dSP);
+        }
+        catch (ErrorUtils e){
 
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("ERROR");
+            errorAlert.setContentText(e.getMessage());
+            errorAlert.showAndWait();
+        }
     }
 
     private void updateDataOnMinions() {

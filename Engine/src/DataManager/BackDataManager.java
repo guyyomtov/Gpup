@@ -192,6 +192,9 @@ public class BackDataManager implements DataManager {
 
                 new Thread(compilation).start();
             }
+            else{
+                throw new ErrorUtils(ErrorUtils.MISSING_COMPILATION_NEEDED_DATA);
+            }
         }
 
     }

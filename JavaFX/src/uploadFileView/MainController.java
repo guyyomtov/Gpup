@@ -163,13 +163,15 @@ public class MainController {
         switch (enumWantedColor){
 
             case RED:
+                this.MainBorderPane.getStylesheets().clear();
                 this.MainBorderPane.getStylesheets().add("AnimationComponent/redMode.css");
                 break;
             case BLUE:
+                this.MainBorderPane.getStylesheets().clear();
                 this.MainBorderPane.getStylesheets().add("AnimationComponent/blueMode.css");
                 break;
             case DEFAULT:
-                this.MainBorderPane.getStylesheets().add("AnimationComponent/defaultMode.css");
+                this.MainBorderPane.getStylesheets().clear();
                 break;
         }
     }

@@ -75,7 +75,6 @@ public class TaskController {
         startButtonProperty = new SimpleBooleanProperty(this, "start", true );
         targetInfo = new SimpleStringProperty();
         stopProperty = new SimpleBooleanProperty(this, "stop", true);
-
     }
 
     public void initTaskView() {

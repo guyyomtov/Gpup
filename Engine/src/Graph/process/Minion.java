@@ -4,45 +4,39 @@ import DataManager.consumerData.FormatAllTask;
 import Graph.Target;
 import DataManager.consumerData.ConsumerTaskInfo;
 import fileHandler.TaskFile;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.scene.control.CheckBox;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.lang.reflect.Type;
+import java.io.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Consumer;
 
-import javax.xml.stream.events.EndDocument;
-
 public class Minion implements Serializable, Runnable {
 
-    private String fullPathDestination;
-    private String fullPathSource;
-    private Target target;
-    private String targetName;
-    private Target.Type targetType;
-    private String myStatus = new String();
-    private StringProperty status;
-    private Boolean canIRun;
-    private Boolean iAmFinished;
-    private List<String> parentsNames = new ArrayList<>();
-    private List<String> myKidsNames = new ArrayList<>();
-    private List<Minion> parents = new ArrayList<>();
-    private List<Minion> myKids = new ArrayList<>();
-    private List<String> myPData = new ArrayList<>();
-    private Consumer cUI;
+    protected String fullPathDestination;
+    protected String fullPathSource;
+    protected Target target;
+    protected String targetName;
+    protected Target.Type targetType;
+    protected String myStatus = new String();
+    protected StringProperty status;
+    protected Boolean canIRun;
+    protected Boolean iAmFinished;
+    protected List<String> parentsNames = new ArrayList<>();
+    protected List<String> myKidsNames = new ArrayList<>();
+    protected List<Minion> parents = new ArrayList<>();
+    protected List<Minion> myKids = new ArrayList<>();
+    protected List<String> myPData = new ArrayList<>();
+    protected Consumer cUI;
     protected Integer timeIRun;
     protected Integer chancesISucceed;
     protected Integer chancesImAWarning;
-    private Map<String, Minion> allNamesToMinions;
-    private Consumer<String> simulationConsumer;
-    private MinionLiveData minionLiveData = new MinionLiveData();
-    private boolean imSimulation;
+    protected Map<String, Minion> allNamesToMinions;
+    protected Consumer<String> taskConsumer;
+    protected MinionLiveData minionLiveData = new MinionLiveData();
+    protected boolean imSimulation;
     public class MinionLiveData {
         private String targetName = new String();
        // private StringProperty status = new SimpleStringProperty();
@@ -123,6 +117,20 @@ public class Minion implements Serializable, Runnable {
         this.setMyKidsNames();
         this.setMyParentsNames();
         this.timeIRun = maxTime;
+        this.minionLiveData.initMinionData();
+        this.imSimulation = imSimulation;
+    }
+    public Minion(Target target, boolean imSimulation){
+
+        this.target = target;
+        this.targetName = target.getName();
+        this.targetType = target.getTargetType();
+        this.myStatus = this.myStartStatus(target.getTargetType().toString());
+        this.canIRun = this.myStatus.equals("WAITING") ? true : false;
+        this.status = new SimpleStringProperty(this, "status", myStatus );
+        this.iAmFinished = false;
+        this.setMyKidsNames();
+        this.setMyParentsNames();
         this.minionLiveData.initMinionData();
         this.imSimulation = imSimulation;
     }
@@ -264,47 +272,49 @@ public class Minion implements Serializable, Runnable {
         this.myStatus = "IN PROCESS";
         this.setStatus(myStatus);
 
-
         List<String> resData = new ArrayList<>();
         String openedParents = new String();
         ConsumerTaskInfo cTI = new ConsumerTaskInfo(this.target.getName());
 
-      //  cTI.getInfo(cUI, "The target " + this.target.getName() + " about to run.");
+      // cTI.getInfo(cUI, "The target " + this.target.getName() + " about to run.");
         try {
             Thread.sleep(100);
         }catch (InterruptedException e) {
            // e.printStackTrace();
         }
 
-        simulationConsumer.accept("The target " + this.target.getName() + " about to run.");
+        taskConsumer.accept("The target " + this.target.getName() + " about to run.");
 
-       // Platform.runLater();
         Duration t = Duration.ofMillis(timeIRun);
-     //   cTI.getInfo(cUI, "The system is going to sleep for: " + String.format("%02d:%02d:%02d" ,t.toHours(), t.toMinutes(), t.getSeconds()));
-        simulationConsumer.accept("The system is going to sleep for: " + String.format("%02d:%02d:%02d" ,t.toHours(), t.toMinutes(), t.getSeconds()));
-        try {
-            end = Instant.now();
-            this.minionLiveData.setTimeInProcess(Duration.between(start, end).toMillis());
-            Thread.sleep(timeIRun);
-        }catch(InterruptedException e){}
+      //  cTI.getInfo(cUI, "The system is going to sleep for: " + String.format("%02d:%02d:%02d" ,t.toHours(), t.toMinutes(), t.getSeconds()));
 
-   //     cTI.getInfo(cUI, "The system finished the task on target " + this.getName());
-        simulationConsumer.accept("The system finished the task on target " + this.getName());
+        if(imSimulation) {
+            taskConsumer.accept("The system is going to sleep for: " + String.format("%02d:%02d:%02d", t.toHours(), t.toMinutes(), t.getSeconds()));
+            try {
+                end = Instant.now();
+                this.minionLiveData.setTimeInProcess(Duration.between(start, end).toMillis());
+                Thread.sleep(timeIRun);
+            } catch (InterruptedException e) {
+            }
+            taskConsumer.accept("The system finished the task on target " + this.getName());
+        }
+
+        //cTI.getInfo(cUI, "The system finished the task on target " + this.getName());
         //  cUI.accept("The system finished the task on target " + this.myTargetName);
-
 
         if(imSimulation) {
             openedParents = this.simulationSpecificProcess(allMinions);
         }
-        else{ // im compilation -->
+        else{ // im compilation
             openedParents = this.compilationSpecificProcess(allMinions);
         }
        // cTI.getInfo(cUI, "the result: " + this.myStatus);
-        simulationConsumer.accept("The result of the target " + this.targetName + " is: " + this.myStatus);
+        if(imSimulation)
+            taskConsumer.accept("The result of the target " + this.targetName + " is: " + this.myStatus);
 
         if(this.myStatus.equals("SUCCESS") || this.myStatus.equals("WARNING")) {
             //cTI.getInfo(cUI, "The targets that opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
-            simulationConsumer.accept("The target " + targetName +  " opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
+            taskConsumer.accept("The target " + targetName +  " opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
         }
 
        // cTI.getInfo(cUI, "----------------------------------------");
@@ -326,37 +336,39 @@ public class Minion implements Serializable, Runnable {
 
     private String compilationSpecificProcess(Map<String, Minion> allMinions){
 
+        Instant start, end;
         String openedParents = "";
-        String userGive = "C:/Users/guyyo/Downloads/XOO/XOO/src";
-
         String resSrcArg = new String();
-
-        // first part of the string
-//        resSrcArg = this.fullPathSource;
-       // resSrcArg = "C:/Users/guyyo/Downloads/XOO/XOO/src/gpup/compilation/example/l2/Koo.java";
-
-
+        int res = 0;
         // append second needed part
-        resSrcArg += userGive + "/" + this.target.getGeneralInfo().replace('.', '/' ) + ".java";
+        resSrcArg += this.fullPathSource + "/" + this.target.getGeneralInfo().replace('.', '/' ) + ".java";
 
-        // TODO
-        // hey javawanker dont forget to create folder dest if not exist.
+        String[] c = {"javac", "-d", this.fullPathDestination, "-cp", this.fullPathDestination, resSrcArg};
+        taskConsumer.accept("Full command: javac-d"+ " " + this.fullPathDestination +  "-cp " +  this.fullPathDestination + resSrcArg );
 
-        // send to cmd with Process ==>
-        // javac + (1destanationPath ,2destanationPath,3.resPath)
-        //String[] c = {"javac", "-d", this.fullPathDestination, "-cp", this.fullPathDestination, resSrcArg};
-        String[] c = {"javac", "-d", "C:/Users/guyyo/out", "-cp", "C:/Users/guyyo/out", resSrcArg};
         try {
-            Process p = Runtime.getRuntime().exec(c);
-            this.myStatus = "SUCCESS";
+            start = Instant.now();
+            Process process = Runtime.getRuntime().exec(c);
+            process.waitFor();
+            end = Instant.now();
+            taskConsumer.accept("The compiler finish the task on target " + targetName + " in: " + Duration.between(start, end).toMillis() + " milli second.");
+            res = process.exitValue();
+            if(res == 0) // of res == 0 == > process on curr target success.
+                this.myStatus = "SUCCESS";
+            else {
+                this.myStatus = "FAILURE";
+                String errorMessage = new BufferedReader(
+                        new InputStreamReader(process.getErrorStream())).readLine();
+                taskConsumer.accept("The target is failed, output from javac: " + errorMessage);
+                checkAndUpdateWhoImClosedTORunning(this, true);
+            }
             this.status.setValue(myStatus);
-        } catch (IOException e) {
+
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             System.out.println(targetName + " is " + "failed" );
         }
 
-        // TODO
-        // if proces failed we have to sop and print what javc throws
         return openedParents = iOpened(this.parentsNames, allMinions);
     }
 
@@ -453,7 +465,7 @@ public class Minion implements Serializable, Runnable {
         return resData;
     }
 
-    private String iOpened(List<String> parentsNames, Map<String,Minion> allMinions)
+    protected String iOpened(List<String> parentsNames, Map<String, Minion> allMinions)
     {
 
         String resNames = new String();
@@ -589,7 +601,7 @@ public class Minion implements Serializable, Runnable {
 
     public Target.Type getTargetType() {return targetType;}
 
-    public void setConsumer(Consumer<String> simulationConsumer){this.simulationConsumer = simulationConsumer;}
+    public void setConsumer(Consumer<String> simulationConsumer){this.taskConsumer = simulationConsumer;}
 
     public String getStatus() {
         return status.get();
@@ -627,6 +639,8 @@ public class Minion implements Serializable, Runnable {
     }
 
     public boolean getImSimulation() {return this.imSimulation; }
+
+    public List<Minion> getMyKids(){return this.myKids;}
 
 
 }

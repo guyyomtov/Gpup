@@ -8,6 +8,7 @@ import Graph.Target;
 import errors.ErrorUtils;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.scene.control.ProgressBar;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -55,22 +56,53 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         this.userAmountWantedThread = dSp.amountOfThreads;
 
         //
-        if (dSp.flagger.processFromScratch) {
+//        if (dSp.flagger.processFromScratch) {
+//
+//            // make all minions from scratch
+//           // this.startMinions();
+//
+//        }
+        this.minionsChosenByUser = dSp.minionsChoosenByUser;
 
-            // make all minions from scratch
-            this.startMinions();
+        if(dSp.flagger.processIncremental){
+            this.updateMinionsForIncrementalProcess(); // anotherProcess
         }
-        else if (dSp.flagger.processIncremental) {
 
-            // copy minions from last task
-            this.startMinions(dSp.oldTask);
-        }
-        else if(dSp.flagger.processFromRandomTargets){
+        this.startMinions(minionsChosenByUser);
 
-            //make on chosen minions with 100% succeed
-            this.startMinions(dSp.minionsChoosenByUser);
+//        if (dSp.flagger.processIncremental) {
+//
+//            // copy minions from last task
+//            this.startMinions(dSp.minionsChoosenByUser);
+//            //  this.startMinions(dSp.oldTask);
+//        }
+//        else if(dSp.flagger.processFromRandomTargets){
+//
+//            //make on chosen minions with 100% succeed
+//            this.startMinions(dSp.minionsChoosenByUser);
+//        }
+        this.AddDataOnMinions();
+    }
+
+    private void updateMinionsForIncrementalProcess() {
+
+        for(Minion minion : minions){
+            String myStatus = minion.getStatus();
+            if(myStatus.equals("SKIPPED") || myStatus.equals("FAILURE"))
+            {
+                checkIfImWaitingOrFrozen(minion);
+            }
         }
-        AddDataOnMinions();
+    }
+
+    private void checkIfImWaitingOrFrozen(Minion minion) {
+        List<Minion> kids = minion.getMyKids();
+        for(Minion currMin : kids){
+            if(this.minionsChosenByUser.contains(currMin)){
+                if(!currMin.getStatus().equals("SUCCESS") || !currMin.getStatus().equals("WARNING"))
+                    minion.setStatus("");
+            }
+        }
     }
 
     // from scratch
@@ -389,6 +421,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
     @Override
     public void run(){
 
+        Instant start, end;
         this.cUI = new Consumer() {
             @Override
             public void accept(Object o) {
@@ -396,8 +429,9 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
             }
         };
 
-        FormatAllTask.restartMap();
-        FormatAllTask.start = Instant.now();
+       // FormatAllTask.restartMap();
+        start = Instant.now();
+      //  FormatAllTask.start = Instant.now();
 
         this.makeQueue();
         //this.runMinions();
@@ -407,12 +441,43 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
 
         System.out.println("process finished");
-        FormatAllTask.end = Instant.now();
-        FormatAllTask.sendData(cUI);
-
-
+        //FormatAllTask.end = Instant.now();
+        //FormatAllTask.sendData(cUI);
+        end = Instant.now();
+        this.makeSummaryOfProcess(Duration.between(start, end));
         FormatAllTask.sendData(cUI, this.targetNameToSummeryProcess);
         ProcessInfo.setOldTask(this);
+    }
+
+    private void makeSummaryOfProcess(Duration timeElapsed) {
+        String summary = new String();
+        Map<String, Integer> mStatusToNumber = makeMapStatusToNumber();
+        String time = String.format("%02d:%02d:%02d" ,timeElapsed.toHours(), timeElapsed.toMinutes(), timeElapsed.getSeconds());
+        summary = "-----------------------------------------------" + "\n";
+        summary += "The result of the process: " + "\n";
+        summary += "Total Time: " + time + "\n";
+        summary += "Targets that ended with 'SUCCESS': " + mStatusToNumber.get("SUCCESS") + "\n";
+        summary += "Targets that ended with 'WARNING': " + mStatusToNumber.get("WARNING") + "\n";
+        summary += "Targets that ended with 'FAILURE': " + mStatusToNumber.get("FAILURE") + "\n";
+        summary += "Targets that ended with 'SKIPPED': " + mStatusToNumber.get("SKIPPED") + "\n";
+        summary += "-----------------------------------------------";
+        updateMessage(getMessage() +  "\n" + summary);
+
+    }
+
+    private Map<String, Integer> makeMapStatusToNumber() {
+        Map<String, Integer> mStatusToNumber = new HashMap<>();
+        mStatusToNumber.put("SUCCESS", 0);
+        mStatusToNumber.put("WARNING", 0);
+        mStatusToNumber.put("FAILURE", 0);
+        mStatusToNumber.put("SKIPPED", 0);
+        mStatusToNumber.put("FROZEN", 0);
+        for(Minion minion : this.minionsChosenByUser){
+            String myStatus = minion.getStatus();
+            Integer tmp = mStatusToNumber.get(myStatus);
+            mStatusToNumber.put(myStatus, tmp + 1);
+        }
+        return mStatusToNumber;
     }
 
 }

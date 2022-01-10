@@ -1,0 +1,33 @@
+.button {
+    -fx-background-color: DarkRed;
+    -fx-text-fill: white;
+}
+
+.label {
+    color: black;
+    padding: 8px;
+    -fx-text-fill: DarkRed;
+}
+
+.radio-button .radio {
+    -fx-border-width: 1px;
+    -fx-border-color: DarkRed;
+    -fx-background-color: white;
+    -fx-background-image: null;
+}
+.radio-button .radio:selected {
+    -fx-background-color: DarkRed;
+    -fx-background-image: null;
+}
+.radio-button -radio:armed {
+    -fx-background-color: DarkRed;
+    -fx-background-image: null;
+}
+.radio-button -radio:determinate {
+    -fx-background-color: DarkRed;
+    -fx-background-image: null;
+}
+.radio-button -radio:indeterminate {
+    -fx-background-color: DarkRed;
+    -fx-background-image: null;
+}

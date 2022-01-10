@@ -41,8 +41,8 @@ public class SimulationComponentController {
 
     @FXML
     void randomButtonAction(ActionEvent event) {
-        succsesSpinner.setDisable(true);
-        warningSpinner.setDisable(true);
+        succsesSpinner.setDisable(false);
+        warningSpinner.setDisable(false);
     }
 
     private void initSpinner(Spinner<Integer> spinner) {
@@ -71,13 +71,7 @@ public class SimulationComponentController {
 
     public void setSkins(SkinsUtils.Colors enumWantedColor) throws ErrorUtils {
 
-
-        //set buttons colors
         this.setButtonsColors(enumWantedColor);
-
-        // set my label skins
-
-        //set background colors
     }
 
     public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {

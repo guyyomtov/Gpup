@@ -47,8 +47,8 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         this.bDM = dSp.bDM;
         this.targets = dSp.allGraphTargets;
         //this.timeIRun = dSp.timeToRun;
-        //this.chancesISucceed = dSp.chancesToSucceed;
-        //this.chancesImAWarning = dSp.chancesToBeAWarning;
+        this.chancesISucceed = dSp.chancesToSucceed;
+        this.chancesImAWarning = dSp.chancesToBeAWarning;
         maxParallelism = dSp.amountOfThreads;
         this.serialSetsNameToTargets = dSp.serialSets;
         this.pauseTaskProperty = dSp.pauseTask;
@@ -81,7 +81,30 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 //            //make on chosen minions with 100% succeed
 //            this.startMinions(dSp.minionsChoosenByUser);
 //        }
+
+        // if random, run over values of success in minion
+        if(dSp.flagger.chancesIsRandomInProcess){
+            this.startMinionWithRandPercent();
+        }
+
         this.AddDataOnMinions();
+    }
+
+    private void startMinionWithRandPercent() {
+
+        Random rand = new Random();
+        int upperBoundSucceed = this.chancesISucceed;
+        int upperBoundWarning = this.chancesImAWarning;
+
+        // rand new values
+        this.chancesISucceed =rand.nextInt(upperBoundSucceed);
+        this.chancesImAWarning = rand.nextInt(upperBoundWarning);
+
+        // go over all minions & give them new chance value
+        for(Minion curM : this.minions){
+            curM.chancesISucceed = this.chancesISucceed;
+            curM.chancesImAWarning = this.chancesImAWarning;
+        }
     }
 
     private void updateMinionsForIncrementalProcess() {

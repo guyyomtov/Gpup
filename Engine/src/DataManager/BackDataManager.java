@@ -26,7 +26,6 @@ public class BackDataManager implements DataManager {
 
     private Graph graph;
     private Map<String, Set<Target>> mTypeToTargets = new HashMap<String, Set<Target>>();
-//    private final static String JAXB_XML_GAME_PACKAGE_NAME = "schemaXmlFile";
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "GpupClassesEx2";
 
     private TaskController taskController;

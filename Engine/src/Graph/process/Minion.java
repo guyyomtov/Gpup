@@ -16,7 +16,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Consumer;
-import javafx.concurrent.Task;
 
 import javax.xml.stream.events.EndDocument;
 
@@ -300,15 +299,15 @@ public class Minion implements Serializable, Runnable {
         else{ // im compilation -->
             openedParents = this.compilationSpecificProcess(allMinions);
         }
-        cTI.getInfo(cUI, "the result: " + this.myStatus);
+       // cTI.getInfo(cUI, "the result: " + this.myStatus);
         simulationConsumer.accept("The result of the target " + this.targetName + " is: " + this.myStatus);
 
         if(this.myStatus.equals("SUCCESS") || this.myStatus.equals("WARNING")) {
-            cTI.getInfo(cUI, "The targets that opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
+            //cTI.getInfo(cUI, "The targets that opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
             simulationConsumer.accept("The target " + targetName +  " opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
         }
 
-        cTI.getInfo(cUI, "----------------------------------------");
+       // cTI.getInfo(cUI, "----------------------------------------");
 
 
         resData.add(0, String.valueOf(this.timeIRun));
@@ -349,13 +348,15 @@ public class Minion implements Serializable, Runnable {
         String[] c = {"javac", "-d", "C:/Users/guyyo/out", "-cp", "C:/Users/guyyo/out", resSrcArg};
         try {
             Process p = Runtime.getRuntime().exec(c);
+            this.myStatus = "SUCCESS";
+            this.status.setValue(myStatus);
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println(targetName + " is " + "failed" );
         }
 
         // TODO
         // if proces failed we have to sop and print what javc throws
-
         return openedParents = iOpened(this.parentsNames, allMinions);
     }
 
@@ -529,10 +530,11 @@ public class Minion implements Serializable, Runnable {
 
             FormatAllTask.updateCounter(myPData.get(3));// the status
         }
-        Simulation.threadCounter = Simulation.threadCounter - 1 ;
+        Task.threadCounter = Task.threadCounter - 1 ;
         this.iAmFinished = true;
     }
 
+    synchronized
     private void checkIfToAddMyParents() {
 
         if(this.ISucceeded()) {
@@ -542,8 +544,6 @@ public class Minion implements Serializable, Runnable {
 
                     if(!Graph.process.Task.waitingList.contains(curD))
                         Graph.process.Task.waitingList.add(curD);
-
-  //                  curD.run();
                 }
             }
         }
@@ -614,9 +614,10 @@ public class Minion implements Serializable, Runnable {
             return;
         else {
             for(Minion dad : dads){
-                if(updateStatus)
-                     dad.status.setValue("SKIPPED");
-                dad.setiAmFinished(true);
+                if(updateStatus) {
+                    dad.status.setValue("SKIPPED");
+                    dad.setiAmFinished(true);
+                }
                 dad.minionLiveData.minionsNameThatMinionRequiredFor.add(minion.getName());
                 dad.minionLiveData.minionsNameThatMinionRequiredFor.addAll(minion.minionLiveData.minionsNameThatMinionRequiredFor);
                 checkAndUpdateWhoImClosedTORunning(dad, updateStatus);

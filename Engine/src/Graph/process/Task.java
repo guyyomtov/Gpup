@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 
 public abstract class Task extends javafx.concurrent.Task<Object> implements Serializable, Consumer<String>{
 
+    private final Integer userAmountWantedThread;
     protected String taskName;
     protected Integer timeIRun;
     protected Integer chancesISucceed;
@@ -51,6 +52,8 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         this.serialSetsNameToTargets = dSp.serialSets;
         this.pauseTaskProperty = dSp.pauseTask;
         this.infoOfLastProcess = dSp.lastProcessTextArea != null ? dSp.lastProcessTextArea : "";
+        this.userAmountWantedThread = dSp.amountOfThreads;
+
         //
         if (dSp.flagger.processFromScratch) {
 
@@ -308,7 +311,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         updateMessage(infoOfLastProcess);
         Instant start , end;
         //Map<String, Minion> test = new HashMap<>();
-        ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
+        ExecutorService executorService = Executors.newFixedThreadPool(this.userAmountWantedThread);
         Minion.MinionLiveData minionLiveData;
 
         //first case
@@ -325,6 +328,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
             start = Instant.now();
             minion = waitingList.poll();
+
 
             totalMinionsThatFinished = updateTotalMinionsThatFinished();
             updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
@@ -345,16 +349,13 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
                     minionLiveData = minion.getMinionLiveData();
                     this.updateHowLongMinionWaiting(minionLiveData, start, end);
                 }
-
             }
             else {
 
                 try {
                     Thread.sleep(300);
                 } catch (InterruptedException e) {/* e.printStackTrace();*/ }
-
             }
-
         }
 
         totalMinionsThatFinished = updateTotalMinionsThatFinished();

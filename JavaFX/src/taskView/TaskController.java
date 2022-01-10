@@ -155,25 +155,6 @@ public class TaskController {
     @FXML
     void startButtonAction(ActionEvent event) throws ErrorUtils {
 
-        // ---------- EXAMPLE PROCESS FROM --------------
-        // start flagger (which is a MUST part of dSP)
-//        Flagger flagger = new Flagger().builder()
-//                .processIsSimulation(true)
-//                .processFromScratch(true)
-//                .chancesIsRandomInProcess(false);
-//
-//        //start more needed data
-//        DataSetupProcess dSP = new DataSetupProcess().builder()
-//                .flagger(flagger)
-//                .chancesToSucceed(100)
-//                .chancesToBeAWarning(100)
-//                .timeToRun(3000);
-//
-//        this.bDM.startProcess(dSP);
-
-        //---------- EXAMPLE PROCESS FOR RANDOM USER TARGETS --------------
-
-        // start flagger (which is a MUST part of dSP)
 
         this.updateTargetListButtonAction(event);
         this.pauseProperty.setValue(false);
@@ -202,18 +183,6 @@ public class TaskController {
         this.bDM.startProcess(dSP);
 
     }
-    /*void startButtonAction(ActionEvent event) {
-        if(minions.isEmpty())
-            return;
-
-        //else
-        this.startButton.setDisable(true);
-        this.resumeButton.setDisable(false);
-        this.pauseButton.setDisable(false);
-        this.bDM.startPro(minions);
-
-    }
-*/
 
     public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {
 
@@ -234,10 +203,15 @@ public class TaskController {
             if(target.getRemark().isSelected())
             {
                 // if minion is simulation --> make simulation minion
-                // if minon is compilation --> make compilation minon
+                if(this.simulationButton.isSelected()) {
+                    Minion minion = new Minion(target, maxTime, chancesISucceed, chancesImAWarning, this.simulationButton.isSelected());
+                    minions.add(minion);
+                }
+                else{ // if minon is compilation --> make compilation minon
 
-                Minion minion = new Minion(target, maxTime, chancesISucceed, chancesImAWarning, this.simulationButton.isSelected());
-                minions.add(minion);
+                    Minion minion = new Minion(target, maxTime, chancesISucceed, chancesImAWarning, this.simulationButton.isSelected(), this.compilationController.getFullPathDestination(), this.compilationController.getFullPathSource());
+                    minions.add(minion);
+                }
             }
         }
         tableProcessController.initTable(minions, this.textAreaTargetInfo);

@@ -86,21 +86,35 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
     private void updateMinionsForIncrementalProcess() {
 
-        for(Minion minion : minions){
+        for(Minion minion : minionsChosenByUser){
             String myStatus = minion.getStatus();
             if(myStatus.equals("SKIPPED") || myStatus.equals("FAILURE"))
             {
-                checkIfImWaitingOrFrozen(minion);
+                checkIfImWaitingOrFrozen(minion, minion);
             }
         }
     }
 
-    private void checkIfImWaitingOrFrozen(Minion minion) {
-        List<Minion> kids = minion.getMyKids();
-        for(Minion currMin : kids){
-            if(this.minionsChosenByUser.contains(currMin)){
-                if(!currMin.getStatus().equals("SUCCESS") || !currMin.getStatus().equals("WARNING"))
-                    minion.setStatus("");
+    private void checkIfImWaitingOrFrozen(Minion minionToUpdate, Minion minionKid) {
+        List<Minion> kids = minionKid.getMyKids();
+        if(kids.isEmpty())
+        {
+            minionToUpdate.setStatus("WAITING");
+            minionToUpdate.setMyStatus("WAITING");
+            minionToUpdate.setiAmFinished(false);
+        }
+        else
+        {
+            for (Minion currMin : kids) {
+                if (this.minionsChosenByUser.contains(currMin)) {
+                    if (!currMin.getStatus().equals("SUCCESS") || !currMin.getStatus().equals("WARNING")) {
+                        minionToUpdate.setStatus("FROZEN");
+                        minionToUpdate.setMyStatus("FROZEN");
+                        minionToUpdate.setiAmFinished(false);
+                        return;
+                    } else
+                        this.checkIfImWaitingOrFrozen(minionToUpdate,currMin);
+                }
             }
         }
     }
@@ -223,7 +237,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
     public abstract void setName();
 
     public void makeQueue() {
-
+        waitingList.clear();
         for(Minion curM : this.minions)
             if(curM.getCanIRun())
                 waitingList.add(curM);
@@ -461,8 +475,16 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         summary += "Targets that ended with 'FAILURE': " + mStatusToNumber.get("FAILURE") + "\n";
         summary += "Targets that ended with 'SKIPPED': " + mStatusToNumber.get("SKIPPED") + "\n";
         summary += "-----------------------------------------------";
-        updateMessage(getMessage() +  "\n" + summary);
+        String messageThatProcessDone = checkIfProcessDone(mStatusToNumber);
+        updateMessage(getMessage() +  "\n" + summary + "\n" + messageThatProcessDone);
 
+    }
+
+    private String checkIfProcessDone(Map<String, Integer> mStatusToNumber) {
+        if(mStatusToNumber.get("SUCCESS") + mStatusToNumber.get("WARNING") >= this.minionsChosenByUser.size())
+            return "Process is done!!!";
+        else
+            return "";
     }
 
     private Map<String, Integer> makeMapStatusToNumber() {

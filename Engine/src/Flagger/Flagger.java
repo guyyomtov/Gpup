@@ -37,9 +37,6 @@ public class Flagger {
         this.processIncremental = b;
 
         // can't be true together
-        if(this.processFromScratch != null && this.processFromRandomTargets !=null
-                && (this.processFromScratch == b || this.processFromRandomTargets == b))
-            throw new ErrorUtils(ErrorUtils.invalidProcess());
 
         this.processFromScratch = !b;
         this.processFromRandomTargets = !b;

@@ -174,6 +174,9 @@ public class TaskController {
 
         if(this.fromScratchButton.isSelected())
             this.updateTargetListButtonAction(event);
+        else
+            this.updateDataOnMinions(); // update time I run, chances..
+
         this.updateTargetListButton.setDisable(true);
         this.stopProperty.setValue(false);
         this.pauseProperty.setValue(false);
@@ -203,6 +206,14 @@ public class TaskController {
 
         this.bDM.startProcess(dSP);
 
+    }
+
+    private void updateDataOnMinions() {
+        for(Minion minion : minions){
+            minion.setTimeIRun(this.simulationComponentController.getMaxTime());
+            minion.setChancesISucceed(this.simulationComponentController.getChancesToSuccess());
+            minion.setChancesImAWarning(this.simulationComponentController.getChancesToSuccessWithWarning());
+        }
     }
 
     @FXML

@@ -642,5 +642,16 @@ public class Minion implements Serializable, Runnable {
 
     public List<Minion> getMyKids(){return this.myKids;}
 
+    public void setTimeIRun(Integer timeIRun) {
+        this.timeIRun = timeIRun;
+    }
+
+    public void setChancesImAWarning(Integer chancesImAWarning) {
+        this.chancesImAWarning = chancesImAWarning;
+    }
+
+    public void setChancesISucceed(Integer chancesISucceed) {
+        this.chancesISucceed = chancesISucceed;
+    }
 
 }

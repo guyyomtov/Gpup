@@ -26,18 +26,19 @@ public class FormatAllTask {
     mStatusToNumber.put(status, toAdd + 1);
     }
 
-    public static void sendData(Consumer cUI)
+    public static String getData()
     {
+        String summary = new String();
         Duration timeElapsed = Duration.between(start, end);
         String time = String.format("%02d:%02d:%02d" ,timeElapsed.toHours(), timeElapsed.toMinutes(), timeElapsed.getSeconds());
-        cUI.accept("The result of the process: ");
-        cUI.accept("Total Time: " + time);
-        cUI.accept("Targets that ended with 'SUCCESS': " + mStatusToNumber.get("SUCCESS"));
-        cUI.accept("Targets that ended with 'WARNING': " + mStatusToNumber.get("WARNING"));
-        cUI.accept("Targets that ended with 'FAILURE': " + mStatusToNumber.get("FAILURE"));
-        cUI.accept("Targets that ended with 'SKIPPED': " + mStatusToNumber.get("SKIPPED"));
-        cUI.accept("--------------------------------------");
-
+        summary = "The result of the process: " + "\n";
+        summary += "Total Time: " + time;
+        summary += "Targets that ended with 'SUCCESS': " + mStatusToNumber.get("SUCCESS");
+        summary += "Targets that ended with 'WARNING': " + mStatusToNumber.get("WARNING");
+        summary += "Targets that ended with 'FAILURE': " + mStatusToNumber.get("FAILURE");
+        summary += "Targets that ended with 'SKIPPED': " + mStatusToNumber.get("SKIPPED");
+        summary += "-----------------------------------------------";
+        return summary;
     }
 
     public static void sendData(Consumer cUI, Map<String, List<String>> nameToData)

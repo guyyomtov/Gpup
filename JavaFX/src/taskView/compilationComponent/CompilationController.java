@@ -3,6 +3,7 @@ package taskView.compilationComponent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -27,10 +28,9 @@ public class CompilationController {
     }
 
     public String uploadFile(){
-        FileChooser fileChooser = new FileChooser();
-       // fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML Files", "*.xml"));
-        File selectedFile = fileChooser.showOpenDialog(null);
-        String absolutePath = selectedFile.getAbsolutePath();
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File selectedDirectory = directoryChooser.showDialog(null);
+        String absolutePath = selectedDirectory.getAbsolutePath();
         return absolutePath;
     }
     public String getFullPathSource(){return this.fullPathSourceLabel.getText();}

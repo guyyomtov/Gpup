@@ -7,6 +7,7 @@ import Graph.Target;
 import Graph.process.DataSetupProcess;
 import Graph.process.Minion;
 import Graph.process.Task;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import errors.ErrorUtils;
@@ -49,6 +50,7 @@ public class TaskController {
     @FXML private TableForProcessController tableProcessController;
     @FXML private TextArea textAreaProcessInfo;
     @FXML ProgressBar progressBar;
+    @FXML Button stopButton;
     private CompilationController compilationController;
     private Parent compilationComponent;
 
@@ -56,6 +58,7 @@ public class TaskController {
     private BooleanProperty startButtonProperty;
     private BooleanProperty resumeProperty;
     private BooleanProperty pauseProperty;
+    private BooleanProperty stopProperty;
     private SimpleStringProperty targetInfo;
     private BackDataManager bDM;
     private List<Minion> minions = new ArrayList<>();
@@ -67,10 +70,11 @@ public class TaskController {
 
     public TaskController(){
 
-        resumeProperty = new SimpleBooleanProperty(this, "pauseAndResume", true);
-        pauseProperty =  new SimpleBooleanProperty(this, "pauseAndResume", false);
+        resumeProperty = new SimpleBooleanProperty(this, "resume", true);
+        pauseProperty =  new SimpleBooleanProperty(this, "pause", true);
         startButtonProperty = new SimpleBooleanProperty(this, "start", true );
         targetInfo = new SimpleStringProperty();
+        stopProperty = new SimpleBooleanProperty(this, "stop", true);
 
     }
 
@@ -86,7 +90,7 @@ public class TaskController {
             compilationController = loaderCom.getController();
             this.initThreadsSpinner();
             this.bDM.setTaskController(this);
-            gridPaneSettingTab.add(simulationComponent, 0, 1);
+            gridPaneSettingTab.add(simulationComponent, 0, 1); // starting with simulation
             this.initButtonsListener();
 
         }catch (IOException e) {
@@ -106,13 +110,23 @@ public class TaskController {
             String[] value = precentOfProgressBar.textProperty().getValue().split(" ");
             if( Integer.valueOf(value[0]) == 100) {
                 startButtonProperty.setValue(false);
+                stopProperty.setValue(true);
                 pauseProperty.setValue(true);
                 resumeProperty.setValue(true);
+                this.updateTargetListButton.setDisable(false);
+                //this.makeSummaryAlert();
             }
         });
         this.startButton.disableProperty().bind(this.startButtonProperty);
+        this.stopButton.disableProperty().bind(this.stopProperty);
         this.resumeButton.disableProperty().bind(this.resumeProperty);
         this.pauseButton.disableProperty().bind(this.pauseProperty);
+    }
+
+    private void makeSummaryAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.showAndWait();
+        alert.setResizable(true);
     }
 
     @FXML
@@ -158,8 +172,10 @@ public class TaskController {
     @FXML
     void startButtonAction(ActionEvent event) throws ErrorUtils {
 
-
-        this.updateTargetListButtonAction(event);
+        if(this.fromScratchButton.isSelected())
+            this.updateTargetListButtonAction(event);
+        this.updateTargetListButton.setDisable(true);
+        this.stopProperty.setValue(false);
         this.pauseProperty.setValue(false);
         this.startButtonProperty.setValue(true);
         Flagger flagger = new Flagger().builder()
@@ -167,7 +183,9 @@ public class TaskController {
                 .processIsCompilation(compilationButton.isSelected())
                 .processFromRandomTargets(true)
                 .thereIsSerialSets(true)
-                .chancesIsRandomInProcess(this.simulationComponentController.getIfRandom());
+                .chancesIsRandomInProcess(this.simulationComponentController.getIfRandom())
+                 .processIncremental(this.incrementalButton.isSelected());
+//                .processFromScratch(this.fromScratchButton.isSelected());
 
         //start more needed data
          dSP = new DataSetupProcess().builder()
@@ -186,6 +204,33 @@ public class TaskController {
         this.bDM.startProcess(dSP);
 
     }
+
+    @FXML
+    void stopButtonAction(ActionEvent event) throws ErrorUtils{
+        this.pauseProperty.setValue(true);
+        this.resumeProperty.setValue(true);
+        this.stopProperty.setValue(true);
+        this.startButtonProperty.setValue(false);
+        this.updateTargetListButton.setDisable(false);
+        // this.minions.clear();
+    }
+
+    @FXML
+    void incrementalButtonAction(ActionEvent event) throws ErrorUtils{
+        boolean itWasAProcess = false;
+        for(Minion minion :this.minions){
+            String myStatus = minion.getStatus();
+            if(myStatus.equals("SUCCESS") || myStatus.equals("SKIPPED") || myStatus.equals("WARNING"))
+                itWasAProcess = true;
+        }
+        if(!itWasAProcess) {
+            this.errorMessegeForIncremental.setText("Please start a process first.");
+            this.fromScratchButton.setSelected(true);
+        }
+        else
+            this.errorMessegeForIncremental.setText("");
+    }
+
 
     public void setButtonsColors(SkinsUtils.Colors wantedColors) throws ErrorUtils {
 

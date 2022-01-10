@@ -21,8 +21,4 @@ public class Compilation extends Task implements Serializable{
 
     }
 
-    @Override
-    public void accept(String s) {
-
-    }
 }

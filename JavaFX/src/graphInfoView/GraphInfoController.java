@@ -223,7 +223,6 @@ public class GraphInfoController {
             errorAlert = new Alert(Alert.AlertType.INFORMATION);
             errorAlert.setGraphic(this.graphizImageView);
             errorAlert.showAndWait();
-            //gridPane.add(this.graphizImageView, 1, 1);
 
         } catch (IOException e) {
             ErrorUtils.makeJavaFXCutomAlert(e.getMessage() + "please try giving another dir");

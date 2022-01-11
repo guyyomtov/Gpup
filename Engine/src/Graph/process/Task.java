@@ -44,7 +44,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
         this.bDM = dSp.bDM;
         this.targets = dSp.allGraphTargets;
-        //this.timeIRun = dSp.timeToRun;
+        this.timeIRun = dSp.timeToRun;
         this.chancesISucceed = dSp.chancesToSucceed;
         this.chancesImAWarning = dSp.chancesToBeAWarning;
         maxParallelism = dSp.amountOfThreads;
@@ -52,6 +52,8 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         this.pauseTaskProperty = dSp.pauseTask;
         this.infoOfLastProcess = dSp.lastProcessTextArea != null ? dSp.lastProcessTextArea : "";
         this.userAmountWantedThread = dSp.amountOfThreads;
+
+
 
         this.minionsChosenByUser = dSp.minionsChoosenByUser;
 
@@ -61,7 +63,10 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
             this.updateMinionsForIncrementalProcess(); // anotherProcess
         }
 
+
+        // if random --> chances & time random
         if(dSp.flagger.chancesIsRandomInProcess){
+
             this.startMinionWithRandPercent();
         }
 
@@ -88,15 +93,18 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         Random rand = new Random();
         int upperBoundSucceed = this.chancesISucceed + 1;
         int upperBoundWarning = this.chancesImAWarning + 1;
+        int upperBoundTime = this.timeIRun + 1;
 
         // rand new values
         this.chancesISucceed =rand.nextInt(upperBoundSucceed);
         this.chancesImAWarning = rand.nextInt(upperBoundWarning);
+        this.timeIRun = rand.nextInt(upperBoundTime);
 
         // go over all minions & give them new chance value
         for(Minion curM : this.minionsChosenByUser){
             curM.chancesISucceed = this.chancesISucceed;
             curM.chancesImAWarning = this.chancesImAWarning;
+            curM.timeIRun = this.timeIRun;
         }
     }
 

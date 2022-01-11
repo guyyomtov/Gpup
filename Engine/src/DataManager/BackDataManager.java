@@ -1,9 +1,7 @@
 package DataManager;
 
 import GpupClassesEx2.GPUPDescriptor;
-import Graph.process.Compilation;
-import Graph.process.DataSetupProcess;
-import Graph.process.Simulation;
+import Graph.process.*;
 import errors.ErrorUtils;
 import fileHandler.HandlerLoadFile;
 import fileHandler.HandlerSaveFile;
@@ -233,5 +231,14 @@ public class BackDataManager implements DataManager {
     public void makeGraphizImage(String wantedSavingPath) throws IOException {
 
         GraphizHHandler.makeGraphizPNGFrom(wantedSavingPath, this.graph);
+    }
+    //in this method we demo process and update the status of the minions.
+    public void demoSimulationProcess(DataSetupProcess dSP){
+
+        dSP.allGraphTargets(this.graph.getAllTargets());
+        dSP.serialSets(this.graph.getmSerialSets());
+        dSP.bDM = this;
+        Simulation demoTask = new Simulation(dSP, true);
+
     }
 }

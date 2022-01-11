@@ -43,6 +43,13 @@ public class DataSetupProcess {
         return this;
     }
 
+    public DataSetupProcess demoFlagger(Flagger flagger) throws ErrorUtils {
+
+        this.flagger = flagger;
+
+        return this;
+    }
+
     public DataSetupProcess flagger(Flagger flagger) throws ErrorUtils {
 
         this.flagger = flagger;

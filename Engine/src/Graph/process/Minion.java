@@ -465,7 +465,7 @@ public class Minion implements Serializable, Runnable {
         return resData;
     }
 
-    protected String iOpened(List<String> parentsNames, Map<String, Minion> allMinions)
+    public String iOpened(List<String> parentsNames, Map<String, Minion> allMinions)
     {
 
         String resNames = new String();
@@ -504,6 +504,7 @@ public class Minion implements Serializable, Runnable {
                 //update status of dad
                 Minion curDad = allMinions.get(curDadName);
                 curDad.setMyStatus("WAITING");
+                curDad.setStatus("WAITING");
                 curDad.setCanIRun(true);
             }
         }
@@ -653,5 +654,7 @@ public class Minion implements Serializable, Runnable {
     public void setChancesISucceed(Integer chancesISucceed) {
         this.chancesISucceed = chancesISucceed;
     }
+
+    public Map<String, Minion> getAllNamesToMinions() {return allNamesToMinions;}
 
 }

@@ -96,14 +96,20 @@ public class GraphInfoController {
     }
 
     public void getNames(ActionEvent event){
+
+        // get data
         Map<String, Set<Target>> serialSets = this.bDM.getSerialSets();
         Set<Target> inSerial = serialSets.get(this.choiceBoxSerialSets.getValue());
+
+        // clear last serial set from ui
+        this.resultOfChoiceBox.setText("");
+
+        // give new serial set data to label
         for(Target target: inSerial)
         {
             this.resultOfChoiceBox.setText(this.resultOfChoiceBox.getText() + target.getName() + " ");
             this.aniController.setSquareText(this.resultOfChoiceBox.getText());
         }
-
     }
 
     private void initSummary() {
@@ -197,10 +203,11 @@ public class GraphInfoController {
     @FXML
     void getGraphizAction(ActionEvent event) throws IOException, ErrorUtils {
 
-        if(this.wantedUserPath == null || this.wantedUserPath.getText().isEmpty())
-            throw new ErrorUtils(ErrorUtils.NEEDED_DATA_IS_NULL);
-
-        this.bDM.makeGraphizImage(this.wantedUserPath.getText());
+        try {
+            this.bDM.makeGraphizImage(this.wantedUserPath.getText());
+        } catch (IOException e) {
+            ErrorUtils.makeJavaFXCutomAlert(e.getMessage() + "please try giving another dir");
+        }
     }
 }
 

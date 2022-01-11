@@ -168,6 +168,7 @@ public class Minion implements Serializable, Runnable {
         this.myStatus = "SUCCESS";
         this.status = new SimpleStringProperty(this, "status", myStatus );
         this.iAmFinished = true;
+        this.canIRun = false;
         this.chancesISucceed = 100;
         this.chancesImAWarning = 0;
         this.setMyKidsNames();
@@ -504,7 +505,7 @@ public class Minion implements Serializable, Runnable {
                 //update status of dad
                 Minion curDad = allMinions.get(curDadName);
                 //todo --> to check logic fuck the morgan
-                if(!curDad.status.getValue().equals("SUCCESS") || !curDad.status.getValue().equals("WARNING")) {
+                if(!curDad.status.getValue().equals("SUCCESS") && !curDad.status.getValue().equals("WARNING")) {
                     curDad.setMyStatus("WAITING");
                     curDad.setStatus("WAITING");
                     curDad.setCanIRun(true);
@@ -550,13 +551,13 @@ public class Minion implements Serializable, Runnable {
         this.iAmFinished = true;
     }
 
-    synchronized
+
     private void checkIfToAddMyParents() {
 
         if(this.ISucceeded()) {
 
             for(Minion curD : this.parents) {
-                if(curD.getCanIRun()) {
+                if(curD.getCanIRun() && !curD.imFinished()) {
 
                     if(!Graph.process.Task.waitingList.contains(curD))
                         Graph.process.Task.waitingList.add(curD);
@@ -659,5 +660,10 @@ public class Minion implements Serializable, Runnable {
     }
 
     public Map<String, Minion> getAllNamesToMinions() {return allNamesToMinions;}
+
+    public void setFullPathDestination(String fullPathDestination) {this.fullPathDestination = fullPathDestination;}
+
+    public void setFullPathSource(String fullPathSource) {this.fullPathSource = fullPathSource;}
+
 
 }

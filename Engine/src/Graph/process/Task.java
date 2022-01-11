@@ -259,7 +259,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
     public void makeQueue() {
         waitingList.clear();
         for(Minion curM : this.minionsChosenByUser)
-            if(curM.getCanIRun())
+            if(curM.getCanIRun() && !curM.imFinished())
                 waitingList.add(curM);
     }
 

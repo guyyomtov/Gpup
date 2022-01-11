@@ -50,6 +50,7 @@ public class TaskController {
     @FXML private TextArea textAreaProcessInfo;
     @FXML ProgressBar progressBar;
     @FXML Button stopButton;
+    @FXML Label taskIsFinishedLabel;
     private CompilationController compilationController;
     private Parent compilationComponent;
 
@@ -170,10 +171,18 @@ public class TaskController {
     @FXML
     void startButtonAction(ActionEvent event) throws ErrorUtils {
 
-        if(this.fromScratchButton.isSelected())
+        this.taskIsFinishedLabel.setText( "");
+        if (this.fromScratchButton.isSelected())
             this.updateTargetListButtonAction(event);
-        else
+            // its incremental
+        else {
+            if(this.allMinionsAreSuccessOrWarning()){
+                this.taskIsFinishedLabel.setText( "Please chose from scratch or chose another task");
+                return;
+            }
             this.updateDataOnMinions(); // update time I run, chances..
+        }
+
 
         this.updateTargetListButton.setDisable(true);
         this.stopProperty.setValue(false);
@@ -185,25 +194,36 @@ public class TaskController {
                 .processFromRandomTargets(true)
                 .thereIsSerialSets(true)
                 .chancesIsRandomInProcess(this.simulationComponentController.getIfRandom())
-                 .processIncremental(this.incrementalButton.isSelected());
+                .processIncremental(this.incrementalButton.isSelected());
 //                .processFromScratch(this.fromScratchButton.isSelected());
 
         //start more needed data
-         dSP = new DataSetupProcess().builder()
+        dSP = new DataSetupProcess().builder()
                 .flagger(flagger)
                 .timeToRun(this.simulationComponentController.getMaxTime())
                 .chancesToBeAWarning(this.simulationComponentController.getChancesToSuccessWithWarning())
                 .chancesToSucceed(this.simulationComponentController.getChancesToSuccess())
                 .pauseTaskProperty(pauseProperty)
                 .amountOfThreads(this.threadsSpinner.getValue())
-                 .setFullPathSource(this.compilationController.getFullPathSource())
-                 .setFullPathDestination(this.compilationController.getFullPathDestination());
+                .setFullPathSource(this.compilationController.getFullPathSource())
+                .setFullPathDestination(this.compilationController.getFullPathDestination());
 
         if (!this.minions.isEmpty())
             dSP.minionsChoosenByUser(this.minions);
 
+
         this.bDM.startProcess(dSP);
 
+    }
+
+    private boolean allMinionsAreSuccessOrWarning() {
+        boolean res = true;
+        for(Minion minion : minions){
+            String staus = minion.getStatus();
+            if(minion.getStatus().equals("SKIPPED") || minion.getStatus().equals("WAITING") || minion.getStatus().equals("FROZEN") || minion.getStatus().equals("FAILURE"))
+                res = false;
+        }
+        return res;
     }
 
     private void updateDataOnMinions() {
@@ -211,6 +231,8 @@ public class TaskController {
             minion.setTimeIRun(this.simulationComponentController.getMaxTime());
             minion.setChancesISucceed(this.simulationComponentController.getChancesToSuccess());
             minion.setChancesImAWarning(this.simulationComponentController.getChancesToSuccessWithWarning());
+            minion.setFullPathSource(this.compilationController.getFullPathSource());
+            minion.setFullPathSource(this.compilationController.getFullPathDestination());
         }
     }
 
@@ -238,6 +260,7 @@ public class TaskController {
         }
         else
             this.errorMessegeForIncremental.setText("");
+            this.taskIsFinishedLabel.setText( "");
     }
 
 
@@ -249,6 +272,7 @@ public class TaskController {
     @FXML
     void updateTargetListButtonAction(ActionEvent event) {
 
+        this.taskIsFinishedLabel.setText("");
         this.minions.clear();
         List<Target> targets = this.bDM.getAllTargets();
         Integer maxTime = this.simulationComponentController.getMaxTime();

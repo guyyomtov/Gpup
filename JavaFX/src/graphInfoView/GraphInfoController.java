@@ -220,6 +220,9 @@ public class GraphInfoController {
             Image image = new Image(new FileInputStream(this.wantedUserPath.getText() + "/curGraph.viz.png"));
             this.graphizImageView = new ImageView(image);
 
+            errorAlert = new Alert(Alert.AlertType.INFORMATION);
+            errorAlert.setGraphic(this.graphizImageView);
+            errorAlert.showAndWait();
             //gridPane.add(this.graphizImageView, 1, 1);
 
         } catch (IOException e) {

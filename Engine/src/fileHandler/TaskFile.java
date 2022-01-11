@@ -10,7 +10,7 @@ import java.util.Date;
 public class TaskFile {
 
     public static String gpupPath;
-    private String currPath;
+    private static String currPath = new String();
     private FileWriter writer;
     private BufferedWriter currBuffer;
     private boolean openTaskDir = false;

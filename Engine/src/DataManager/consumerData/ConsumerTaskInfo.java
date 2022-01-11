@@ -7,10 +7,14 @@ import java.util.function.Consumer;
 
     public class ConsumerTaskInfo {
 
-        private TaskFile taskFile = new TaskFile();
+        private TaskFile taskFile;
 
-        public ConsumerTaskInfo(String targetName)
+        public ConsumerTaskInfo()
         {
+            taskFile = new TaskFile();
+        }
+
+        public void openFile(String targetName){
             taskFile.openFile(targetName);
         }
 

@@ -32,7 +32,8 @@ public class MinionForSimulation extends Minion{
 
         List<String> resData = new ArrayList<>();
         String openedParents = new String();
-        ConsumerTaskInfo cTI = new ConsumerTaskInfo(this.target.getName());
+        ConsumerTaskInfo cTI = new ConsumerTaskInfo();
+        cTI.openFile(this.targetName);
 
         //  cTI.getInfo(cUI, "The target " + this.target.getName() + " about to run.");
         try {

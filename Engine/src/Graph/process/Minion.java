@@ -276,7 +276,8 @@ public class Minion implements Serializable, Runnable {
         this.setStatus(myStatus);
         List<String> resData = new ArrayList<>();
         String openedParents = new String();
-        ConsumerTaskInfo cTI = new ConsumerTaskInfo(this.target.getName());
+        ConsumerTaskInfo cTI = new ConsumerTaskInfo();
+        cTI.openFile(this.target.getName());
 
         try {
             Thread.sleep(100);

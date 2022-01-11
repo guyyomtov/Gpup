@@ -28,7 +28,9 @@ public class MinionForCompilation extends Minion{
 
         List<String> resData = new ArrayList<>();
         String openedParents = new String();
-        ConsumerTaskInfo cTI = new ConsumerTaskInfo(this.target.getName());
+        ConsumerTaskInfo cTI = new ConsumerTaskInfo();
+        cTI.openFile(this.target.getName());
+
         Instant start, end;
         String resSrcArg = new String();
         int res = 0;

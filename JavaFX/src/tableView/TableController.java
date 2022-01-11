@@ -94,7 +94,10 @@ public class TableController {
         );
 
         tableView.setItems(data);
-        levelColumn.setSortType(TableColumn.SortType.DESCENDING);
+     /*   levelColumn.setSortType(TableColumn.SortType.DESCENDING);
+        tableView.getSortOrder().add(levelColumn);
+        tableView.sort();
+        levelColumn.setSortType(TableColumn.SortType.DESCENDING);*/
         this.initActionOnCheckBoxes(targets);
     }
 

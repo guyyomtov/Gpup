@@ -52,6 +52,7 @@ public class TableForProcessController {
 
         tableForProcess.setEditable(true);
         tableForProcess.setItems(data);
+
         this.addListener(targetInfo);
 
     }

@@ -92,7 +92,7 @@ public class MinionForSimulation extends Minion{
         resData.add(3, this.myStatus);
         resData.add(4, openedParents);
         // add targets names the got free
-        TaskFile.closeFile();
+        cTI.closeFile();
         //  this.aTask.updateUser();
 
         this.setStatus(myStatus);

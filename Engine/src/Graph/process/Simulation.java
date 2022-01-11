@@ -24,7 +24,7 @@ public class Simulation extends Task implements Serializable, Runnable {
         this.setName();
 
         TaskFile taskFile = new TaskFile();
-        taskFile.makeTaskDir(this.taskName);
+        taskFile.makeTaskDir("Simulation");
     }
 
     public Simulation(DataSetupProcess dSp, boolean isDemo){

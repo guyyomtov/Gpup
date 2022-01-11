@@ -250,7 +250,7 @@ public class TaskController {
         this.stopProperty.setValue(true);
         this.startButtonProperty.setValue(false);
         this.updateTargetListButton.setDisable(false);
-        // this.minions.clear();
+        this.minions.clear();
     }
 
     @FXML

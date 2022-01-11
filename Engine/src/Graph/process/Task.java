@@ -53,8 +53,6 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         this.infoOfLastProcess = dSp.lastProcessTextArea != null ? dSp.lastProcessTextArea : "";
         this.userAmountWantedThread = dSp.amountOfThreads;
 
-
-
         this.minionsChosenByUser = dSp.minionsChoosenByUser;
 
         this.startMinions(minionsChosenByUser);
@@ -62,8 +60,6 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         if(dSp.flagger.processIncremental){
             this.updateMinionsForIncrementalProcess(); // anotherProcess
         }
-
-
 
         if(dSp.flagger.chancesIsRandomInProcess){
             this.startMinionWithRandPercent();
@@ -476,7 +472,9 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         //FormatAllTask.end = Instant.now();
         //FormatAllTask.sendData(cUI);
         end = Instant.now();
-        this.makeSummaryOfProcess(Duration.between(start, end));
+        if(!pauseTaskProperty.getValue())
+             this.makeSummaryOfProcess(Duration.between(start, end));
+
         FormatAllTask.sendData(cUI, this.targetNameToSummeryProcess);
         ProcessInfo.setOldTask(this);
     }
@@ -518,18 +516,19 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
     }
 
     private Map<String, Integer> makeMapStatusToNumber() {
-        Map<String, Integer> mStatusToNumber = new HashMap<>();
-        mStatusToNumber.put("SUCCESS", 0);
-        mStatusToNumber.put("WARNING", 0);
-        mStatusToNumber.put("FAILURE", 0);
-        mStatusToNumber.put("SKIPPED", 0);
-        mStatusToNumber.put("FROZEN", 0);
-        for(Minion minion : this.minionsChosenByUser){
-            String myStatus = minion.getStatus();
-            Integer tmp = mStatusToNumber.get(myStatus);
-            mStatusToNumber.put(myStatus, tmp + 1);
-        }
-        return mStatusToNumber;
+            Map<String, Integer> mStatusToNumber = new HashMap<>();
+            mStatusToNumber.put("SUCCESS", 0);
+            mStatusToNumber.put("WARNING", 0);
+            mStatusToNumber.put("FAILURE", 0);
+            mStatusToNumber.put("SKIPPED", 0);
+            mStatusToNumber.put("FROZEN", 0);
+            for (Minion minion : this.minionsChosenByUser) {
+                String myStatus = minion.getStatus();
+                Integer tmp = mStatusToNumber.get(myStatus);
+                if (tmp != null)
+                    mStatusToNumber.put(myStatus, tmp + 1);
+            }
+            return mStatusToNumber;
     }
 
 }

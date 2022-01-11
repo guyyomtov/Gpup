@@ -269,36 +269,40 @@ public class Minion implements Serializable, Runnable {
 
     public List<String> runMe(Map<String,Minion> allMinions, Consumer cUI)  {
 
+        String outPut  = "";
         Instant start, end;
         start = Instant.now();
         this.myStatus = "IN PROCESS";
         this.setStatus(myStatus);
-
         List<String> resData = new ArrayList<>();
         String openedParents = new String();
         ConsumerTaskInfo cTI = new ConsumerTaskInfo(this.target.getName());
 
-      // cTI.getInfo(cUI, "The target " + this.target.getName() + " about to run.");
         try {
             Thread.sleep(100);
         }catch (InterruptedException e) {
            // e.printStackTrace();
         }
-
-        taskConsumer.accept("The target " + this.target.getName() + " about to run.");
+        outPut = "The target " + this.target.getName() + " about to run.";
+        cTI.getInfo(outPut);
+        taskConsumer.accept(outPut);
 
         Duration t = Duration.ofMillis(timeIRun);
       //  cTI.getInfo(cUI, "The system is going to sleep for: " + String.format("%02d:%02d:%02d" ,t.toHours(), t.toMinutes(), t.getSeconds()));
 
         if(imSimulation) {
-            taskConsumer.accept("The system is going to sleep for: " + String.format("%02d:%02d:%02d", t.toHours(), t.toMinutes(), t.getSeconds()));
+            outPut = "The system is going to sleep for: " + String.format("%02d:%02d:%02d", t.toHours(), t.toMinutes(), t.getSeconds());
+            cTI.getInfo(outPut);
+            taskConsumer.accept(outPut);
             try {
                 end = Instant.now();
                 this.minionLiveData.setTimeInProcess(Duration.between(start, end).toMillis());
                 Thread.sleep(timeIRun);
             } catch (InterruptedException e) {
             }
-            taskConsumer.accept("The system finished the task on target " + this.getName());
+            outPut = "The system finished the task on target " + this.getName();
+            cTI.getInfo(outPut);
+            taskConsumer.accept(outPut);
         }
 
         //cTI.getInfo(cUI, "The system finished the task on target " + this.getName());
@@ -308,14 +312,19 @@ public class Minion implements Serializable, Runnable {
             openedParents = this.simulationSpecificProcess(allMinions);
         }
         else{ // im compilation
-            openedParents = this.compilationSpecificProcess(allMinions);
+            openedParents = this.compilationSpecificProcess(allMinions, cTI);
         }
        // cTI.getInfo(cUI, "the result: " + this.myStatus);
-        if(imSimulation)
-            taskConsumer.accept("The result of the target " + this.targetName + " is: " + this.myStatus);
+        if(imSimulation) {
+            outPut = "The result of the target " + this.targetName + " is: " + this.myStatus;
+            cTI.getInfo(outPut);
+            taskConsumer.accept(outPut);
+        }
 
         if(this.myStatus.equals("SUCCESS") || this.myStatus.equals("WARNING")) {
             //cTI.getInfo(cUI, "The targets that opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
+            outPut = "The target " + targetName +  " opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents);
+            cTI.getInfo("The target " + targetName +  " opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
             taskConsumer.accept("The target " + targetName +  " opened to run: " + (openedParents.isEmpty() ? "nobody" : openedParents));
         }
 
@@ -328,7 +337,7 @@ public class Minion implements Serializable, Runnable {
         resData.add(3, this.myStatus);
         resData.add(4, openedParents);
         // add targets names the got free
-        TaskFile.closeFile();
+        cTI.closeFile();
       //  this.aTask.updateUser();
 
         this.setStatus(myStatus);
@@ -336,8 +345,9 @@ public class Minion implements Serializable, Runnable {
         return resData;
     }
 
-    private String compilationSpecificProcess(Map<String, Minion> allMinions){
+    private String compilationSpecificProcess(Map<String, Minion> allMinions, ConsumerTaskInfo cTI){
 
+        String outPut = "";
         Instant start, end;
         String openedParents = "";
         String resSrcArg = new String();
@@ -346,14 +356,19 @@ public class Minion implements Serializable, Runnable {
         resSrcArg += this.fullPathSource + "/" + this.target.getGeneralInfo().replace('.', '/' ) + ".java";
 
         String[] c = {"javac", "-d", this.fullPathDestination, "-cp", this.fullPathDestination, resSrcArg};
-        taskConsumer.accept("Full command: javac-d"+ " " + this.fullPathDestination +  "-cp " +  this.fullPathDestination + resSrcArg );
+        outPut = "Full command: javac-d"+ " " + this.fullPathDestination +  "-cp " +  this.fullPathDestination + resSrcArg;
+        cTI.getInfo(outPut);
+        taskConsumer.accept(outPut);
 
         try {
             start = Instant.now();
             Process process = Runtime.getRuntime().exec(c);
             process.waitFor();
             end = Instant.now();
-            taskConsumer.accept("The compiler finish the task on target " + targetName + " in: " + Duration.between(start, end).toMillis() + " milli second.");
+            outPut = "The compiler finish the task on target " + targetName + " in: " + Duration.between(start, end).toMillis() + " milli second.";
+            cTI.getInfo(outPut);
+            taskConsumer.accept(outPut);
+
             res = process.exitValue();
             if(res == 0) // of res == 0 == > process on curr target success.
                 this.myStatus = "SUCCESS";
@@ -361,14 +376,17 @@ public class Minion implements Serializable, Runnable {
                 this.myStatus = "FAILURE";
                 String errorMessage = new BufferedReader(
                         new InputStreamReader(process.getErrorStream())).readLine();
-                taskConsumer.accept("The target is failed, output from javac: " + errorMessage);
+                outPut = "The target is failed, output from javac: " + errorMessage;
+
+                cTI.getInfo(outPut);
+                taskConsumer.accept(outPut);
+
                 checkAndUpdateWhoImClosedTORunning(this, true);
             }
             this.status.setValue(myStatus);
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-            System.out.println(targetName + " is " + "failed" );
         }
 
         return openedParents = iOpened(this.parentsNames, allMinions);

@@ -17,6 +17,8 @@ import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
@@ -25,6 +27,7 @@ import javafx.stage.Stage;
 import tableView.TableController;
 import Flagger.Flagger;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -51,6 +54,7 @@ public class GraphInfoController {
     @FXML private TableController tableComponentController;
     private BackDataManager bDM = new BackDataManager();
     private AnimationController aniController;
+    private ImageView graphizImageView;
 
 
     public void initGraphInfo() throws IOException {
@@ -205,6 +209,19 @@ public class GraphInfoController {
 
         try {
             this.bDM.makeGraphizImage(this.wantedUserPath.getText());
+
+            // tell user that the process worked
+            Alert errorAlert = new Alert(Alert.AlertType.INFORMATION);
+            errorAlert.setHeaderText("Success");
+            errorAlert.setContentText("Made graph successfully :)");
+            errorAlert.showAndWait();
+
+            //make image & put in wanted place
+            Image image = new Image(new FileInputStream(this.wantedUserPath.getText() + "/curGraph.viz.png"));
+            this.graphizImageView = new ImageView(image);
+
+            //gridPane.add(this.graphizImageView, 1, 1);
+
         } catch (IOException e) {
             ErrorUtils.makeJavaFXCutomAlert(e.getMessage() + "please try giving another dir");
         }

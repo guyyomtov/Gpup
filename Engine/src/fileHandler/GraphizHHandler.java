@@ -4,7 +4,9 @@ import Graph.Graph;
 import Graph.Target;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class GraphizHHandler {
@@ -21,6 +23,9 @@ public class GraphizHHandler {
 
         String res  = new String();
 
+        // start all values with false
+        Map<Target, Boolean> iHaveBeenHereMap = Target.initiHaveBeenHereMap(targets);
+
         res = "digraph G {\n\n";
 
         // get list of roots
@@ -28,7 +33,7 @@ public class GraphizHHandler {
 
         /// for each call rec function
         for(Target curRoot : roots)
-            res = makeDotFormatString(curRoot, res);
+            res = makeDotFormatString(curRoot, res, iHaveBeenHereMap);
 
         List<Target> independents = Target.getTargetByType(targets, Target.Type.INDEPENDENT);
 
@@ -62,13 +67,15 @@ public class GraphizHHandler {
         Process p = Runtime.getRuntime().exec(c);
     }
 
-    static private String makeDotFormatString(Target curT, String res){
+    static private String makeDotFormatString(Target curT, String res, Map<Target, Boolean> iHaveBeenHereMap){
 
         String curTName = curT.getName();
 
-        // if i have no kids
-        if(curT.getDependsOn().isEmpty())
+        // if i have no kids || all ready been here
+        if(curT.getDependsOn().isEmpty() || iHaveBeenHereMap.get(curT) == true)
             return res;
+        else  // haven't been here yet
+            iHaveBeenHereMap.put(curT, true);
 
         //get & add kids to string
         Set<String> kidNames = Target.getTargetNamesFrom(curT.getDependsOn());
@@ -82,7 +89,7 @@ public class GraphizHHandler {
 
         // do the same to each kid
         for(Target curKid : curT.getDependsOn())
-            res = makeDotFormatString(curKid, res);
+            res = makeDotFormatString(curKid, res, iHaveBeenHereMap);
 
         return res;
     }

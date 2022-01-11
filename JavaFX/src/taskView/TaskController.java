@@ -211,9 +211,16 @@ public class TaskController {
         if (!this.minions.isEmpty())
             dSP.minionsChoosenByUser(this.minions);
 
+        try {
+            this.bDM.startProcess(dSP);
+        }
+        catch (ErrorUtils e){
 
-        this.bDM.startProcess(dSP);
-
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("ERROR");
+            errorAlert.setContentText(e.getMessage());
+            errorAlert.showAndWait();
+        }
     }
 
     private boolean allMinionsAreSuccessOrWarning() {

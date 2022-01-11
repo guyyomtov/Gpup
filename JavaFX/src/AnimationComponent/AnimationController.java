@@ -53,9 +53,9 @@ public class AnimationController {
         this.boarderPane.setLeft(stack);
     }
 
-
     public void setSquareText(String text){
 
+        this.textAno1.setText("");
         this.textAno1.setText(text);
     }
 

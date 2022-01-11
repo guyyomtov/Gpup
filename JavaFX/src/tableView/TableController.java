@@ -22,33 +22,15 @@ import java.util.Set;
 
 public class TableController {
 
-    @FXML
-    private TableView<Target> tableView;
-
-    @FXML
-    private TableColumn<Target, String> targetNameColumn;
-
-    @FXML
-    private TableColumn<Target, Target.Type> levelColumn;
-
-    @FXML
-    private TableColumn<Target, Integer> dependsOnColumn;
-
-    @FXML
-    private TableColumn<Target, Integer> requiredForColumn;
-
-    @FXML
-    private TableColumn<Target, String> infoColumn;
-
-    @FXML
-    private TableColumn<Target, Integer> serialSetColumn;
-
-    @FXML
-    private TableColumn<Target, CheckBox> selectColumn;
-
-    @FXML
-    private CheckBox selectAllCheckBox;
-
+    @FXML private TableView<Target> tableView;
+    @FXML private TableColumn<Target, String> targetNameColumn;
+    @FXML private TableColumn<Target, Target.Type> levelColumn;
+    @FXML private TableColumn<Target, Integer> dependsOnColumn;
+    @FXML private TableColumn<Target, Integer> requiredForColumn;
+    @FXML private TableColumn<Target, String> infoColumn;
+    @FXML private TableColumn<Target, Integer> serialSetColumn;
+    @FXML private TableColumn<Target, CheckBox> selectColumn;
+    @FXML private CheckBox selectAllCheckBox;
     private GraphInfoController graphInfoController;
 
     @FXML
@@ -94,11 +76,31 @@ public class TableController {
         );
 
         tableView.setItems(data);
+
+        this.makeColumsSurtable();
      /*   levelColumn.setSortType(TableColumn.SortType.DESCENDING);
         tableView.getSortOrder().add(levelColumn);
         tableView.sort();
         levelColumn.setSortType(TableColumn.SortType.DESCENDING);*/
         this.initActionOnCheckBoxes(targets);
+    }
+
+    private void makeColumsSurtable() {
+
+        this.targetNameColumn.setSortType(TableColumn.SortType.ASCENDING);
+        this.targetNameColumn.setSortType(TableColumn.SortType.DESCENDING);
+
+        this.levelColumn.setSortType(TableColumn.SortType.ASCENDING);
+        this.levelColumn.setSortType(TableColumn.SortType.DESCENDING);
+
+        this.dependsOnColumn.setSortType(TableColumn.SortType.ASCENDING);
+        this.dependsOnColumn.setSortType(TableColumn.SortType.DESCENDING);
+
+        this.requiredForColumn.setSortType(TableColumn.SortType.ASCENDING);
+        this.requiredForColumn.setSortType(TableColumn.SortType.ASCENDING);
+
+        this.serialSetColumn.setSortType(TableColumn.SortType.ASCENDING);
+        this.serialSetColumn.setSortType(TableColumn.SortType.ASCENDING);
     }
 
     private void initActionOnCheckBoxes(List<Target> targets) {

@@ -65,7 +65,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
 
 
-            if(dSp.flagger.chancesIsRandomInProcess){
+        if(dSp.flagger.chancesIsRandomInProcess){
             this.startMinionWithRandPercent();
         }
 

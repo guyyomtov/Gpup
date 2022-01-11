@@ -13,13 +13,25 @@ import java.util.*;
 public class Target implements Serializable {
 
     public enum Type implements Serializable {
-        INDEPENDENT{public String toString(){return "Independent";}}
+        INDEPENDENT {
+            public String toString() {
+                return "Independent";
+            }
+        }, ROOT {
+            public String toString() {
+                return "Root";
+            }
+        },
 
-        , ROOT{public String toString(){return "Root";}},
-
-        MIDDLE{public String toString(){return "Middle";}}
-
-        , LEAF{public String toString(){return "Leaf";}};
+        MIDDLE {
+            public String toString() {
+                return "Middle";
+            }
+        }, LEAF {
+            public String toString() {
+                return "Leaf";
+            }
+        };
     }
 
     private String name;
@@ -27,21 +39,26 @@ public class Target implements Serializable {
     private String generalInfo;
     private Type targetType;
     private List<Target> dependsOn = new ArrayList<Target>();
-    private List<Target> requiredFor = new ArrayList<Target>();;
+    private List<Target> requiredFor = new ArrayList<Target>();
+    ;
     private Integer totalDependsOn = 0;
     private Integer totalRequiredFor = 0;
     private Integer totalSerialSets = 0;
     private CheckBox remark = new CheckBox();
-    public Integer getTotalSerialSets() {return totalSerialSets;}
-    public Integer getTotalRequiredFor() {
-       return totalRequiredFor;
-    }
-    public Integer getTotalDependsOn() {
-       return totalDependsOn;
+
+    public Integer getTotalSerialSets() {
+        return totalSerialSets;
     }
 
-    public void setDependsOn(List<Target> dependsOn)
-    {
+    public Integer getTotalRequiredFor() {
+        return totalRequiredFor;
+    }
+
+    public Integer getTotalDependsOn() {
+        return totalDependsOn;
+    }
+
+    public void setDependsOn(List<Target> dependsOn) {
         this.dependsOn = dependsOn;
     }
 
@@ -49,23 +66,27 @@ public class Target implements Serializable {
         this.requiredFor = requiredFor;
     }
 
-    public List<Target> getDependsOn() {return this.dependsOn;}
+    public List<Target> getDependsOn() {
+        return this.dependsOn;
+    }
 
-    public List<Target> getRequiredFor() {return this.requiredFor;}
+    public List<Target> getRequiredFor() {
+        return this.requiredFor;
+    }
 
     public void addTargetToDependsOnList(Target toAdd) {
-        if(!this.dependsOn.contains(toAdd))
+        if (!this.dependsOn.contains(toAdd))
             dependsOn.add(toAdd);
     }
 
     public void addTargetToRequiredForList(Target toAdd) {
-        if(!this.requiredFor.contains(toAdd))
+        if (!this.requiredFor.contains(toAdd))
             this.requiredFor.add(toAdd);
     }
 
     public Target(String name, String generalInfo) {
         this.name = name;
-        this.countOfDependency =0;
+        this.countOfDependency = 0;
         this.generalInfo = generalInfo;
     }
 
@@ -73,13 +94,25 @@ public class Target implements Serializable {
 
         List<Target> res = new ArrayList<Target>();
 
-        for(Target curT : targets){
+        for (Target curT : targets) {
 
-            if(curT.getTargetType() == wantedType)
+            if (curT.getTargetType() == wantedType)
                 res.add(curT);
         }
 
         return res;
+    }
+
+    public static Map<Target, Boolean> initiHaveBeenHereMap(List<Target> targets) {
+
+    Map<Target, Boolean> iHaveBeenHereMap = new HashMap<Target, Boolean>();
+
+        for(Target curT :targets) {
+
+            iHaveBeenHereMap.put(curT, false);
+        }
+
+        return iHaveBeenHereMap;
     }
 
 

@@ -56,11 +56,26 @@ public class FindCircleController {
 
             try {
                 res = this.bDM.findCircle(curTarget.getName());
-            } catch (ErrorUtils e) {
-                res = e.getMessage();
-            }
 
-            resultPrintArea.setText(res);
+                // make string pretty
+
+                // take comma away in the end
+                res = res.replaceAll(",", "");
+                // trim string
+                res.trim();
+
+                // put arrows and
+                res = res.replaceAll(" ", " --> ");
+
+                // the last target name in the end
+                res += this.curTarget.getName();
+
+                resultPrintArea.setText(res);
+
+            } catch (ErrorUtils e) {
+                resultPrintArea.setText("");
+                ErrorUtils.makeJavaFXCutomAlert(e.getMessage());
+            }
         }
     }
 

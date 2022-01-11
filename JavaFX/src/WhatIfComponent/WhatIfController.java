@@ -42,6 +42,9 @@ public class WhatIfController {
 
     public void init(BackDataManager other){
 
+        // remove extra unneeded column
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         this.bDM = other;
         this.targets = other.getAllTargets();
 

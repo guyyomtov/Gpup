@@ -66,21 +66,25 @@ public class FindPathController {
 
     private void initDataNeededForPath() throws ErrorUtils {
 
+        // clean last data
+        this.resPaths.clear();
+
         String srcV = this.srcTargetButton.getValue(), dstV = this.dstTargetButton.getValue(), relV = this.relationshipButton.getValue();
 
         if(srcV != null && !srcV.isEmpty() && dstV != null && !dstV.isEmpty() && relV != null && !relV.isEmpty()){
 
             String relationShipNeededSyntax = (relV == "Depends On" ? "D" : "R");
-
             String allPath = this.bDM.getPathFromTargets(srcV, dstV, relationShipNeededSyntax);
+
             if(allPath.equals("")){
-                this.thereIsNoPathMessege.setText("There is no path between " + srcV + " to " + dstV + "\n" +  " with the given connection " + this.relationshipButton.getValue());
+
+                this.resPaths.clear();
+                ErrorUtils.makeJavaFXCutomAlert("There is no path between " + srcV + " to " + dstV + "\n" +  " with the given connection " + this.relationshipButton.getValue());
                 return;
             }
             else {
                 this.thereIsNoPathMessege.setText("");
                 this.initResPaths(allPath);
-
             }
         }
     }
@@ -107,7 +111,6 @@ public class FindPathController {
 
                     this.resPaths.add(arrowString);
                 }
-
             //this.resPaths.addAll(tmp);
         }
     }

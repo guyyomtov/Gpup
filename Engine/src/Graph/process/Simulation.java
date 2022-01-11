@@ -27,6 +27,10 @@ public class Simulation extends Task implements Serializable, Runnable {
         taskFile.makeTaskDir(this.taskName);
     }
 
+    public Simulation(DataSetupProcess dSp, boolean isDemo){
+        super(dSp, isDemo);
+    }
+
     private Map<String, Map<String,Minion>> startMinionMapByTargetType(Map<String, Minion> namesToTasks, Map<String, Target> namesToTarget) {
 
         String curTargetType = new String();

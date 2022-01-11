@@ -3,12 +3,10 @@ package Graph.process;
 import DataManager.BackDataManager;
 import DataManager.consumerData.FormatAllTask;
 import DataManager.consumerData.ProcessInfo;
-import Flagger.Flagger;
 import Graph.Target;
 import errors.ErrorUtils;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.scene.control.ProgressBar;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -16,12 +14,11 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 public abstract class Task extends javafx.concurrent.Task<Object> implements Serializable, Consumer<String>{
 
-    private final Integer userAmountWantedThread;
+    private  Integer userAmountWantedThread;
     protected String taskName;
     protected Integer timeIRun;
     protected Integer chancesISucceed;
@@ -44,6 +41,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
     public Task(DataSetupProcess dSp) throws ErrorUtils {
 
+
         this.bDM = dSp.bDM;
         this.targets = dSp.allGraphTargets;
         //this.timeIRun = dSp.timeToRun;
@@ -55,13 +53,8 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         this.infoOfLastProcess = dSp.lastProcessTextArea != null ? dSp.lastProcessTextArea : "";
         this.userAmountWantedThread = dSp.amountOfThreads;
 
-        //
-//        if (dSp.flagger.processFromScratch) {
-//
-//            // make all minions from scratch
-//           // this.startMinions();
-//
-//        }
+
+
         this.minionsChosenByUser = dSp.minionsChoosenByUser;
 
         if(dSp.flagger.processIncremental){
@@ -70,24 +63,28 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
         this.startMinions(minionsChosenByUser);
 
-//        if (dSp.flagger.processIncremental) {
-//
-//            // copy minions from last task
-//            this.startMinions(dSp.minionsChoosenByUser);
-//            //  this.startMinions(dSp.oldTask);
-//        }
-//        else if(dSp.flagger.processFromRandomTargets){
-//
-//            //make on chosen minions with 100% succeed
-//            this.startMinions(dSp.minionsChoosenByUser);
-//        }
 
-        // if random, run over values of success in minion
-        if(dSp.flagger.chancesIsRandomInProcess){
-            this.startMinionWithRandPercent();
-        }
+        //todo
+    //        if(dSp.flagger.chancesIsRandomInProcess){
+//            this.startMinionWithRandPercent();
+//        }
 
         this.AddDataOnMinions();
+    }
+
+    public Task(DataSetupProcess dSp, boolean isDemo) {
+
+        this.bDM = dSp.bDM;
+        this.targets = dSp.allGraphTargets;
+        this.minionsChosenByUser = dSp.minionsChoosenByUser;
+        this.serialSetsNameToTargets = dSp.serialSets;
+
+        if(dSp.flagger.processIncremental){
+            this.updateMinionsForIncrementalProcess(); // anotherProcess
+        }
+        this.startMinions(minionsChosenByUser);
+        this.AddDataOnMinions();
+        this.updateStatusOfUnchosenMinions();
     }
 
     private void startMinionWithRandPercent() {
@@ -101,7 +98,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         this.chancesImAWarning = rand.nextInt(upperBoundWarning);
 
         // go over all minions & give them new chance value
-        for(Minion curM : this.minions){
+        for(Minion curM : this.minionsChosenByUser){
             curM.chancesISucceed = this.chancesISucceed;
             curM.chancesImAWarning = this.chancesImAWarning;
         }
@@ -261,7 +258,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
     public void makeQueue() {
         waitingList.clear();
-        for(Minion curM : this.minions)
+        for(Minion curM : this.minionsChosenByUser)
             if(curM.getCanIRun())
                 waitingList.add(curM);
     }
@@ -466,12 +463,10 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
             }
         };
 
-       // FormatAllTask.restartMap();
         start = Instant.now();
-      //  FormatAllTask.start = Instant.now();
 
+        this.updateStatusOfUnchosenMinions();
         this.makeQueue();
-        //this.runMinions();
         try {
             this.call();
         }catch (Exception e){}
@@ -484,6 +479,13 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         this.makeSummaryOfProcess(Duration.between(start, end));
         FormatAllTask.sendData(cUI, this.targetNameToSummeryProcess);
         ProcessInfo.setOldTask(this);
+    }
+
+    private void updateStatusOfUnchosenMinions() {
+        for(Minion minion : minions){
+            if(!this.minionsChosenByUser.contains(minion))
+                minion.iOpened(minion.parentsNames, minion.getAllNamesToMinions());
+        }
     }
 
     private void makeSummaryOfProcess(Duration timeElapsed) {

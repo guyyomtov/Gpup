@@ -12,6 +12,7 @@ public class Flagger {
     public Boolean chancesIsRandomInProcess;
     public Boolean processIsSimulation;
     public Boolean processIsCompilation;
+    public Boolean updateStatus;
     public boolean thereIsSerialSets = false;
 
 
@@ -31,6 +32,12 @@ public class Flagger {
 
         return this;
     }
+
+    public Flagger setUpdateStatus(Boolean updateStatus) {
+        this.updateStatus = updateStatus;
+        return this;
+    }
+
 
     public Flagger processIncremental(Boolean b) throws ErrorUtils {
 

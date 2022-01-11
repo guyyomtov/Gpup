@@ -7,7 +7,6 @@ import Graph.Target;
 import Graph.process.DataSetupProcess;
 import Graph.process.Minion;
 import Graph.process.Task;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import errors.ErrorUtils;
@@ -280,9 +279,31 @@ public class TaskController {
                 }
             }
         }
+        if(this.fromScratchButton.isSelected())
+            this.updateStatusOfUnchosenMinions();
         tableProcessController.initTable(minions, this.textAreaTargetInfo);
         if(!minions.isEmpty())
             this.startButtonProperty.setValue(false);
+    }
+
+    private void updateStatusOfUnchosenMinions() {
+        //making demo simulation process for update minions status.
+        try {
+
+            Flagger flagger = new Flagger().builder()
+                    .processIsSimulation(simulationButton.isSelected())
+                    .processIncremental(this.incrementalButton.isSelected());
+
+            dSP = new DataSetupProcess().builder()
+                    .demoFlagger(flagger);
+            if (!this.minions.isEmpty()) {
+                dSP.minionsChoosenByUser(this.minions);
+                this.bDM.demoSimulationProcess(dSP);
+            }
+
+        }catch (ErrorUtils e){
+            System.out.println("Demo process is failed.");
+        }
     }
 
     public void bindTaskToUIComponents(javafx.concurrent.Task<Object> aTask) {

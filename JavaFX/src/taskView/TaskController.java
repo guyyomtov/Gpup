@@ -258,7 +258,7 @@ public class TaskController {
         boolean itWasAProcess = false;
         for(Minion minion :this.minions){
             String myStatus = minion.getStatus();
-            if(myStatus.equals("SUCCESS") || myStatus.equals("SKIPPED") || myStatus.equals("WARNING"))
+            if(myStatus.equals("SUCCESS") || myStatus.equals("SKIPPED") || myStatus.equals("WARNING") || myStatus.equals("FAILURE"))
                 itWasAProcess = true;
         }
         if(!itWasAProcess) {

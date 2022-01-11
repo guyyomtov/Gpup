@@ -263,6 +263,7 @@ public class TaskController {
         Integer chancesISucceed = this.simulationComponentController.getChancesToSuccess();
         Integer chancesImAWarning = this.simulationComponentController.getChancesToSuccessWithWarning();
         boolean isRand = this.simulationComponentController.getIfRandom();
+        this.fromScratchButton.setSelected(true);
 
         for(Target target : targets){
             if(target.getRemark().isSelected())

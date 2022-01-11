@@ -57,17 +57,17 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
         this.minionsChosenByUser = dSp.minionsChoosenByUser;
 
+        this.startMinions(minionsChosenByUser);
+
         if(dSp.flagger.processIncremental){
             this.updateMinionsForIncrementalProcess(); // anotherProcess
         }
 
-        this.startMinions(minionsChosenByUser);
 
 
-        //todo
-    //        if(dSp.flagger.chancesIsRandomInProcess){
-//            this.startMinionWithRandPercent();
-//        }
+            if(dSp.flagger.chancesIsRandomInProcess){
+            this.startMinionWithRandPercent();
+        }
 
         this.AddDataOnMinions();
     }
@@ -90,8 +90,8 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
     private void startMinionWithRandPercent() {
 
         Random rand = new Random();
-        int upperBoundSucceed = this.chancesISucceed;
-        int upperBoundWarning = this.chancesImAWarning;
+        int upperBoundSucceed = this.chancesISucceed + 1;
+        int upperBoundWarning = this.chancesImAWarning + 1;
 
         // rand new values
         this.chancesISucceed =rand.nextInt(upperBoundSucceed);
@@ -126,7 +126,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         else
         {
             for (Minion currMin : kids) {
-                if (this.minionsChosenByUser.contains(currMin)) {
+               // if (this.minionsChosenByUser.contains(currMin)) {
                     if (!currMin.getStatus().equals("SUCCESS") || !currMin.getStatus().equals("WARNING")) {
                         minionToUpdate.setStatus("FROZEN");
                         minionToUpdate.setMyStatus("FROZEN");
@@ -134,7 +134,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
                         return;
                     } else
                         this.checkIfImWaitingOrFrozen(minionToUpdate,currMin);
-                }
+                //}
             }
         }
     }
@@ -465,7 +465,7 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
         start = Instant.now();
 
-        this.updateStatusOfUnchosenMinions();
+     //   this.updateStatusOfUnchosenMinions();
         this.makeQueue();
         try {
             this.call();
@@ -485,6 +485,11 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         for(Minion minion : minions){
             if(!this.minionsChosenByUser.contains(minion))
                 minion.iOpened(minion.parentsNames, minion.getAllNamesToMinions());
+            else{ // minion that the user chose
+                if(minion.getStatus().equals("SUCCESS") || minion.getStatus().equals("WARNING"))
+                    minion.iOpened(minion.parentsNames, minion.getAllNamesToMinions());
+            }
+
         }
     }
 

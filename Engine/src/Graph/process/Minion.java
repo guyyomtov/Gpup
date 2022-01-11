@@ -166,6 +166,7 @@ public class Minion implements Serializable, Runnable {
         this.targetName = target.getName();
         this.targetType = target.getTargetType();
         this.myStatus = "SUCCESS";
+        this.status = new SimpleStringProperty(this, "status", myStatus );
         this.iAmFinished = true;
         this.chancesISucceed = 100;
         this.chancesImAWarning = 0;
@@ -497,15 +498,17 @@ public class Minion implements Serializable, Runnable {
                     addThisDad = false;
             }
             if(addThisDad) {
-
                 //make res string
                 resNames += " " + curDadName;
 
                 //update status of dad
                 Minion curDad = allMinions.get(curDadName);
-                curDad.setMyStatus("WAITING");
-                curDad.setStatus("WAITING");
-                curDad.setCanIRun(true);
+                //todo --> to check logic fuck the morgan
+                if(!curDad.status.getValue().equals("SUCCESS") || !curDad.status.getValue().equals("WARNING")) {
+                    curDad.setMyStatus("WAITING");
+                    curDad.setStatus("WAITING");
+                    curDad.setCanIRun(true);
+                }
             }
         }
         return resNames;

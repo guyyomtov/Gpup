@@ -4,6 +4,7 @@
     <root id="archive" name="Engine.jar">
       <element id="module-output" name="Engine" />
       <element id="module-output" name="UI" />
+      <element id="module-output" name="JavaFX" />
     </root>
   </artifact>
 </component>

@@ -1,0 +1,46 @@
+.button {
+    -fx-background-color: DarkBlue;
+    -fx-text-fill: white;
+}
+
+.label {
+    color: black;
+    padding: 8px;
+    -fx-text-fill: DarkBlue;
+}
+
+.radio-button .radio {
+    -fx-border-width: 1px;
+    -fx-border-color: DarkBlue;
+    -fx-background-color: white;
+    -fx-background-image: null;
+}
+.radio-button .radio:selected {
+    -fx-background-color: DarkBlue;
+    -fx-background-image: null;
+}
+.radio-button -radio:armed {
+    -fx-background-color: DarkBlue;
+    -fx-background-image: null;
+}
+.radio-button -radio:determinate {
+    -fx-background-color: DarkBlue;
+    -fx-background-image: null;
+}
+.radio-button -radio:indeterminate {
+    -fx-background-color: DarkBlue;
+    -fx-background-image: null;
+}
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: DarkBlue;
+    -fx-background-color: DarkBlue;
+}
+
+.table-view .table-cell{
+    -fx-border-color: transparent;
+}

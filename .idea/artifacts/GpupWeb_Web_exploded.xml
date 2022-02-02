@@ -1,0 +1,19 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="GpupWeb:Web exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/GpupWeb_Web_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="GpupWeb/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="GpupWeb" />
+          <element id="module-output" name="JavaFX" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="google-gson-2" />
+          <element id="library" level="project" name="okHttp" />
+          <element id="artifact" artifact-name="Engine:jar" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

@@ -79,7 +79,7 @@ public class GraphInfoController {
 
     private void initAnimation() throws IOException {
 
-        String curP = "../AnimationComponent/Animation.fxml";
+        String curP = "/AnimationComponent/Animation.fxml";
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource(curP));
         Parent animationView = loader.load();

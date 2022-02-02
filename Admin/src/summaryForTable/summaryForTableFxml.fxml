@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.text.Font?>
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="82.0" prefWidth="803.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="summaryForTable.SummeryForTableController">
+   <content>
+      <Label fx:id="summaryLabel" minHeight="80.0" minWidth="600.0" prefHeight="69.0" prefWidth="523.0" text="Total targets:&#10;Roots:     Middle:    Leafs:    independent">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+   </content>
+</ScrollPane>

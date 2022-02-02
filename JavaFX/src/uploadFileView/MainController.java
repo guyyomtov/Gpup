@@ -103,7 +103,7 @@ public class MainController {
 
         try {
             if (taskController == null) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("../taskView/taskViewFxml.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/taskView/taskViewFxml.fxml"));
                 taskView = loader.load(); // was null
                 this.taskController = loader.getController();
                 this.taskController.setbDM(this.bDM);
@@ -116,7 +116,7 @@ public class MainController {
 
     private void initInteragatorComponent() throws IOException {
 
-        String circlePathName = "../InterrogatorComponent/InteragatorComponent.fxml";
+        String circlePathName = "/InterrogatorComponent/InteragatorComponent.fxml";
         FXMLLoader loader = new FXMLLoader(getClass().getResource(circlePathName));
         this.interrogatorView = loader.load();
         this.intController = loader.getController();
@@ -132,7 +132,7 @@ public class MainController {
 
     void initGraphInfoComponent() throws IOException {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../graphInfoView/graphInfoFxml.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/graphInfoView/graphInfoFxml.fxml"));
         graphInfoView = loader.load();
         this.graphInfoController = loader.getController();
         this.graphInfoController.setbDM(this.bDM);
@@ -168,11 +168,11 @@ public class MainController {
 
             case RED:
                 this.MainBorderPane.getStylesheets().clear();
-                this.MainBorderPane.getStylesheets().add("AnimationComponent/redMode.css");
+                this.MainBorderPane.getStylesheets().add("/AnimationComponent/redMode.css");
                 break;
             case BLUE:
                 this.MainBorderPane.getStylesheets().clear();
-                this.MainBorderPane.getStylesheets().add("AnimationComponent/blueMode.css");
+                this.MainBorderPane.getStylesheets().add("/AnimationComponent/blueMode.css");
                 break;
             case DEFAULT:
                 this.MainBorderPane.getStylesheets().clear();

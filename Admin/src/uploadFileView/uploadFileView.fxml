@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<BorderPane fx:id="MainBorderPane" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uploadFileView.UploadFileViewController">
+   <left>
+      <VBox prefHeight="355.0" prefWidth="105.0" spacing="10.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="graphInfoButton" disable="true" mnemonicParsing="false" onAction="#graphInfoAction" prefHeight="37.0" prefWidth="103.0" text="Graph Info" />
+            <Button fx:id="InterrogatorButton" disable="true" mnemonicParsing="false" onAction="#InterrogatorButtonAction" prefHeight="35.0" prefWidth="103.0" text="Interrogator" />
+            <Button fx:id="taskButton" disable="true" mnemonicParsing="false" onAction="#taskButtonAction" prefHeight="34.0" prefWidth="104.0" text="Task" />
+         </children>
+         <BorderPane.margin>
+            <Insets left="10.0" top="20.0" />
+         </BorderPane.margin>
+      </VBox>
+   </left>
+   <top>
+      <MenuBar prefWidth="564.0" BorderPane.alignment="CENTER">
+         <menus>
+            <Menu mnemonicParsing="false" text="File">
+               <items>
+                  <MenuItem fx:id="UploadFile" mnemonicParsing="false" onAction="#UploadFileAction" text="Upload File" />
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Skins">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#defualtSkinAction" text="Defualt" />
+                  <MenuItem mnemonicParsing="false" onAction="#blueSkinAction" text="Blue" />
+                  <MenuItem mnemonicParsing="false" onAction="#redSkinAction" text="Red" />
+              </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <ScrollPane fx:id="welcomeView" fitToHeight="true" fitToWidth="true" prefHeight="1000.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+         <content>
+            <VBox alignment="CENTER" minHeight="200.0" minWidth="270.0" spacing="5.0">
+               <children>
+                  <Label text="Welcome to GPUP">
+                     <font>
+                        <Font size="32.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="msgAfterUploadFile" alignment="CENTER" text="Label" visible="false" />
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

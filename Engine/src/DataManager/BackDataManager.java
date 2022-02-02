@@ -28,6 +28,8 @@ public class BackDataManager implements DataManager {
 
     private TaskController taskController;
 
+    private Task gpupTask;
+
     // for console application
     public boolean checkFile(String fileName) throws ErrorUtils {
 
@@ -175,26 +177,30 @@ public class BackDataManager implements DataManager {
         // Choose process
         if(dSP.flagger.processIsSimulation){
 
-            Simulation simulation = new Simulation(dSP);
+            gpupTask = new Simulation(dSP);
 
-            this.taskController.bindTaskToUIComponents(simulation);
+            this.taskController.bindTaskToUIComponents(gpupTask);
 
-            new Thread(simulation).start();
+            new Thread(gpupTask).start();
         }
         else if(dSP.flagger.processIsCompilation){
 
             if(dSP.compilationProcessHasNeededData()){
-                Compilation compilation = new Compilation(dSP);
+                gpupTask = new Compilation(dSP);
 
-                this.taskController.bindTaskToUIComponents(compilation);
+                this.taskController.bindTaskToUIComponents(gpupTask);
 
-                new Thread(compilation).start();
+                new Thread(gpupTask).start();
             }
             else{
                 throw new ErrorUtils(ErrorUtils.MISSING_COMPILATION_NEEDED_DATA);
             }
         }
 
+    }
+
+    public void resume(){
+        this.gpupTask.resumeProcess();
     }
 
     public String findCircle(String name) throws ErrorUtils {
@@ -243,5 +249,9 @@ public class BackDataManager implements DataManager {
         dSP.bDM = this;
         Simulation demoTask = new Simulation(dSP, true);
 
+    }
+
+    public void stopProcess() {
+        this.gpupTask.cancelTask();
     }
 }

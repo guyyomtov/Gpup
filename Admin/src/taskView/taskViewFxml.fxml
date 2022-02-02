@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="taskView.TaskController">
+   <content>
+      <TabPane minHeight="500.0" minWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Task setting">
+               <content>
+                  <GridPane fx:id="gridPaneSettingTab">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="45.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="240.0" minHeight="10.0" percentHeight="10.0" prefHeight="167.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="332.0" minHeight="10.0" percentHeight="90.0" prefHeight="292.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Pane>
+                           <children>
+                              <VBox prefHeight="200.0" prefWidth="444.0">
+                                 <children>
+                                    <Label fx:id="chooseTask" alignment="TOP_LEFT" text="Choose task">
+                                       <padding>
+                                          <Insets left="5.0" />
+                                       </padding>
+                                    </Label>
+                                    <HBox spacing="10.0">
+                                       <children>
+                                          <Label fx:id="taskName" alignment="TOP_LEFT" text="task name:" />
+                                          <RadioButton fx:id="simulationButton" mnemonicParsing="false" onAction="#simulationButtonAction" selected="true" text="Simulation">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="taskName" />
+                                             </toggleGroup></RadioButton>
+                                          <RadioButton fx:id="compilationButton" mnemonicParsing="false" onAction="#compilationButtonAction" prefHeight="21.0" prefWidth="121.0" text="Compilation" toggleGroup="$taskName" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="5.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                                 <padding>
+                                    <Insets left="5.0" top="5.0" />
+                                 </padding>
+                              </VBox>
+                           </children>
+                        </Pane>
+                     </children>
+                  </GridPane>
+               </content>
+          </Tab>
+          <Tab text="Excution setting">
+               <content>
+                  <GridPane minHeight="500.0" minWidth="500.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="240.0" minHeight="10.0" percentHeight="30.0" prefHeight="167.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="332.0" minHeight="10.0" percentHeight="90.0" prefHeight="292.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <VBox spacing="10.0">
+                           <children>
+                              <Label prefHeight="21.0" prefWidth="141.0" text="How many theards?" />
+                              <Spinner fx:id="threadsSpinner" />
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <RadioButton fx:id="incrementalButton" mnemonicParsing="false" onAction="#incrementalButtonAction" text="Incremental">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="runFromBegining" />
+                                       </toggleGroup></RadioButton>
+                                    <RadioButton fx:id="fromScratchButton" mnemonicParsing="false" selected="true" text="from Scratch" toggleGroup="$runFromBegining" />
+                                 </children>
+                              </HBox>
+                              <Label fx:id="errorMessegeForIncremental" prefHeight="21.0" prefWidth="267.0" />
+                           </children>
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                           <padding>
+                              <Insets left="5.0" top="5.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </GridPane>
+               </content>
+          </Tab>
+            <Tab text="Target List">
+               <content>
+                  <GridPane>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="45.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="240.0" minHeight="10.0" percentHeight="10.0" prefHeight="167.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="332.0" minHeight="10.0" percentHeight="90.0" prefHeight="292.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="332.0" minHeight="10.0" percentHeight="20.0" prefHeight="292.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <fx:include fx:id="tableProcess" source="../tableForProcess/tableForProcessFxml.fxml" GridPane.rowIndex="1" />
+                        <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                           <children>
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                 <children>
+                                    <Button fx:id="updateTargetListButton" mnemonicParsing="false" onAction="#updateTargetListButtonAction" prefHeight="31.0" prefWidth="148.0" text="Update Target List" />
+                                    <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startButtonAction" prefHeight="31.0" prefWidth="62.0" text="Start" />
+                                    <Button fx:id="stopButton" disable="true" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="31.0" prefWidth="71.0" text="Stop" />
+                                    <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseButtonAction" prefHeight="31.0" prefWidth="68.0" text="Pause" />
+                                    <Button fx:id="resumeButton" disable="true" mnemonicParsing="false" onAction="#resumeButtonAction" text="Resume" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="5.0" top="5.0" />
+                                 </padding>
+                              </HBox>
+                              <Label fx:id="taskIsFinishedLabel" prefHeight="21.0" prefWidth="511.0" textFill="RED" />
+                           </children>
+                        </VBox>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <HBox prefHeight="39.0" prefWidth="549.0" spacing="10.0">
+                                 <children>
+                                    <Label prefHeight="38.0" prefWidth="100.0" text="Task Progress">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="precentOfProgressBar" prefHeight="39.0" prefWidth="64.0" />
+                                 </children>
+                              </HBox>
+                              <ProgressBar fx:id="progressBar" prefHeight="31.0" prefWidth="762.0" progress="0.0" />
+                           </children>
+                        </VBox>
+                        <TextArea fx:id="textAreaProcessInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextArea fx:id="textAreaProcessInfo1" layoutX="459.0" layoutY="73.0" prefHeight="200.0" prefWidth="200.0" />
+                        <TextArea fx:id="textAreaTargetInfo" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2" />
+                     </children>
+                  </GridPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </content>
+</ScrollPane>

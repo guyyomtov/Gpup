@@ -4,9 +4,7 @@ import AnimationComponent.SkinsUtils;
 import errors.ErrorUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 
 import java.awt.event.KeyEvent;
@@ -20,16 +18,25 @@ public class SimulationComponentController {
     @FXML private RadioButton randomButton;
     @FXML private RadioButton manualButton;
     private List<RadioButton> radioButtons = new ArrayList<>();
-    @FXML private Spinner<Integer> succsesSpinner;
-    @FXML private Spinner<Integer> warningSpinner;
+    @FXML
+    private Slider succsesSpinner;
+
+    @FXML
+    private Label succesLabel;
+
+    @FXML
+    private Slider warningSpinner;
+
+    @FXML
+    private Label warningLabel;
+
 
 
 
     public void initSimulation(){
         this.initTimeSpinner();
-        this.initSpinner(this.succsesSpinner);
-        this.initSpinner(this.warningSpinner);
-
+        this.succsesSpinner.valueProperty().addListener((v, oldV, newV) -> succesLabel.setText(String.valueOf((int)this.succsesSpinner.getValue())));
+        this.warningSpinner.valueProperty().addListener((v, oldV, newV) -> warningLabel.setText(String.valueOf((int)this.warningSpinner.getValue())));
         this.radioButtons = Arrays.asList(randomButton, this.manualButton);
     }
 
@@ -45,9 +52,8 @@ public class SimulationComponentController {
         warningSpinner.setDisable(false);
     }
 
-    private void initSpinner(Spinner<Integer> spinner) {
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100,0,5);
-        spinner.setValueFactory(valueFactory);
+    private void initSpinner(Slider slider) {
+       slider.valueProperty().addListener((v, oldV, newV) -> succesLabel.setText(slider.toString()));
     }
 
 
@@ -63,9 +69,15 @@ public class SimulationComponentController {
 
     public Integer getMaxTime(){return this.chooseTimeSpinner.getValue();}
 
-    public Integer getChancesToSuccess(){return this.succsesSpinner.getValue();}
+    public Integer getChancesToSuccess(){
+        Integer res = (int)this.succsesSpinner.getValue();
+        return res;
+    }
 
-    public Integer getChancesToSuccessWithWarning(){return this.warningSpinner.getValue();}
+    public Integer getChancesToSuccessWithWarning(){
+        Integer res = (int)this.warningSpinner.getValue();
+        return res;
+    }
 
     public boolean getIfRandom(){return this.randomButton.isSelected();}
 

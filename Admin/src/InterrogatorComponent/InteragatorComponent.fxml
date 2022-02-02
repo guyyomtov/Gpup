@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="InterrogatorComponent.InterrogatorController">
+   <content>
+      <GridPane minHeight="500.0" minWidth="700.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="163.0" minHeight="0.0" percentHeight="13.0" prefHeight="0.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="336.0" minHeight="10.0" percentHeight="87.0" prefHeight="336.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <HBox prefHeight="163.0" prefWidth="540.0" spacing="5.0">
+               <children>
+                  <Button fx:id="circleButton" mnemonicParsing="false" onAction="#circleButtonAction" prefHeight="31.0" prefWidth="69.0" text="Circle">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="pathButton" mnemonicParsing="false" onAction="#pathButtonAction" prefHeight="31.0" prefWidth="67.0" text="Path">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="whatIfButton" mnemonicParsing="false" onAction="#whatIfButtonAction" text="What If">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Button>
+               </children>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </HBox>
+            <BorderPane fx:id="mainBoarderPain" minHeight="500.0" minWidth="500.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+         </children>
+      </GridPane>
+   </content>
+</ScrollPane>

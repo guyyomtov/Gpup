@@ -75,7 +75,7 @@ public class InterrogatorController {
 
     private void WhatIfComponent() throws IOException {
 
-        String curP = "../WhatIfComponent/WhatIfComponent.fxml";
+        String curP = "/WhatIfComponent/WhatIfComponent.fxml";
 
         this.loader = getCurrentFXMLoader(curP);
         this.whatIfView = loader.load();
@@ -86,7 +86,7 @@ public class InterrogatorController {
 
     private void initPathComponent() throws IOException {
 
-        String curP = "../FindPathComponent/FindPathComponent.fxml";
+        String curP = "/FindPathComponent/FindPathComponent.fxml";
         this.loader = getCurrentFXMLoader(curP);
         this.findPathView = loader.load();
         this.fPController = loader.getController();
@@ -96,7 +96,7 @@ public class InterrogatorController {
 
     private void initCircleComponenet() throws IOException {
 
-        String curP = "../FindCircleComponent/FindCircleComponent.fxml";
+        String curP = "/FindCircleComponent/FindCircleComponent.fxml";
         this.loader = getCurrentFXMLoader(curP);
 
         this.findCircleView = loader.load();

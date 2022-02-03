@@ -76,6 +76,7 @@ public class MainAdminController {
                 Platform.runLater(() ->
                         errorMessageProperty.set("Something went wrong: " + e.getMessage())
                 );
+                System.out.println("we failed server problem");
             }
 
             @Override
@@ -85,12 +86,14 @@ public class MainAdminController {
                     Platform.runLater(() ->
                             errorMessageProperty.set("Something went wrong: " + responseBody)
                     );
+                    System.out.println("we failed " + response.code());
                 } else {
                     Platform.runLater(() -> {
                         switchToUploadFileView();
                         //chatAppMainController.updateUserName(userName);
                         //chatAppMainController.switchToChatRoom();
                     });
+                    System.out.println("we success " + response.code());
                 }
             }
         });

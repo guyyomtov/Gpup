@@ -29,6 +29,7 @@ public class LightweightLoginServlet extends HttpServlet {
                 //no username in session and no username in parameter - not standard situation. it's a conflict
 
                 // stands for conflict in server state
+                System.out.println(HttpServletResponse.SC_CONFLICT);
                 response.setStatus(HttpServletResponse.SC_CONFLICT);
             } else {
                 //normalize the username value
@@ -53,6 +54,7 @@ public class LightweightLoginServlet extends HttpServlet {
                         // stands for unauthorized as there is already such user with this name
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         response.getOutputStream().print(errorMessage);
+                        System.out.println(errorMessage);
                     }
                     else {
                         //add the new user to the users list
@@ -64,12 +66,15 @@ public class LightweightLoginServlet extends HttpServlet {
 
                         //redirect the request to the chat room - in order to actually change the URL
                         System.out.println("On login, request URI is: " + request.getRequestURI());
+                        System.out.println("we success " + HttpServletResponse.SC_OK);
                         response.setStatus(HttpServletResponse.SC_OK);
+
                     }
                 }
             }
         } else {
             //user is already logged in
+            System.out.println("we success " + HttpServletResponse.SC_OK);
             response.setStatus(HttpServletResponse.SC_OK);
         }
     }

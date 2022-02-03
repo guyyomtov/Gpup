@@ -43,9 +43,9 @@
       </MenuBar>
    </top>
    <center>
-      <ScrollPane fx:id="welcomeView" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ScrollPane fx:id="welcomeView" fitToHeight="true" fitToWidth="true" prefHeight="1000.0" prefWidth="800.0" BorderPane.alignment="CENTER">
          <content>
-            <VBox alignment="CENTER" minHeight="200.0" minWidth="270.0" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+            <VBox alignment="CENTER" minHeight="200.0" minWidth="270.0" spacing="5.0">
                <children>
                   <Label text="Welcome to GPUP">
                      <font>

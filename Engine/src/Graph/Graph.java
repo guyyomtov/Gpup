@@ -222,10 +222,11 @@ public class Graph implements Serializable {
             String[] split = str.split(",");
             for(String string : split)
             {
-                string = string.replace(" ", "");
+                string = string.trim();
+               // string = string.replace(" ", "");
                    List<Target> path = new ArrayList<Target>();
 
-                   String[] targetNames = string.split("");
+                   String[] targetNames = string.split(" ");
                    for(String targetName : targetNames) {
                        Target target = this.mNameToTarget.get(targetName);
                        if(target != null)
@@ -244,7 +245,6 @@ public class Graph implements Serializable {
     public void setmSerialSets(Map<String, Set<Target>> mSerialSets) {
         this.mSerialSets = mSerialSets;
     }
-
 
     public void updateTotalDependenciesAndSerialSets() {
         Map <String, Boolean> isVisited;
@@ -279,13 +279,11 @@ public class Graph implements Serializable {
         return res;
     }
 
-
     private Map<String, Boolean> makeIsVisitedMap() {
         Map <String, Boolean> isVisited = new HashMap<>();
         for(Target target: targets)
             isVisited.put(target.getName(), false);
         return isVisited;
     }
-
 
 }

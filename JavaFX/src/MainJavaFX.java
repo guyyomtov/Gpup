@@ -11,6 +11,9 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import uploadFileView.MainController;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class MainJavaFX extends Application {
 
     MainController mainController = new MainController();
@@ -23,7 +26,7 @@ public class MainJavaFX extends Application {
 
         primaryStage.setTitle("GPUP");
 
-        loader = new FXMLLoader(getClass().getResource("uploadFileView/uploadFileView.fxml"));
+        loader = new FXMLLoader(getClass().getResource("/uploadFileView/uploadFileView.fxml"));
         Parent load = loader.load();
         mainController = (MainController)loader.getController();
         Scene scene = new Scene(load, 600, 400);
@@ -36,6 +39,7 @@ public class MainJavaFX extends Application {
 
     public static void main(String[] args) {
 
-        launch(args);
+       launch(args);
+
     }
 }

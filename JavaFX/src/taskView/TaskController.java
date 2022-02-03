@@ -79,12 +79,12 @@ public class TaskController {
 
     public void initTaskView() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("simulationComponent/simulationComponentFxml.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/taskView/simulationComponent/simulationComponentFxml.fxml"));
             simulationComponent = loader.load();
             simulationComponentController = loader.getController();
             simulationComponentController.initSimulation();
 
-            FXMLLoader loaderCom = new FXMLLoader(getClass().getResource("compilationComponent/compilationControllerFxml.fxml"));
+            FXMLLoader loaderCom = new FXMLLoader(getClass().getResource("/taskView/compilationComponent/compilationControllerFxml.fxml"));
             compilationComponent = loaderCom.load();
             compilationController = loaderCom.getController();
             this.initThreadsSpinner();
@@ -122,17 +122,6 @@ public class TaskController {
         this.pauseButton.disableProperty().bind(this.pauseProperty);
     }
 
-    private void makeSummaryAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.showAndWait();
-        alert.setResizable(true);
-    }
-
-    @FXML
-    private void initialize(){
-        //textAreaProcessInfo.textProperty().bind(updateInfoForUI);
-    }
-
     @FXML
     void compilationButtonAction(ActionEvent event) {
         try {
@@ -144,14 +133,8 @@ public class TaskController {
     @FXML
     void resumeButtonAction(ActionEvent event) {
         pauseProperty.set(false);
+        this.bDM.resume();
         resumeProperty.set(true);
-        List<Minion> updateMinions = this.tableProcessController.getMinionsFromTable();
-        try {
-            dSP.setLastProcessTextArea(this.textAreaProcessInfo.getText());
-            this.bDM.startProcess(dSP);
-        }catch (ErrorUtils e) { // last update}
-        }
-
     }
 
     @FXML
@@ -250,7 +233,8 @@ public class TaskController {
         this.stopProperty.setValue(true);
         this.startButtonProperty.setValue(false);
         this.updateTargetListButton.setDisable(false);
-        this.minions.clear();
+        this.bDM.stopProcess();
+        updateTargetListButtonAction(event);
     }
 
     @FXML

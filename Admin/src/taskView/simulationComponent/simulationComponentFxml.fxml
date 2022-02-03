@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="taskView.simulationComponent.SimulationComponentController">
+   <children>
+      <HBox prefHeight="48.0" prefWidth="400.0" spacing="7.0">
+         <children>
+            <Label prefHeight="21.0" prefWidth="101.0" text="choose time?" />
+            <Label fx:id="errorLabel" />
+            <Spinner fx:id="chooseTimeSpinner" onDragDone="#onDragDoneChooseTime" />
+         </children>
+         <padding>
+            <Insets left="10.0" />
+         </padding>
+      </HBox>
+      <HBox prefHeight="49.0" prefWidth="400.0" spacing="10.0">
+         <children>
+            <RadioButton fx:id="randomButton" mnemonicParsing="false" onAction="#randomButtonAction" prefHeight="21.0" prefWidth="92.0" selected="true" text="Random">
+               <toggleGroup>
+                  <ToggleGroup fx:id="randomOrManual" />
+               </toggleGroup></RadioButton>
+            <RadioButton fx:id="manualButton" mnemonicParsing="false" onAction="#manualButtonAction" prefHeight="21.0" prefWidth="88.0" text="Manual" toggleGroup="$randomOrManual" />
+         </children>
+         <padding>
+            <Insets left="15.0" />
+         </padding>
+      </HBox>
+      <HBox prefHeight="50.0" prefWidth="400.0" spacing="5.0">
+         <children>
+            <Label prefHeight="21.0" prefWidth="136.0" text="Chances for success:" />
+            <Slider fx:id="succsesSpinner" majorTickUnit="10.0" prefHeight="18.0" prefWidth="155.0" />
+            <Label fx:id="succesLabel" prefHeight="21.0" prefWidth="47.0" text="0" />
+         </children>
+         <padding>
+            <Insets left="10.0" />
+         </padding>
+      </HBox>
+      <HBox prefHeight="76.0" prefWidth="590.0" spacing="5.0">
+         <children>
+            <Label prefHeight="46.0" prefWidth="137.0" text="Chances for success&#10; with warning:" />
+            <Slider fx:id="warningSpinner" majorTickUnit="10.0" prefHeight="18.0" prefWidth="153.0" />
+            <Label fx:id="warningLabel" prefHeight="21.0" prefWidth="47.0" text="0" />
+         </children>
+         <VBox.margin>
+            <Insets left="10.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+   <padding>
+      <Insets top="15.0" />
+   </padding>
+</VBox>

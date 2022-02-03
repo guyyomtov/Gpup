@@ -4,6 +4,7 @@ import DataManager.BackDataManager;
 import DataManager.consumerData.FormatAllTask;
 import DataManager.consumerData.ProcessInfo;
 import Graph.Target;
+import com.sun.jmx.snmp.tasks.ThreadService;
 import errors.ErrorUtils;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -14,6 +15,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public abstract class Task extends javafx.concurrent.Task<Object> implements Serializable, Consumer<String>{
@@ -394,7 +396,10 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
         Integer totalMinionsThatFinished = updateTotalMinionsThatFinished();
 
         // go out of while when: no thread exist & queue is empty
-        while((threadCounter != 0 || !waitingList.isEmpty()) && !pauseTaskProperty.getValue()) {
+        while((threadCounter != 0 || !waitingList.isEmpty()) /*&& !pauseTaskProperty.getValue()*/) {
+
+            if(pauseTaskProperty.getValue())
+                this.pauseProcess();
 
             start = Instant.now();
             minion = waitingList.poll();
@@ -430,7 +435,8 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
         totalMinionsThatFinished = updateTotalMinionsThatFinished();
         updateProgress(totalMinionsThatFinished, minionsChosenByUser.size());
-
+        executorService.shutdown();
+        executorService.awaitTermination(60, TimeUnit.SECONDS);
         this.namesToCurRunningMinions.clear();
 
         return true;
@@ -469,19 +475,13 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
 
         start = Instant.now();
 
-     //   this.updateStatusOfUnchosenMinions();
         this.makeQueue();
         try {
             this.call();
         }catch (Exception e){}
 
-
-        System.out.println("process finished");
-        //FormatAllTask.end = Instant.now();
-        //FormatAllTask.sendData(cUI);
         end = Instant.now();
-        if(!pauseTaskProperty.getValue())
-             this.makeSummaryOfProcess(Duration.between(start, end));
+        this.makeSummaryOfProcess(Duration.between(start, end));
 
         FormatAllTask.sendData(cUI, this.targetNameToSummeryProcess);
         ProcessInfo.setOldTask(this);
@@ -539,4 +539,21 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
             return mStatusToNumber;
     }
 
+    public void pauseProcess() {
+        try {
+            synchronized (this){this.wait();}
+
+        } catch (InterruptedException e) {
+            //e.printStackTrace();
+        }
+
+    }
+
+    public void resumeProcess(){
+        synchronized (this){this.notify();}
+    }
+
+    public void cancelTask() {
+        this.cancel();
+    }
 }

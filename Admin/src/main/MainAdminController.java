@@ -1,5 +1,6 @@
 package main;
 
+import DashBoardAdmin.MainDashBoardController;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -27,19 +28,12 @@ import java.io.IOException;
 
 public class MainAdminController {
 
-    @FXML
-    private ScrollPane welcomeView;
-
-    @FXML
-    private TextField userNameTextField;
-
-    @FXML
-    private Button loginButton;
-
-    @FXML
-    private Label errorMessageLabel;
-
-    Stage primaryStage;
+    @FXML private ScrollPane welcomeView;
+    @FXML private TextField userNameTextField;
+    @FXML private Button loginButton;
+    @FXML private Label errorMessageLabel;
+    private Stage primaryStage;
+    private MainDashBoardController dashBoardController;
 
     private final StringProperty errorMessageProperty = new SimpleStringProperty();
 
@@ -89,7 +83,9 @@ public class MainAdminController {
                     System.out.println("we failed " + response.code());
                 } else {
                     Platform.runLater(() -> {
-                        switchToUploadFileView();
+                       // switchToUploadFileView(); --> takes us to gpup part 2 home page
+                        switchToDashBoard();
+                        //switchToDashBoard(); --> shouldn't be here
                         //chatAppMainController.updateUserName(userName);
                         //chatAppMainController.switchToChatRoom();
                     });
@@ -118,8 +114,28 @@ public class MainAdminController {
         this.primaryStage = primaryStage;
     }
 
+
+    // shouldn't be here
+    public void switchToDashBoard() {
+
+        try {
+
+            // This takes us to Admin dashboard
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardAdmin/MainDashBoard.fxml"));
+            Parent load = loader.load();
+            MainDashBoardController dashBoardController = (MainDashBoardController) loader.getController();
+            dashBoardController.setActive();
+            Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
+            primaryStage.setScene(scene);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+    }
+
     public void switchToUploadFileView(){
         try {
+
+            // This takes us to gpup part 2 home page
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/uploadFileView/uploadFileView.fxml")); // todo to move path to constants!
             Parent load = loader.load();
             UploadFileViewController uploadFileViewController = (UploadFileViewController) loader.getController();

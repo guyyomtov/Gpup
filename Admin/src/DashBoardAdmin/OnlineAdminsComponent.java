@@ -17,8 +17,7 @@ import java.util.TimerTask;
 
 public class OnlineAdminsComponent implements Closeable {
 
-    @FXML
-    private ListView<String> adminsListView;
+    @FXML private ListView<String> adminsListView;
     private Timer timer;
     private TimerTask listRefresher;
     private HttpStatusUpdate httpStatusUpdate;

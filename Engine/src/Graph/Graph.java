@@ -14,6 +14,7 @@ public class Graph implements Serializable {
     //private boolean matrixOfDependency[][];
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
     private Map<String, Set<Target>> mSerialSets = new HashMap<>();
+    private String graphName;
 
 
     public Graph(List<Target> targets, Map<String, Target> mNameToTarget, Map<String, Set<Target>> mSerialSets) throws ErrorUtils, IOException {
@@ -285,5 +286,7 @@ public class Graph implements Serializable {
             isVisited.put(target.getName(), false);
         return isVisited;
     }
+    
+    public String getGraphName(){ return this.graphName;}
 
 }

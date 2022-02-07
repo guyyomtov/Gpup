@@ -251,6 +251,8 @@ public class BackDataManager implements DataManager {
 
     }
 
+    public Graph getGraph(){return this.graph;}
+
     public void stopProcess() {
         this.gpupTask.cancelTask();
     }

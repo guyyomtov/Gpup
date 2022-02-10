@@ -1,5 +1,5 @@
 package Graph;
-import GpupClassesEx2.GPUPDescriptor;
+import GpupClassesEx3.GPUPDescriptor;
 import errors.ErrorUtils;
 
 import java.io.*;
@@ -289,4 +289,7 @@ public class Graph implements Serializable {
     
     public String getGraphName(){ return this.graphName;}
 
+    public void setGraphName(String graphName) {
+        this.graphName = graphName;
+    }
 }

@@ -1,8 +1,8 @@
 package fileHandler;
 
-import GpupClassesEx2.GPUPDescriptor;
-import GpupClassesEx2.GPUPTarget;
-import GpupClassesEx2.GPUPTargetDependencies;
+import GpupClassesEx3.GPUPDescriptor;
+import GpupClassesEx3.GPUPTarget;
+import GpupClassesEx3.GPUPTargetDependencies;
 import Graph.Graph;
 import Graph.Target;
 import Graph.process.Task;
@@ -14,6 +14,7 @@ public class HandlerXmlFile {
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
     private List<Target> targets = new ArrayList<Target>();
     private Map<String, Set<Target>> nameToSerialSet = new HashMap<String, Set<Target>>();
+    private String graphName = new String();
 
     public void buildMe(GPUPDescriptor information) throws ErrorUtils {
 
@@ -27,7 +28,8 @@ public class HandlerXmlFile {
 
         int size = information.getGPUPTargets().getGPUPTarget().size();
 
-        Task.maxParallelism = information.getGPUPConfiguration().getGPUPMaxParallelism();
+        //GPUP PART TWO
+        //Task.maxParallelism = information.getGPUPConfiguration().getGPUPMaxParallelism();
 
         this.targets = new ArrayList<Target>(size);
 
@@ -41,9 +43,12 @@ public class HandlerXmlFile {
 
             this.targets = Target.updateTypeOfTargets(this.targets);
 
+            this.graphName = information.getGPUPConfiguration().getGPUPGraphName();
+
             this.checkCircleBetweenTwoTargets();
 
-            TaskFile.gpupPath = information.getGPUPConfiguration().getGPUPWorkingDirectory();
+            //GPUP PART TWO
+            //TaskFile.gpupPath = information.getGPUPConfiguration().getGPUPWorkingDirectory();
 
            this.nameToSerialSet = Graph.initSerialSetsFrom(information, this.targets);
         }
@@ -135,4 +140,5 @@ public class HandlerXmlFile {
 
     public Map<String, Set<Target>> getNameToSerialSet() { return this.nameToSerialSet;}
 
+    public String getGraphName() {return graphName;}
 }

@@ -1,5 +1,6 @@
 package main;
 
+import DashBoardAdmin.DashBoardButtonColum;
 import DashBoardAdmin.MainDashBoardController;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -86,8 +87,6 @@ public class MainAdminController {
                        // switchToUploadFileView(); --> takes us to gpup part 2 home page
                         switchToDashBoard();
                         //switchToDashBoard(); --> shouldn't be here
-                        //chatAppMainController.updateUserName(userName);
-                        //chatAppMainController.switchToChatRoom();
                     });
                     System.out.println("we success " + response.code());
                 }
@@ -120,16 +119,27 @@ public class MainAdminController {
 
         try {
 
-            // This takes us to Admin dashboard
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardAdmin/MainDashBoard.fxml"));
-            Parent load = loader.load();
-            MainDashBoardController dashBoardController = (MainDashBoardController) loader.getController();
-            dashBoardController.setActive();
-            Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
-            primaryStage.setScene(scene);
+            this.testUploadFile();
+//
+//            // This takes us to Admin dashboard
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardAdmin/MainDashBoard.fxml"));
+//            Parent load = loader.load();
+//            MainDashBoardController dashBoardController = (MainDashBoardController) loader.getController();
+//            dashBoardController.setActive();
+//            Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
+//            primaryStage.setScene(scene);
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
+    }
+
+    private void testUploadFile() throws IOException {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardAdmin/DashBoardButtonColum.fxml"));
+        Parent load = loader.load();
+        DashBoardButtonColum dashBoardButtonColumController = (DashBoardButtonColum) loader.getController();
+        Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
+        primaryStage.setScene(scene);
     }
 
     public void switchToUploadFileView(){

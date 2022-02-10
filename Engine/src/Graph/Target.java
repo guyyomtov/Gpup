@@ -1,7 +1,7 @@
 package Graph;
 
-import GpupClassesEx2.GPUPDescriptor;
-import GpupClassesEx2.GPUPTarget;
+import GpupClassesEx3.GPUPDescriptor;
+import GpupClassesEx3.GPUPTarget;
 import errors.ErrorUtils;
 import javafx.scene.control.CheckBox;
 //import fileHandler.schemaXmlFile.GPUPDescriptor;

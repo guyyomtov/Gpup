@@ -1,6 +1,6 @@
 package DataManager;
 
-import GpupClassesEx2.GPUPDescriptor;
+import GpupClassesEx3.GPUPDescriptor;
 import Graph.process.*;
 import errors.ErrorUtils;
 import fileHandler.HandlerLoadFile;
@@ -24,7 +24,7 @@ public class BackDataManager implements DataManager {
 
     private Graph graph;
     private Map<String, Set<Target>> mTypeToTargets = new HashMap<String, Set<Target>>();
-    private final static String JAXB_XML_GAME_PACKAGE_NAME = "GpupClassesEx2";
+    private final static String JAXB_XML_GAME_PACKAGE_NAME = "GpupClassesEx3";
 
     private TaskController taskController;
 
@@ -50,9 +50,13 @@ public class BackDataManager implements DataManager {
 
                     fileSuccess =  true;
 
-                    this.graph = new Graph(handlerFile.getListOfTargets(),handlerFile.getMap(), handlerFile.getNameToSerialSet());
+                    this.graph = new Graph(handlerFile.getListOfTargets(),
+                                            handlerFile.getMap(),
+                                            handlerFile.getNameToSerialSet());
 
                     this.graph.updateTotalDependenciesAndSerialSets();
+
+                    this.graph.setGraphName(handlerFile.getGraphName());
 
                     this.mTypeToTargets = this.makeMap(this.graph.getAllTargets());
 

@@ -1,7 +1,7 @@
 package main;
 
 import DashBoardAdmin.DashBoardButtonColum;
-import DashBoardAdmin.MainDashBoardController;
+import DashBoardAdmin.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -58,7 +58,7 @@ public class MainAdminController {
         String finalUrl = HttpUrl
                 .parse(Constants.LOGIN_PAGE)
                 .newBuilder()
-                .addQueryParameter("username", userName)
+                .addQueryParameter("username", userName + " Admin")
                 .build()
                 .toString();
 
@@ -119,15 +119,16 @@ public class MainAdminController {
 
         try {
 
-            this.testUploadFile();
-//
-//            // This takes us to Admin dashboard
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardAdmin/MainDashBoard.fxml"));
-//            Parent load = loader.load();
-//            MainDashBoardController dashBoardController = (MainDashBoardController) loader.getController();
-//            dashBoardController.setActive();
-//            Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
-//            primaryStage.setScene(scene);
+            //this.testUploadFile();
+
+            // This takes us to Admin dashboard
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardAdmin/MainDashBoard2Fxml.fxml"));
+            Parent load = loader.load();
+            MainDashboardController2 dashBoardController = (MainDashboardController2) loader.getController();
+            dashBoardController.setPrimaryStage(this.primaryStage);
+            dashBoardController.setActive();
+            Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
+            primaryStage.setScene(scene);
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

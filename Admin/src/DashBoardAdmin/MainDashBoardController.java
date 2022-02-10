@@ -1,7 +1,7 @@
 package DashBoardAdmin;
 
+import DashBoardAdmin.onlineAdminsComponent.OnlineAdminsController;
 import api.HttpStatusUpdate;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,7 +15,7 @@ public class MainDashBoardController implements Closeable, HttpStatusUpdate {
 
     private Stage primaryStage;
     @FXML Parent onlineAdminsComponents;
-    @FXML private OnlineAdminsComponent onlineAdminsComponentsController;
+    @FXML private OnlineAdminsController onlineAdminsComponentsController;
     @FXML private DashBoardButtonColum dashBoardButtonColumController;
 
     private void setMainPanelTo() {

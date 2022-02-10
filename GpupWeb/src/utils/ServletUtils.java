@@ -31,9 +31,9 @@ public class ServletUtils {
 
 		synchronized (userManagerLock) {
 
-			//if (servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME) == null) {
+			if (servletContext.getAttribute(GRAPH_MANAGER_ATTRIBUTE_NAME) == null) {
 				servletContext.setAttribute(GRAPH_MANAGER_ATTRIBUTE_NAME, new GraphManager());
-			//}
+			}
 		}
 		return (GraphManager) servletContext.getAttribute(GRAPH_MANAGER_ATTRIBUTE_NAME);
 	}

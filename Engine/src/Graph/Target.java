@@ -3,6 +3,7 @@ package Graph;
 import GpupClassesEx3.GPUPDescriptor;
 import GpupClassesEx3.GPUPTarget;
 import errors.ErrorUtils;
+import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
 //import fileHandler.schemaXmlFile.GPUPDescriptor;
 //import fileHandler.schemaXmlFile.GPUPTarget;
@@ -44,7 +45,8 @@ public class Target implements Serializable {
     private Integer totalDependsOn = 0;
     private Integer totalRequiredFor = 0;
     private Integer totalSerialSets = 0;
-    private CheckBox remark = new CheckBox();
+
+   // private CheckBox remark = new CheckBox(); //todo this is the bug will we upload the file, Message error not on fx application thread.
 
     public Integer getTotalSerialSets() {
         return totalSerialSets;
@@ -275,7 +277,7 @@ public class Target implements Serializable {
     }
 
 
-    public CheckBox getRemark() {return remark;}
+    public CheckBox getRemark() {return  null; } //remark;}
 
     public void setTotalRequiredFor(Integer totalRequiredFor) {
         this.totalRequiredFor = totalRequiredFor;

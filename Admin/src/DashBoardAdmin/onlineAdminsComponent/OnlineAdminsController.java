@@ -1,4 +1,4 @@
-package DashBoardAdmin;
+package DashBoardAdmin.onlineAdminsComponent;
 
 import api.HttpStatusUpdate;
 import javafx.application.Platform;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class OnlineAdminsComponent implements Closeable {
+public class OnlineAdminsController implements Closeable {
 
     @FXML private ListView<String> adminsListView;
     private Timer timer;
@@ -25,7 +25,7 @@ public class OnlineAdminsComponent implements Closeable {
     private final BooleanProperty autoUpdate;
 
 
-    public OnlineAdminsComponent() {
+    public OnlineAdminsController() {
         autoUpdate = new SimpleBooleanProperty(true);
         totalUsers = new SimpleIntegerProperty();
     }

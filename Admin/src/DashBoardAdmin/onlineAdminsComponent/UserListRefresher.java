@@ -1,4 +1,4 @@
-package DashBoardAdmin;
+package DashBoardAdmin.onlineAdminsComponent;
 
 import javafx.beans.property.BooleanProperty;
 import okhttp3.Call;

@@ -1,6 +1,6 @@
 package main;
 
-import DashBoardAdmin.DashBoardButtonColum;
+
 import DashBoardAdmin.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,7 +20,7 @@ import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
-import uploadFileView.UploadFileViewController;
+import uploadGraphPane.UploadPaneController;
 import util.Constants;
 import util.http.HttpClientUtil;
 
@@ -34,7 +34,6 @@ public class MainAdminController {
     @FXML private Button loginButton;
     @FXML private Label errorMessageLabel;
     private Stage primaryStage;
-    private MainDashBoardController dashBoardController;
 
     private final StringProperty errorMessageProperty = new SimpleStringProperty();
 
@@ -127,6 +126,8 @@ public class MainAdminController {
             MainDashboardController2 dashBoardController = (MainDashboardController2) loader.getController();
             dashBoardController.setPrimaryStage(this.primaryStage);
             dashBoardController.setActive();
+            dashBoardController.setUserName(userNameTextField.getText());
+            dashBoardController.initComponents();
             Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
             primaryStage.setScene(scene);
         } catch (IOException ioException) {
@@ -134,22 +135,14 @@ public class MainAdminController {
         }
     }
 
-    private void testUploadFile() throws IOException {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardAdmin/DashBoardButtonColum.fxml"));
-        Parent load = loader.load();
-        DashBoardButtonColum dashBoardButtonColumController = (DashBoardButtonColum) loader.getController();
-        Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
-        primaryStage.setScene(scene);
-    }
 
     public void switchToUploadFileView(){
         try {
 
             // This takes us to gpup part 2 home page
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/uploadFileView/uploadFileView.fxml")); // todo to move path to constants!
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/uploadGraphPane/uploadFileView.fxml")); // todo to move path to constants!
             Parent load = loader.load();
-            UploadFileViewController uploadFileViewController = (UploadFileViewController) loader.getController();
+            UploadPaneController uploadFileViewController = (UploadPaneController) loader.getController();
             Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
             primaryStage.setScene(scene);
         }catch (IOException e) {

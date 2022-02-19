@@ -1,9 +1,11 @@
 package WhatIfComponent;
 
 import AnimationComponent.SkinsUtils;
+import DashBoardAdmin.MainDashboardController2;
 import DataManager.BackDataManager;
 import Graph.Target;
 import errors.ErrorUtils;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,11 +17,21 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
+import transferGraphData.AllGraphInfo;
+import transferGraphData.TargetInfo;
+import util.AlertMessage;
+import util.Constants;
+import util.http.HttpClientUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
+
+import static util.Constants.GSON_INSTANCE;
 
 public class WhatIfController {
 
@@ -30,20 +42,21 @@ public class WhatIfController {
     @FXML private TableColumn<String, String> resTable;
     @FXML private TableView<String> tableView;
     private BackDataManager bDM;
-    private List<Target> targets;
-    private Set<List<Target>> resTargets;
+    private AllGraphInfo allGraphInfo;
+    private List<TargetInfo> targets;
+    private Set<List<TargetInfo>> resTargets = new HashSet<>();
     private String backroundColor = new String();
     private Paint textColor;
     private List<String> resPaths = new ArrayList<>();
 
 
-    public void init(BackDataManager other){
+    public void init(AllGraphInfo allGraphInfo){
 
         // remove extra unneeded column
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        this.bDM = other;
-        this.targets = other.getAllTargets();
+        this.allGraphInfo = allGraphInfo;
+        this.targets = allGraphInfo.getTargetInfoList();
 
         this.buttons = Arrays.asList(this.findButton);
 
@@ -58,15 +71,13 @@ public class WhatIfController {
 
         tableView.setDisable(false);
 
-        this.convertToStringPath();
-
-        this.initResTable();
     }
 
     private void convertToStringPath() {
 
+
         this.resPaths.clear();
-        for(List<Target> targets : this.resTargets ) {
+        for(List<TargetInfo> targets : this.resTargets ) {
             String path = new String();
             if(dependenciesType.getValue().equals("Depends On")) {
                 for (int i = 0; i < targets.size(); i++) {
@@ -102,13 +113,64 @@ public class WhatIfController {
     private void initFindButtonNeededData() throws ErrorUtils {
 
         if(dependenciesType.getValue() != null && !dependenciesType.getValue().isEmpty() && targetListButton.getValue() != null && !targetListButton.getValue().isEmpty()) {
-
+            String srcV = targetListButton.getValue();
             String relationshipType = dependenciesType.getValue() == "Depends On" ? "D" : "R";
+            String finalUrl = HttpUrl
+                    .parse(Constants.WHAT_IF_REQUEST)
+                    .newBuilder()
+                    .addQueryParameter("src", srcV)
+                    .addQueryParameter("relationship",relationshipType)
+                    .addQueryParameter("graphname", MainDashboardController2.currGraphName)
+                    .build()
+                    .toString();
 
-            this.resTargets = this.bDM.whatIf(targetListButton.getValue(), relationshipType);
+            // make a request
+            HttpClientUtil.runAsync(finalUrl, new Callback() {
+
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+                    Platform.runLater(() ->
+                            ErrorUtils.makeJavaFXCutomAlert("We failed, server problem")
+                    );
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    if (response.code() != 200) {
+                        String responseBody = response.body().string();
+
+                        Platform.runLater(() ->
+                                ErrorUtils.makeJavaFXCutomAlert(responseBody)
+                        );
+                        System.out.println("we failed " + response.code());
+
+                    } else { // the code is 200
+                        String jsonString = response.body().string();
+                        TargetInfo[][] res = GSON_INSTANCE.fromJson(jsonString, TargetInfo[][].class);
+                        convertResToCollection(res);
+                        convertToStringPath();
+                        Platform.runLater(()-> initResTable() );
+                        System.out.println("we succeeded " + response.code());
+                    }
+                }
+            });
 
         }
+        else{
+            ErrorUtils.makeJavaFXCutomAlert("Please choose source ,destination and relationship.");
+        }
+            //this.resTargets = this.bDM.whatIf(targetListButton.getValue(), relationshipType);
+
     }
+
+    private void convertResToCollection(TargetInfo[][] res) {
+        this.resTargets.clear();
+        for(TargetInfo[] arr : res){
+            this.resTargets.add(Arrays.asList(arr));
+        }
+    }
+
 
     private void initDependenciesTypeButton() {
 
@@ -121,7 +183,8 @@ public class WhatIfController {
 
     private void initTargetListButton() {
 
-        Set<String> tNames = Target.getTargetNamesFrom(this.targets);
+        Set<String> tNames = new HashSet<>();
+        this.targets.stream().forEach((targetInfo) -> tNames.add(targetInfo.getName()));
 
         ObservableList<String> data = FXCollections.observableArrayList(tNames);
 

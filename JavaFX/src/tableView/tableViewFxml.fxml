@@ -18,7 +18,6 @@
             <TableColumn fx:id="dependsOnColumn" prefWidth="73.0" text="Total &#10;depends on" />
             <TableColumn fx:id="requiredForColumn" prefWidth="107.0" text="Total &#10;required for&#10;" />
             <TableColumn fx:id="infoColumn" prefWidth="83.0" text="Info" />
-            <TableColumn fx:id="serialSetColumn" prefWidth="111.0" text="Num of &#10;serial sets" />
          </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

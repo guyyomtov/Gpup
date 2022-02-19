@@ -29,7 +29,7 @@ public class ServletUtils {
 
 	public static GraphManager getGraphManager(ServletContext servletContext) {
 
-		synchronized (userManagerLock) {
+		synchronized (graphManagerLock) {
 
 			if (servletContext.getAttribute(GRAPH_MANAGER_ATTRIBUTE_NAME) == null) {
 				servletContext.setAttribute(GRAPH_MANAGER_ATTRIBUTE_NAME, new GraphManager());

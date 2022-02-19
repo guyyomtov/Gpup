@@ -19,6 +19,8 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import tableView.TableController;
+import transferGraphData.AllGraphInfo;
+import transferGraphData.GraphInfo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -46,6 +48,7 @@ public class GraphInfoController {
     private BackDataManager bDM = new BackDataManager();
     private AnimationController aniController;
     private ImageView graphizImageView;
+    private AllGraphInfo allGraphInfo;
 
 
     public void initGraphInfo() throws IOException {
@@ -55,10 +58,9 @@ public class GraphInfoController {
             this.tableComponentController.getTableView().getItems().clear();
         }
 
-        this.tableComponentController.initTable(this.bDM.getAllTargets());
+        this.tableComponentController.initTable(this.allGraphInfo.getTargetInfoList());
         this.tableComponentController.setGraphInfoController(this);
-        this.initSummary();;
-        this.initChoiceBox();
+        this.initSummary();
         this.initBarChart();
 
         this.radioButtons = Arrays.asList(this.dependsOnButton, this.requiredForButton);
@@ -81,48 +83,25 @@ public class GraphInfoController {
         gridPane.add(animationView, 2,2);
     }
 
-    private void initChoiceBox() {
-        this.choiceBoxSerialSets.getItems().clear();
-        Map<String, Set<Target>> serialSets = this.bDM.getSerialSets();
-        Set<String> namesOfSerialSets = serialSets.keySet();
-        String[] names = namesOfSerialSets.toArray(new String[0]);
-        this.choiceBoxSerialSets.getItems().addAll(names);
-        this.choiceBoxSerialSets.setOnAction(this::getNames);
-    }
-
-    public void getNames(ActionEvent event){
-
-        // get data
-        Map<String, Set<Target>> serialSets = this.bDM.getSerialSets();
-        Set<Target> inSerial = serialSets.get(this.choiceBoxSerialSets.getValue());
-
-        // clear last serial set from ui
-        this.resultOfChoiceBox.setText("");
-
-        // give new serial set data to label
-        for(Target target: inSerial)
-        {
-            this.resultOfChoiceBox.setText(this.resultOfChoiceBox.getText() + target.getName() + " ");
-            this.aniController.setSquareText(this.resultOfChoiceBox.getText());
-        }
-    }
 
     private void initSummary() {
-        summaryTable.setText("Total targets: " + bDM.getAllTargets().size()
+        GraphInfo graphInfo = this.allGraphInfo.getGraphInfo();
+        summaryTable.setText("Total targets: " + graphInfo.getTotalTargets()
         );
-        summaryBy.setText(    "Independents: " + bDM.getNumOfIndependents() + " Leaves: " + bDM.getNumOfLeafs() +
-                " Middles: " + bDM.getNumOfMiddle() + " Roots: " + bDM.getNumOfRoots() + ".");
+        summaryBy.setText(    "Independents: " + graphInfo.getTotalIndependents()+ " Leaves: " + graphInfo.getTotalLeaf() +
+                " Middles: " + graphInfo.getTotalMiddles() + " Roots: " + graphInfo.getTotalRoots() + ".");
     }
 
     private void initBarChart()
     {
+        GraphInfo graphInfo = allGraphInfo.getGraphInfo();
         barChart.getData().clear();
         XYChart.Series series = new XYChart.Series();
         series.setName("Target Level");
-        series.getData().add(new XYChart.Data<>("Independent", this.bDM.getNumOfIndependents()));
-        series.getData().add(new XYChart.Data<>("Leaf", this.bDM.getNumOfLeafs()));
-        series.getData().add(new XYChart.Data<>("Middle", this.bDM.getNumOfMiddle()));
-        series.getData().add(new XYChart.Data<>("Root", this.bDM.getNumOfRoots()));
+        series.getData().add(new XYChart.Data<>("Independent", graphInfo.getTotalIndependents()));
+        series.getData().add(new XYChart.Data<>("Leaf", graphInfo.getTotalLeaf()));
+        series.getData().add(new XYChart.Data<>("Middle", graphInfo.getTotalMiddles()));
+        series.getData().add(new XYChart.Data<>("Root", graphInfo.getTotalRoots()));
         barChart.getData().addAll(series);
 
     }
@@ -139,13 +118,6 @@ public class GraphInfoController {
         }
     }
 
-    public TableView<Target> getTable(){
-
-        if(tableIsFull)
-            return this.tableComponentController.getTableView();
-        else
-            return null;
-    }
 
     public TableController getTableComponentController(){ return this.tableComponentController;}
 
@@ -218,6 +190,14 @@ public class GraphInfoController {
         } catch (IOException e) {
             ErrorUtils.makeJavaFXCutomAlert(e.getMessage() + "please try giving another dir");
         }
+    }
+
+    public AllGraphInfo getAllGraphInfo() {
+        return allGraphInfo;
+    }
+
+    public void setAllGraphInfo(AllGraphInfo allGraphInfo) {
+        this.allGraphInfo = allGraphInfo;
     }
 }
 

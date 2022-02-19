@@ -15,6 +15,7 @@ import static constants.Constants.USERNAME;
 
 @WebServlet(name = "loginServlet", urlPatterns = {"/loginShortResponse"})
 public class LightweightLoginServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=UTF-8");
@@ -78,6 +79,5 @@ public class LightweightLoginServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);
         }
     }
-
 
 }

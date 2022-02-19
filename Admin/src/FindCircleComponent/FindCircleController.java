@@ -1,9 +1,11 @@
 package FindCircleComponent;
 
 import AnimationComponent.SkinsUtils;
+import DashBoardAdmin.MainDashboardController2;
 import DataManager.BackDataManager;
 import Graph.Target;
 import errors.ErrorUtils;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,11 +15,21 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
+import transferGraphData.AllGraphInfo;
+import transferGraphData.TargetInfo;
+import util.AlertMessage;
+import util.Constants;
+import util.http.HttpClientUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
+
+import static util.Constants.GSON_INSTANCE;
 
 public class FindCircleController {
 
@@ -26,61 +38,102 @@ public class FindCircleController {
     private List<Button> myButtons = new ArrayList<>();
     @FXML private TextArea resultPrintArea;
     private BackDataManager bDM;
-    private List<Target> targets;
+    private AllGraphInfo allGraphInfo;
+    private List<TargetInfo> targets;
     private Target curTarget;
     private String backroundColor = new String();
     private Paint textColor;
 
 
-    public void initFindCircleController(BackDataManager bDM){
+    public void initFindCircleController(AllGraphInfo allGraphInfo){
 
-        this.bDM = bDM;
+        this.allGraphInfo = allGraphInfo;
 
         this.myButtons = Arrays.asList(this.findCircleButton);
 
-        this.initTargetListButton(this.bDM.getAllTargets());
+        this.initTargetListButton(this.allGraphInfo.getTargetInfoList());
     }
 
     @FXML
     void findCircleAction(ActionEvent event) throws ErrorUtils {
 
-        String tName = targetList.getValue(), res= "";
-
+        String tName = targetList.getValue();
+        resultPrintArea.setDisable(false);
         if(tName != null) {
-            this.curTarget = Target.getTargetByName(tName, targets);
+            String finalUrl = HttpUrl
+                    .parse(Constants.FIND_CIRCLE)
+                    .newBuilder()
+                    .addQueryParameter("src", tName)
+                    .addQueryParameter("graphname", MainDashboardController2.currGraphName)
+                    .build()
+                    .toString();
 
-            resultPrintArea.setDisable(false);
+            // make a request
+            HttpClientUtil.runAsync(finalUrl, new Callback() {
 
-            try {
-                res = this.bDM.findCircle(curTarget.getName());
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Platform.runLater(() ->
+                            //  errorMessageProperty.set("Something went wrong: " + e.getMessage())
+                            System.out.println("server failed")
+                    );
+                    Platform.runLater(() ->
+                            ErrorUtils.makeJavaFXCutomAlert("We failed, server problem")
+                    );
+                }
 
-                // make string pretty
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    if (response.code() != 200) {
+                        String responseBody = response.body().string();
 
-                // take comma away in the end
-                res = res.replaceAll(",", "");
-                // trim string
-                res.trim();
+                        Platform.runLater(() ->
+                                ErrorUtils.makeJavaFXCutomAlert(responseBody)
+                        );
+                        System.out.println("we failed " + response.code());
 
-                // put arrows and
-                res = res.replaceAll(" ", " --> ");
+                    } else { // the code is 200
+                        String jsonString = response.body().string();
+                        String res = GSON_INSTANCE.fromJson(jsonString, String.class);
+                        if(res.equals(""))
+                            Platform.runLater(()-> AlertMessage.showUserSuccessAlert("The target " + tName +  " is not in circle."));
+                        else
+                            Platform.runLater(()-> makePrettyTheResultAndPrint(res));
+                        System.out.println("we succeeded " + response.code());
+                    }
+                }
+            });
 
-                // the last target name in the end
-                res += this.curTarget.getName();
-
-                resultPrintArea.setText(res);
-
-            } catch (ErrorUtils e) {
-                resultPrintArea.setText("");
-                ErrorUtils.makeJavaFXCutomAlert(e.getMessage());
-            }
+        }
+        else{
+            ErrorUtils.makeJavaFXCutomAlert("Please choose source ,destination and relationship.");
         }
     }
 
-    public void initTargetListButton(List<Target> targets){
+    private void makePrettyTheResultAndPrint(String res) {
+            // make string pretty
+            // take comma away in the end
+            res = res.replaceAll(",", "");
+            // trim string
+            res.trim();
+
+            // put arrows and
+            res = res.replaceAll(" ", " --> ");
+
+            // the last target name in the end
+            res += this.curTarget.getName();
+
+            resultPrintArea.setText(res);
+
+    }
+
+
+    public void initTargetListButton(List<TargetInfo> targets){
 
         this.targets = targets;
 
-        Set<String> tNames = Target.getTargetNamesFrom(targets);
+        Set<String> tNames = new HashSet<>();
+        targets.stream().forEach((target) -> tNames.add(target.getName()));
         ObservableList<String> data = FXCollections.observableArrayList(tNames);
 
         targetList.setItems(data);

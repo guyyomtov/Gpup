@@ -19,7 +19,8 @@
       <VBox prefHeight="748.0" prefWidth="132.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="uploadFileButton" mnemonicParsing="false" onAction="#uploadFileAction" prefHeight="37.0" prefWidth="133.0" text="Upload File" />
-            <Button fx:id="newAssignmentButton" disable="true" mnemonicParsing="false" onAction="#newAssignmentButtonAction" prefHeight="35.0" prefWidth="137.0" text="New Assignment" />
+            <Button fx:id="interrogatorButton" mnemonicParsing="false" onAction="#interrogatorAction" prefHeight="37.0" prefWidth="133.0" text="Interrogator" />
+            <Button fx:id="newAssignmentButton" mnemonicParsing="false" onAction="#newAssignmentButtonAction" prefHeight="35.0" prefWidth="137.0" text="New Assignment" />
          </children>
          <BorderPane.margin>
             <Insets left="10.0" top="20.0" />
@@ -45,11 +46,12 @@
       </MenuBar>
    </top>
    <center>
-      <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="1000.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+      <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="1000.0" prefWidth="1300.0" BorderPane.alignment="CENTER">
          <content>
-            <GridPane minHeight="800.0" minWidth="1200.0">
+            <GridPane minHeight="1000.0" minWidth="1800.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" prefWidth="750.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" prefWidth="1000.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="5.0" prefWidth="5.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
@@ -58,8 +60,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="500.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <fx:include fx:id="graphInfoTable" source="GraphsInfoTableComponent/graphInfoTableFxml.fxml" />
-                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="182.0" GridPane.columnIndex="1">
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="182.0" GridPane.columnIndex="2">
                      <children>
                         <Label prefHeight="21.0" prefWidth="100.0" text="All users">
                            <font>
@@ -69,6 +70,8 @@
                         <fx:include fx:id="onlineAdmin" source="onlineAdminsComponent/OnlineAdmins.fxml" GridPane.columnIndex="1" />
                      </children>
                   </VBox>
+                  <fx:include fx:id="graphInfoTable" source="GraphsInfoTableComponent/graphInfoTableFxml.fxml" />
+                  <fx:include fx:id="taskInfoTable" source="TaskInfoTableComponent/taskInfoTableComponentFxml.fxml" GridPane.rowIndex="2" />
                </children>
             </GridPane>
          </content>

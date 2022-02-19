@@ -57,7 +57,7 @@ public class WhatIfController {
     @FXML
     void findButtonAction(ActionEvent event) throws ErrorUtils {
 
-        this.initFindButtonNeededData();
+        //this.initFindButtonNeededData();
 
         tableView.setDisable(false);
 
@@ -102,16 +102,16 @@ public class WhatIfController {
 
 
 
-    private void initFindButtonNeededData() throws ErrorUtils {
-
-        if(dependenciesType.getValue() != null && !dependenciesType.getValue().isEmpty() && targetListButton.getValue() != null && !targetListButton.getValue().isEmpty()) {
-
-            String relationshipType = dependenciesType.getValue() == "Depends On" ? "D" : "R";
-
-            this.resTargets = this.bDM.whatIf(targetListButton.getValue(), relationshipType);
-
-        }
-    }
+//    private void initFindButtonNeededData() throws ErrorUtils {
+//
+//        if(dependenciesType.getValue() != null && !dependenciesType.getValue().isEmpty() && targetListButton.getValue() != null && !targetListButton.getValue().isEmpty()) {
+//
+//            String relationshipType = dependenciesType.getValue() == "Depends On" ? "D" : "R";
+//
+//            this.resTargets = this.bDM.whatIf(targetListButton.getValue(), relationshipType);
+//
+//        }
+//    }
 
     private void initDependenciesTypeButton() {
 

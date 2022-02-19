@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import Graph.*;
 import fileHandler.GraphizHHandler;
 import taskView.TaskController;
+import transferGraphData.TargetInfo;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -22,9 +23,11 @@ import javax.xml.bind.Unmarshaller;
 
 public class BackDataManager implements DataManager {
 
+    private String userNameThatUploadTheCurGraph;
     private Graph graph;
     private Map<String, Set<Target>> mTypeToTargets = new HashMap<String, Set<Target>>();
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "GpupClassesEx3";
+    private List<TargetInfo> targetInfoList = new ArrayList<>();
 
     private TaskController taskController;
 
@@ -57,6 +60,8 @@ public class BackDataManager implements DataManager {
                     this.graph.updateTotalDependenciesAndSerialSets();
 
                     this.graph.setGraphName(handlerFile.getGraphName());
+
+                    this.graph.setTasksAndPricing(handlerFile.getTasksAndPricing());
 
                     this.mTypeToTargets = this.makeMap(this.graph.getAllTargets());
 
@@ -225,9 +230,16 @@ public class BackDataManager implements DataManager {
         }catch (ErrorUtils e){throw e;}
     }
 
-    public Set<List<Target>> whatIf(String name, String connection) throws ErrorUtils {
+    public Set<List<TargetInfo>> whatIf(String name, String connection) throws ErrorUtils {
         try {
-            return this.graph.whatIf(name, connection);
+            Set<List<Target>> whatIfRes = this.graph.whatIf(name, connection);
+            Set<List<TargetInfo>> whatIfResAfterConvert = new HashSet<>();
+            for(List<Target> targets : whatIfRes){
+                List<TargetInfo> targetsInfo = new ArrayList<>();
+                this.createListOfTargetInfo(targets, targetsInfo);
+                whatIfResAfterConvert.add(targetsInfo);
+            }
+            return whatIfResAfterConvert;
         }catch(ErrorUtils e){throw e;}
     }
 
@@ -259,5 +271,78 @@ public class BackDataManager implements DataManager {
 
     public void stopProcess() {
         this.gpupTask.cancelTask();
+    }
+
+    public void setUserNameThatUploadTheCurGraph(String userNameThatUploadTheCurGraph) {
+        this.userNameThatUploadTheCurGraph = userNameThatUploadTheCurGraph;
+    }
+
+    public String getUserNameThatUploadTheCurGraph() {
+        return userNameThatUploadTheCurGraph;
+    }
+
+    public List<TargetInfo> convertTargetsToDtoClass() {
+        List<Target> targets = this.graph.getAllTargets();
+        this.createListOfTargetInfo(targets, this.targetInfoList);
+        Map<String, TargetInfo> nameToTargetInfo = this.makeMapToTargetInfo();
+        //this.addDependencies(targets, nameToTargetInfo, "dependsOn");
+        //this.addDependencies(targets, nameToTargetInfo, "requiredFor");
+        return this.targetInfoList;
+    }
+
+    private Map<String, TargetInfo> makeMapToTargetInfo() {
+        Map<String, TargetInfo> nameToTargetInfo = new HashMap<>();
+        for(TargetInfo targetInfo : this.targetInfoList){
+            nameToTargetInfo.put(targetInfo.getName(), targetInfo);
+        }
+        return nameToTargetInfo;
+    }
+
+    // not in used maybe in the future when I put List of Target info in target info the json throw exception of stack overflow..
+    private void addDependencies(List<Target> targets, Map<String, TargetInfo> nameToTargetInfo, String dependenciesType) {
+            List<TargetInfo> dependenciesForTargetInfo = new ArrayList<>();
+            List<Target> dependenciesForTarget = new ArrayList<Target>();
+            Map<String, Target> nameToTarget = this.graph.getmNameToTarget();
+            for (TargetInfo targetInfo : targetInfoList) {
+                Target currTarget = nameToTarget.get(targetInfo.getName());
+                if (dependenciesType.equals("dependsOn")) {
+                   // dependenciesForTargetInfo = targetInfo.getDependsOn();
+                    dependenciesForTarget = currTarget.getDependsOn();
+                } else { // its requiredFor
+                   // dependenciesForTargetInfo = targetInfo.getRequiredFor();
+                    dependenciesForTarget = currTarget.getRequiredFor();
+                }
+                for (Target target : dependenciesForTarget) {
+                    dependenciesForTargetInfo.add(nameToTargetInfo.get(target.getName()));
+                }
+            }
+
+    }
+
+    private void createListOfTargetInfo(List<Target> targets, List<TargetInfo> targetInfoList) {
+        for(Target target : targets){
+            TargetInfo targetInfo = new TargetInfo();
+            targetInfo.setName(target.getName());
+            targetInfo.setType(target.getTargetType().toString());
+            targetInfo.setTotalDependsOn(target.getDependsOn().size());
+            targetInfo.setTotalRequiredFor(target.getRequiredFor().size());
+            targetInfo.setInformation(target.getGeneralInfo());
+            targetInfoList.add(targetInfo);
+        }
+    }
+
+    public List<TargetInfo> getTargetInfoList(){return this.targetInfoList; }
+
+    public List<String> getTasksAndPricing(){
+        return this.graph.getTasksAndPricing();
+    }
+
+    public String getTasksAndPricingAndConvertToString() {
+        String res = new String("");
+        List<String> taskAndPricing = this.graph.getTasksAndPricing();
+        for(String currTaskAndPrice : taskAndPricing){
+            res += currTaskAndPrice + "\n";
+        }
+        return res;
     }
 }

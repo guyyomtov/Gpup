@@ -44,6 +44,10 @@ public class TaskController {
     @FXML private Button startButton;
     @FXML private Button pauseButton;
     @FXML private Button resumeButton;
+
+    @FXML public CheckBox whatIfCheckBox;
+    @FXML public RadioButton requiredForButton;
+    @FXML public RadioButton dependsOnButton;
     private List<Button> buttons = new ArrayList<>();
     @FXML private Parent tableProcess;
     @FXML private TableForProcessController tableProcessController;
@@ -368,5 +372,9 @@ public class TaskController {
             this.gridPaneSettingTab.setBackground(new Background(new BackgroundFill(Color.gray(0.2), null, null)));
         else
             this.gridPaneSettingTab.setBackground(new Background(new BackgroundFill(null, null, null)));
+    }
+
+    @FXML
+    public void whatIfCheckBoxAction(ActionEvent actionEvent) {
     }
 }

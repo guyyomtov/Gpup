@@ -82,7 +82,7 @@ public class TableController {
         tableView.getSortOrder().add(levelColumn);
         tableView.sort();
         levelColumn.setSortType(TableColumn.SortType.DESCENDING);*/
-        this.initActionOnCheckBoxes(targets);
+       // this.initActionOnCheckBoxes(targets); todo to init the checkboxes
     }
 
     private void makeColumsSurtable() {
@@ -103,32 +103,32 @@ public class TableController {
         this.serialSetColumn.setSortType(TableColumn.SortType.ASCENDING);
     }
 
-    private void initActionOnCheckBoxes(List<Target> targets) {
-        for(Target target : targets){
-            CheckBox currCheckBox = target.getRemark();
-            currCheckBox.setOnAction(event -> checkBoxAction(target));
-        }
-    }
+//    private void initActionOnCheckBoxes(List<Target> targets) {
+//        for(Target target : targets){
+//            CheckBox currCheckBox = target.getRemark();
+//            currCheckBox.setOnAction(event -> checkBoxAction(target));
+//        }
+//    }
     //this action only for if what if selected.
-    private void checkBoxAction(Target target){
-
-        boolean whatIfSelected = graphInfoController.getWhatIfCheckBox().isSelected();
-        boolean dependsOnSelected = graphInfoController.getDependsOnRadioButton().isSelected();
-        boolean isAlreadySelected = target.getRemark().isSelected();
-        if(!isAlreadySelected)
-            return;
-        if(whatIfSelected){
-            Set<List<Target>> allPath;
-            try {
-                if (dependsOnSelected)
-                    allPath = this.graphInfoController.getbDM().whatIf(target.getName(), "D");
-                else // its requiredFor
-                    allPath = this.graphInfoController.getbDM().whatIf(target.getName(), "R");
-                this.updateCheckBoxesWith(allPath);
-            }catch(ErrorUtils e){}
-        }
-
-    }
+//    private void checkBoxAction(Target target){
+//
+//        boolean whatIfSelected = graphInfoController.getWhatIfCheckBox().isSelected();
+//        boolean dependsOnSelected = graphInfoController.getDependsOnRadioButton().isSelected();
+//        boolean isAlreadySelected = target.getRemark().isSelected();
+//        if(!isAlreadySelected)
+//            return;
+//        if(whatIfSelected){
+//            Set<List<Target>> allPath;
+//            try {
+//                if (dependsOnSelected)
+//                    allPath = this.graphInfoController.getbDM().whatIf(target.getName(), "D");
+//                else // its requiredFor
+//                    allPath = this.graphInfoController.getbDM().whatIf(target.getName(), "R");
+//                this.updateCheckBoxesWith(allPath);
+//            }catch(ErrorUtils e){}
+//        }
+//
+//    }
 
     private void updateCheckBoxesWith(Set<List<Target>> allPath) {
 

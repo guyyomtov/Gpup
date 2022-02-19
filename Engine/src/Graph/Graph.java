@@ -15,7 +15,7 @@ public class Graph implements Serializable {
     private Map<String, Target> mNameToTarget = new HashMap<String, Target>();
     private Map<String, Set<Target>> mSerialSets = new HashMap<>();
     private String graphName;
-
+    private List<String> tasksAndPricing;
 
     public Graph(List<Target> targets, Map<String, Target> mNameToTarget, Map<String, Set<Target>> mSerialSets) throws ErrorUtils, IOException {
 
@@ -79,12 +79,12 @@ public class Graph implements Serializable {
                 {
                     return this.pathFinder.findAllPaths(currTarget.getName(), res.get(0));
                 }
-                else throw new ErrorUtils("The target " + targetName + " doesn't in circle.");
+                else return ""; // the server will know how to handle with this its means the target doesn't in circle
             }
-            else throw new ErrorUtils("The target " + targetName + " isn't in a circle.");
+            else return "";
         }
         else
-            throw new ErrorUtils(ErrorUtils.invalidTarget("The target " + targetName + " doesn't exist"));
+            return "";
 
     }
 
@@ -291,5 +291,13 @@ public class Graph implements Serializable {
 
     public void setGraphName(String graphName) {
         this.graphName = graphName;
+    }
+
+    public void setTasksAndPricing(List<String> tasksAndPricing) {
+        this.tasksAndPricing = tasksAndPricing;
+    }
+
+    public List<String> getTasksAndPricing() {
+        return tasksAndPricing;
     }
 }

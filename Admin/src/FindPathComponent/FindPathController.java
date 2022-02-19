@@ -1,9 +1,12 @@
 package FindPathComponent;
 
 import AnimationComponent.SkinsUtils;
+import DashBoardAdmin.MainDashboardController2;
 import DataManager.BackDataManager;
 import Graph.Target;
+import api.HttpStatusUpdate;
 import errors.ErrorUtils;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,13 +17,24 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
+import sun.net.www.http.HttpClient;
+import transferGraphData.AllGraphInfo;
+import transferGraphData.TargetInfo;
+import util.AlertMessage;
+import util.Constants;
+import util.http.HttpClientUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
-public class FindPathController {
+import static util.Constants.GSON_INSTANCE;
+
+public class FindPathController implements HttpStatusUpdate {
 
     @FXML private ChoiceBox<String> srcTargetButton;
     @FXML private ChoiceBox<String> dstTargetButton;
@@ -30,17 +44,18 @@ public class FindPathController {
     @FXML private ListView<String> pathListView;
     @FXML private Label thereIsNoPathMessege;
     private BackDataManager bDM;
-    private List<Target> targets;
+    private AllGraphInfo allGraphInfo;
+    private List<TargetInfo> targets;
     private List<String> resPaths = new ArrayList<>();
     private String backroundColor = new String();
     private Paint textColor;
 
 
 
-    public void init(BackDataManager other){
+    public void init(AllGraphInfo allGraphInfo){
 
-        this.bDM = other;
-        this.targets = other.getAllTargets();
+        this.allGraphInfo = allGraphInfo;
+        this.targets = allGraphInfo.getTargetInfoList();
 
         this.buttons = Arrays.asList(this.findPathButton);
 
@@ -53,7 +68,6 @@ public class FindPathController {
 
         this.initDataNeededForPath();
 
-        this.initViewPathTable();
     }
 
     private void initViewPathTable() {
@@ -68,7 +82,6 @@ public class FindPathController {
     }
 
     private void initDataNeededForPath() throws ErrorUtils {
-
         // clean last data
         this.resPaths.clear();
 
@@ -77,18 +90,65 @@ public class FindPathController {
         if(srcV != null && !srcV.isEmpty() && dstV != null && !dstV.isEmpty() && relV != null && !relV.isEmpty()){
 
             String relationShipNeededSyntax = (relV == "Depends On" ? "D" : "R");
-            String allPath = this.bDM.getPathFromTargets(srcV, dstV, relationShipNeededSyntax);
+            String allPath = new String();
+            String finalUrl = HttpUrl
+                    .parse(Constants.FIND_PATH)
+                    .newBuilder()
+                    .addQueryParameter("src", srcV)
+                    .addQueryParameter("dest", dstV)
+                    .addQueryParameter("relationship",relationShipNeededSyntax)
+                    .addQueryParameter("graphname", MainDashboardController2.currGraphName)
+                    .build()
+                    .toString();
 
-            if(allPath.equals("")){
+            // make a request
+            HttpClientUtil.runAsync(finalUrl, new Callback() {
 
-                this.resPaths.clear();
-                ErrorUtils.makeJavaFXCutomAlert("There is no path between " + srcV + " to " + dstV + "\n" +  " with the given connection " + this.relationshipButton.getValue());
-                return;
-            }
-            else {
-                this.thereIsNoPathMessege.setText("");
-                this.initResPaths(allPath);
-            }
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Platform.runLater(() ->
+                          //  errorMessageProperty.set("Something went wrong: " + e.getMessage())
+                            System.out.println("server failed")
+                    );
+                    Platform.runLater(() ->
+                            ErrorUtils.makeJavaFXCutomAlert("We failed, server problem")
+                    );
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    if (response.code() != 200) {
+                        String responseBody = response.body().string();
+
+                        Platform.runLater(() ->
+                                ErrorUtils.makeJavaFXCutomAlert(responseBody)
+                        );
+                        System.out.println("we failed " + response.code());
+
+                    } else { // the code is 200
+                        String jsonString = response.body().string();
+                        String allPath = GSON_INSTANCE.fromJson(jsonString, String.class);
+
+                        if(allPath.equals("")){
+                            resPaths.clear();
+                            Platform.runLater(()->  AlertMessage.showUserSuccessAlert("There is no path between " + srcV + " to " + dstV + "\n" +  " with the given connection "
+                                    + relationshipButton.getValue()) );
+                            return;
+                        }
+                        else // there is path {
+                            Platform.runLater(() -> {
+                                thereIsNoPathMessege.setText("");
+                                initResPaths(allPath);
+                                initViewPathTable();
+                            });
+                            System.out.println("we succeeded " + response.code());
+                        }
+                    }
+            });
+
+        }
+        else{
+            ErrorUtils.makeJavaFXCutomAlert("Please choose source ,destination and relationship.");
         }
     }
 
@@ -142,7 +202,8 @@ public class FindPathController {
 
     private void initTargetsButtons() {
 
-        Set<String> tNames = Target.getTargetNamesFrom(this.targets);
+        Set<String> tNames = new HashSet<>();
+        this.targets.stream().forEach((targetInfo) -> tNames.add(targetInfo.getName()));
 
         ObservableList<String> data = FXCollections.observableArrayList(tNames);
 
@@ -237,6 +298,11 @@ public class FindPathController {
     }
 
     private void setBackRoundColors(SkinsUtils.Colors enumWantedColor) {
+    }
+
+    @Override
+    public void updateHttpLine(String line) {
+
     }
 }
 

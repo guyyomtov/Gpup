@@ -22,6 +22,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import tableForProcess.TableForProcessController;
+import tableView.TableController;
 import taskView.compilationComponent.CompilationController;
 import taskView.simulationComponent.SimulationComponentController;
 
@@ -53,6 +54,10 @@ public class TaskController {
     @FXML ProgressBar progressBar;
     @FXML Button stopButton;
     @FXML Label taskIsFinishedLabel;
+
+    @FXML Parent targetsInfoTable;
+    @FXML TableController targetsInfoTableController;
+
     private CompilationController compilationController;
     private Parent compilationComponent;
 

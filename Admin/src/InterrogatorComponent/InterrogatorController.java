@@ -18,6 +18,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import transferGraphData.AllGraphInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class InterrogatorController {
     @FXML private BorderPane mainBoarderPain;
     @FXML private ChoiceBox<String> skinsChoiceBox;
     private BackDataManager bDM;
+    private AllGraphInfo allGraphInfo;
     private String wantedColor = new String();
     private Paint textColor = Color.BLACK;
     private Parent findCircleView;
@@ -47,9 +49,9 @@ public class InterrogatorController {
     private WhatIfController wIController;
 
 
-    public void init(BackDataManager other) throws IOException {
+    public void init(AllGraphInfo allGraphInfo) throws IOException {
 
-        this.bDM = other;
+        this.allGraphInfo= allGraphInfo;
 
        // this.initSkinsButton();
 
@@ -80,7 +82,7 @@ public class InterrogatorController {
         this.whatIfView = loader.load();
         this.wIController = loader.getController();
 
-        this.wIController.init(this.bDM);
+        this.wIController.init(this.allGraphInfo);
     }
 
     private void initPathComponent() throws IOException {
@@ -90,7 +92,7 @@ public class InterrogatorController {
         this.findPathView = loader.load();
         this.fPController = loader.getController();
 
-        this.fPController.init(this.bDM);
+        this.fPController.init(this.allGraphInfo);
     }
 
     private void initCircleComponenet() throws IOException {
@@ -102,7 +104,7 @@ public class InterrogatorController {
 
         this.fCController = loader.getController();
 
-        this.fCController.initFindCircleController(this.bDM);
+        this.fCController.initFindCircleController(this.allGraphInfo);
     }
 
     @FXML

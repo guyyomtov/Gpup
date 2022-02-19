@@ -1,5 +1,6 @@
 package fileHandler;
 
+import GpupClassesEx3.GPUPConfiguration;
 import GpupClassesEx3.GPUPDescriptor;
 import GpupClassesEx3.GPUPTarget;
 import GpupClassesEx3.GPUPTargetDependencies;
@@ -15,6 +16,7 @@ public class HandlerXmlFile {
     private List<Target> targets = new ArrayList<Target>();
     private Map<String, Set<Target>> nameToSerialSet = new HashMap<String, Set<Target>>();
     private String graphName = new String();
+    private List<String> tasksAndPricing;
 
     public void buildMe(GPUPDescriptor information) throws ErrorUtils {
 
@@ -35,6 +37,8 @@ public class HandlerXmlFile {
 
         try {
 
+            this.tasksAndPricing = this.getTaskAndPricingFromXML(information);
+
             this.targets = Target.CreateTargetsFromXmlInfo(information, size);
 
             this.mNameToTarget = Target.initNameToTargetFrom(this.targets);
@@ -53,6 +57,17 @@ public class HandlerXmlFile {
            this.nameToSerialSet = Graph.initSerialSetsFrom(information, this.targets);
         }
         catch (ErrorUtils e) {throw e;}
+    }
+
+    private List<String> getTaskAndPricingFromXML(GPUPDescriptor information) {
+        List<String> tasksAndPricing = new ArrayList<>();
+        List<GPUPConfiguration.GPUPPricing.GPUPTask> gpupTasks = information.getGPUPConfiguration().getGPUPPricing().getGPUPTask();
+        for(GPUPConfiguration.GPUPPricing.GPUPTask gpupTask : gpupTasks){
+            String taskAndPrice = new String();
+            taskAndPrice = gpupTask.getName() + " " + String.valueOf(gpupTask.getPricePerTarget());
+            tasksAndPricing.add(taskAndPrice);
+        }
+        return tasksAndPricing;
     }
 
     public void getFromFileDependencies(List<GPUPTarget> gpupTargets) throws ErrorUtils {
@@ -141,4 +156,8 @@ public class HandlerXmlFile {
     public Map<String, Set<Target>> getNameToSerialSet() { return this.nameToSerialSet;}
 
     public String getGraphName() {return graphName;}
+
+    public List<String> getTasksAndPricing() {
+        return tasksAndPricing;
+    }
 }

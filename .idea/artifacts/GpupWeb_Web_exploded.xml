@@ -12,6 +12,7 @@
           <element id="library" level="project" name="google-gson-2" />
           <element id="library" level="project" name="okHttp" />
           <element id="artifact" artifact-name="Engine:jar" />
+          <element id="artifact" artifact-name="DTO:jar" />
         </element>
       </element>
     </root>

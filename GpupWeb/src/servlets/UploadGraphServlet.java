@@ -16,7 +16,6 @@ import static constants.Constants.GRAPH_PATH_NAME;
 @WebServlet(name = "uploadGraphServlet", urlPatterns = {"/uploadGraphShortResponse"})
 public class UploadGraphServlet extends HttpServlet {
 
-    private BackDataManager bDM = new BackDataManager();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -24,17 +23,21 @@ public class UploadGraphServlet extends HttpServlet {
 
 
         String absolutePath = request.getParameter(GRAPH_PATH_NAME);
+        String userName = request.getParameter("username");
         GraphManager graphManager = ServletUtils.getGraphManager(getServletContext());
 
         synchronized (this) {
 
+            BackDataManager bDM = new BackDataManager();
+
+            bDM.setUserNameThatUploadTheCurGraph(userName);
             // Check that the file is valid & add graph to DB
             try {
                 //This function CHECKS & STARTS a graph
-                this.bDM.checkFile(absolutePath);
+                bDM.checkFile(absolutePath);
 
                 // get cur graph
-                Graph curGraph = this.bDM.getGraph();
+                Graph curGraph = bDM.getGraph();
 
                 // check if graph was uploaded already
                 if(graphManager.graphExists(curGraph)) {
@@ -44,7 +47,7 @@ public class UploadGraphServlet extends HttpServlet {
                 else{
 
                     // add cur graph to graph manager
-                    graphManager.addGraph(curGraph);
+                    graphManager.addGraph(bDM);
 
                     response.setStatus(HttpServletResponse.SC_OK);
                 }
@@ -54,4 +57,5 @@ public class UploadGraphServlet extends HttpServlet {
             }
         }
     }
+
 }

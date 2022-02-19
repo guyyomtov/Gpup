@@ -29,6 +29,7 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import taskView.TaskController;
 import transferGraphData.AllGraphInfo;
+import transferGraphData.GraphInfo;
 import util.Constants;
 import util.http.HttpClientUtil;
 
@@ -43,6 +44,7 @@ import static util.Constants.GSON_INSTANCE;
 public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
 
+    private AllGraphInfo allGraphInfo;
     private Stage primaryStage;
     @FXML public Button interrogatorButton;
     @FXML private BorderPane MainBorderPane;
@@ -142,6 +144,10 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
         this.MainBorderPane.setCenter(this.taskView);
 
+        // get graph info
+        // give it to new task controller
+
+        // open it up (new window\cur window)
     }
 
     @FXML
@@ -244,7 +250,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
                 } else {
                     String jsonArrayOfAllGraphInfo = response.body().string();
-                    AllGraphInfo allGraphInfo = GSON_INSTANCE.fromJson(jsonArrayOfAllGraphInfo, AllGraphInfo.class);
+                    allGraphInfo = GSON_INSTANCE.fromJson(jsonArrayOfAllGraphInfo, AllGraphInfo.class);
                     Platform.runLater(() -> {
                         updateGraphInfoToComponents(allGraphInfo);
                     });
@@ -252,8 +258,6 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
                 }
             }
         });
-
-
     }
 
     // that user selected todo the toggle group doesnt work well!

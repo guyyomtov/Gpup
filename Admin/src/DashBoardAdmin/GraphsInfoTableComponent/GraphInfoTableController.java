@@ -141,9 +141,14 @@ public class GraphInfoTableController implements Closeable {
     }
 
     public void initRadioButton() {
-        this.graphInfoTable.getItems().stream().forEach((item) -> {
-            item.makeRadioButton();
-            item.setToggleGroup(this.toggleGroup);
-        });
+        for(GraphInfo graphInfo : this.graphInfoTable.getItems()){
+            graphInfo.makeRadioButton();
+            graphInfo.setToggleGroup(this.toggleGroup);
+        }
+
     }
+    public void deleteItems() {
+        this.graphInfoTable.getItems().clear();
+    }
+
 }

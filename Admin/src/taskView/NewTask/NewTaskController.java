@@ -59,22 +59,41 @@ public class NewTaskController {
         FXMLLoader loader;
 
         // start compilation component
-        loader = new FXMLLoader(getClass().getResource("/taskView/compilationControllerFxml.fxml"));
+        loader = new FXMLLoader(getClass().getResource("/taskView/compilationComponent/compilationControllerFxml.fxml"));
         this.compilationComponent = loader.load();
         this.compilationController = loader.getController();
 
         //start simulation component
-        loader = new FXMLLoader(getClass().getResource("/taskView/simulationComponentFxml.fxml"));
+        loader = new FXMLLoader(getClass().getResource("/taskView/simulationComponent/simulationComponentFxml.fxml"));
         this.simulationComponent = loader.load();
-        this.simulationComponent = loader.getController();
+        this.simulationController = loader.getController();
+        this.simulationController.initSimulation();
     }
 
-    @FXML void compilationRBOnAction(ActionEvent event) {
+    @FXML void compilationRBOnAction(ActionEvent event) throws ErrorUtils {
 
         // if compilation button is on, turn him off
 
         // check if simulation is an option
         // if simulation so: show simulation component
+
+
+        // if compilation button is on, turn him off
+        this.turnTheOtherOff(this.compilationRB);
+
+        // check if simulation is an option
+        if(thisProcessIsAvailable(COMPILATION)){
+
+            // if simulation so: show simulation component
+
+            // save data to members
+        }
+        else{
+
+            // process not available, send a message.
+            ErrorUtils.showUserErrorAlertJavaFX("Process not available.");
+        }
+
     }
 
     @FXML
@@ -100,9 +119,6 @@ public class NewTaskController {
 
     private void showSimulationComponent() {
 
-        // clear tile
-        this.gridPane.add(null, 1,1);
-
         // put new component there
         this.gridPane.add(this.simulationComponent, 1,1);
     }
@@ -112,7 +128,7 @@ public class NewTaskController {
         boolean isAvailable = false;
 
         // check if available
-        if(this.curGraphInfo.getGraphInfo().getTaskInfo().contains(processType.toLowerCase(Locale.ROOT)))
+        if(this.curGraphInfo.getGraphInfo().getTaskInfo().toLowerCase(Locale.ROOT).contains(processType.toLowerCase(Locale.ROOT)))
             isAvailable = true;
 
         return isAvailable;
@@ -140,6 +156,9 @@ public class NewTaskController {
     @FXML
     void sumbitButtonAction(ActionEvent event) {
 
+        // check valid data: valid name, data for process, user choose targets
+
+        // TODO make request of a new task
     }
 
     public void setMainBorderPane(BorderPane mainBorderPane) { this.mainBorderPane = mainBorderPane;}

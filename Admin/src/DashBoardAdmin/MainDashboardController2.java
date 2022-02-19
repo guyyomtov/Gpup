@@ -107,7 +107,6 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
             this.leftSideMenuForGraphView = loader.load();
             this.leftSideController = loader.getController();
             this.leftSideController.initComponents();
-            this.leftSideController.setMainBorderPane(this.MainBorderPane);
             this.leftSideController.setLeftSideMenuForGraphView(this.leftSideMenuForGraphView);
         } catch (IOException e) {
             e.printStackTrace();
@@ -177,10 +176,10 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
     }
 
     @FXML
-    void newAssignmentButtonAction(ActionEvent event) {
+    void newAssignmentButtonAction(ActionEvent event) throws ErrorUtils {
 
-        // show error if now graph was chosen
-            currGraphName = this.getGraphName();
+        // show error if no graph was chosen
+        currGraphName = this.getGraphName();
 
             //make url
             String finalUrl = HttpUrl

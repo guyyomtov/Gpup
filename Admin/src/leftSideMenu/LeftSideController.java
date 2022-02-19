@@ -1,8 +1,10 @@
 package leftSideMenu;
 
+import DashBoardAdmin.GraphsInfoTableComponent.GraphInfoTableController;
 import DashBoardAdmin.MainDashboardController2;
 import InterrogatorComponent.InterrogatorController;
 import graphInfoView.GraphInfoController;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,15 +18,11 @@ import java.io.IOException;
 
 public class LeftSideController {
 
-    @FXML private Button dashboardButton;
     @FXML private Button graphInfoButton;
     @FXML private Button InterrogatorButton;
-    @FXML private Button taskButton;
     private AllGraphInfo allGraphInfo;
 
     private BorderPane mainBorderPane;
-    private Node centerDashboard;
-    private Node leftSideDashboard;
     private MainDashboardController2 mainDashboardController;
 
     private GraphInfoController graphInfoController;
@@ -40,22 +38,12 @@ public class LeftSideController {
         this.mainBorderPane.setCenter(this.interrogatorView);
     }
 
-    @FXML
-    void dashboardButtonAction(ActionEvent event) {
-        this.mainBorderPane.setCenter(this.centerDashboard);
-        this.mainDashboardController.getGraphInfoTableController().initRadioButton();
-        this.mainBorderPane.setLeft(this.leftSideDashboard);
-    }
 
     @FXML
     void graphInfoAction(ActionEvent event) {
         this.mainBorderPane.setCenter(this.graphInfoView);
     }
 
-    @FXML
-    void taskButtonAction(ActionEvent event) {
-
-    }
 
     public void initComponents() {
         this.initGraphInfoComponent();
@@ -88,9 +76,7 @@ public class LeftSideController {
 
     public void setMainBorderPane(BorderPane mainBorderPane) {
         this.mainBorderPane = mainBorderPane;
-        this.centerDashboard = mainBorderPane.getCenter();
-        this.leftSideDashboard =mainBorderPane.getLeft();
-
+        this.mainBorderPane.setCenter(graphInfoView);
     }
 
     public void setAllGraphInfo(AllGraphInfo allGraphInfo) {
@@ -107,8 +93,8 @@ public class LeftSideController {
             this.graphInfoController.initGraphInfo();
             this.interrogatorController.init(this.allGraphInfo);
 
-            this.mainBorderPane.setCenter(this.graphInfoView);
-            this.mainBorderPane.setLeft(this.leftSideMenuForGraphView);
+//            this.mainBorderPane.setCenter(this.graphInfoView);
+//            this.mainBorderPane.setLeft(this.leftSideMenuForGraphView);
         }catch (Exception e){
             System.out.println("init graph info failed.");
         }
@@ -120,5 +106,10 @@ public class LeftSideController {
 
     public void setLeftSideMenuForGraphView(Node leftSideMenuForGraphView) {
         this.leftSideMenuForGraphView = leftSideMenuForGraphView;
+    }
+
+
+    public void setMainDashboardController(MainDashboardController2 mainDashboardController) {
+        this.mainDashboardController = mainDashboardController;
     }
 }

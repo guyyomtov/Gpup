@@ -199,6 +199,7 @@ public class GraphInfoController {
     public void setAllGraphInfo(AllGraphInfo allGraphInfo) {
         this.allGraphInfo = allGraphInfo;
     }
+    
 }
 
 

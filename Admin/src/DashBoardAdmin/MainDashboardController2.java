@@ -59,6 +59,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
     @FXML private TaskInfoTableController taskInfoTableController;
     @FXML private Parent onlineAdmin;
     @FXML private OnlineAdminsController onlineAdminController;
+
     public static String currGraphName;
 
     private String userName;
@@ -310,7 +311,9 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
     @FXML
     public void interrogatorAction(ActionEvent actionEvent) {
         //make url
-        currGraphName = this.getGraphName(); // todo there is a comment in this function fuck the toggle!
+        try {
+            currGraphName = this.getGraphName();
+        }catch (ErrorUtils e) { ErrorUtils.makeJavaFXCutomAlert(e.getMessage()); return; }
         String finalUrl = HttpUrl
                 .parse(Constants.GRAPHS_VIEW)
                 .newBuilder()
@@ -358,18 +361,28 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
         });
     }
 
-    private String getGraphName() {
+    private String getGraphName() throws ErrorUtils {
         try {
             String graphName = this.graphInfoTableController.getNameOfTheSelectedGraph();
             return graphName;
-        }catch (ErrorUtils e){ErrorUtils.makeJavaFXCutomAlert(e.getMessage());}
-        return "";
+        }catch (ErrorUtils e){
+            throw e;}
     }
 
     private void updateGraphInfoToComponents(AllGraphInfo allGraphInfo) {
         this.leftSideController.setAllGraphInfo(allGraphInfo);
         this.leftSideController.swapToGraphViewComponents();
+        this.makeNewGraphInfoStage();
+    }
 
+    private void makeNewGraphInfoStage() {
+        Stage stage = new Stage();
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(interrogatorView);
+        borderPane.setLeft(this.leftSideMenuForGraphView);
+        this.leftSideController.setMainBorderPane(borderPane);
+        stage.setScene(new Scene(borderPane, 800, 800));
+        stage.show();
     }
 
     public void setUserName(String userName) {

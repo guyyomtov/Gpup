@@ -14,7 +14,7 @@ public class GraphInfo {
     private Integer totalMiddles;
     private Integer totalRoots;
     private String taskInfo;
-    private Object radioButton = null;
+    private Object radioButton;
 
     public GraphInfo(){};
 

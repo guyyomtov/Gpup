@@ -43,6 +43,7 @@ public class LeftSideController {
     @FXML
     void dashboardButtonAction(ActionEvent event) {
         this.mainBorderPane.setCenter(this.centerDashboard);
+        this.mainDashboardController.getGraphInfoTableController().initRadioButton();
         this.mainBorderPane.setLeft(this.leftSideDashboard);
     }
 

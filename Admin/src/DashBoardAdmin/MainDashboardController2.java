@@ -57,6 +57,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
     @FXML private TaskInfoTableController taskInfoTableController;
     @FXML private Parent onlineAdmin;
     @FXML private OnlineAdminsController onlineAdminController;
+
     public static String currGraphName;
 
     private String userName;
@@ -211,11 +212,10 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
     public void interrogatorAction(ActionEvent actionEvent) {
         //make url
         currGraphName = this.getGraphName(); // todo there is a comment in this function fuck the toggle!
-        currGraphName = "Test";
         String finalUrl = HttpUrl
                 .parse(Constants.GRAPHS_VIEW)
                 .newBuilder()
-                .addQueryParameter("graphname", "Test"/*graphName*/)
+                .addQueryParameter("graphname", currGraphName)
                 .build()
                 .toString();
 
@@ -260,16 +260,12 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
         });
     }
 
-    // that user selected todo the toggle group doesnt work well!
     private String getGraphName() {
-        String graphName = this.graphInfoTableController.getNameOfTheSelectedGraph();
-        if(graphName.equals(""))
-            System.out.println("error");
-            //handle with error user should choose graph.
-           // throw new ErrorUtils("handle with error user should choose graph");
-        else
+        try {
+            String graphName = this.graphInfoTableController.getNameOfTheSelectedGraph();
             return graphName;
-        return "blabla"; // todo!
+        }catch (ErrorUtils e){ErrorUtils.makeJavaFXCutomAlert(e.getMessage());}
+        return "";
     }
 
     private void updateGraphInfoToComponents(AllGraphInfo allGraphInfo) {
@@ -300,7 +296,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
         }
     }
 
-    void initLeftSide() {
+    public void initLeftSide() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/leftSideMenu/leftSideMenuFxml.fxml"));
             this.leftSideMenuForGraphView = loader.load();
@@ -312,4 +308,6 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
             e.printStackTrace();
         }
     }
+
+    public GraphInfoTableController getGraphInfoTableController(){return this.graphInfoTableController;}
 }

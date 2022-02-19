@@ -3,6 +3,7 @@ package transferGraphData;
 
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 
 public class GraphInfo {
     private String name;
@@ -13,6 +14,7 @@ public class GraphInfo {
     private Integer totalMiddles;
     private Integer totalRoots;
     private String taskInfo;
+    private Object radioButton = null;
 
     public GraphInfo(){};
 
@@ -80,10 +82,18 @@ public class GraphInfo {
         this.byWhoUpload = byWhoUpload;
     }
 
-    public RadioButton getRadioButton() {
-        return new RadioButton();
+    public RadioButton makeRadioButton(){
+        this.radioButton = new RadioButton();
+        return (RadioButton) radioButton;
     }
 
+    public RadioButton getRadioButton() {
+        return (RadioButton) radioButton;
+    }
+
+    public void setToggleGroup(ToggleGroup toggleGroup){
+        ((RadioButton)this.radioButton).setToggleGroup(toggleGroup);
+    }
     public void setRadioButton(RadioButton radioButton) {
         radioButton = radioButton;
     }

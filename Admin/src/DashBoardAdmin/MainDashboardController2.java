@@ -28,8 +28,10 @@ import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
+import taskView.NewTask.NewTaskController;
 import taskView.TaskController;
 import transferGraphData.AllGraphInfo;
+import transferGraphData.GraphInfo;
 import util.Constants;
 import util.http.HttpClientUtil;
 
@@ -44,6 +46,7 @@ import static util.Constants.GSON_INSTANCE;
 public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
 
+    private AllGraphInfo allGraphInfo;
     private Stage primaryStage;
     @FXML public Button interrogatorButton;
     @FXML private BorderPane MainBorderPane;
@@ -74,8 +77,41 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
     private InterrogatorController interrogatorController;
     private Parent interrogatorView;
 
-    private TaskController taskController;
-    private Parent taskView;
+    private Parent newTaskComponent;
+    private NewTaskController newTaskController;
+
+
+    public void initComponents() {
+
+        this.initLeftSide();
+        this.initNewAssignment();
+    }
+
+    private void initNewAssignment() {
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/taskView/NewTask/newTask.fxml"));
+            this.newTaskComponent = loader.load();
+            this.newTaskController = loader.getController();
+
+            newTaskController.setMainBorderPane(this.MainBorderPane);
+        }
+        catch (IOException e) {
+        }
+    }
+
+    public void initLeftSide() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/leftSideMenu/leftSideMenuFxml.fxml"));
+            this.leftSideMenuForGraphView = loader.load();
+            this.leftSideController = loader.getController();
+            this.leftSideController.initComponents();
+            this.leftSideController.setLeftSideMenuForGraphView(this.leftSideMenuForGraphView);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML void uploadFileAction(ActionEvent event) {
         //Let User Choose a file from his machine
@@ -140,10 +176,78 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
     }
 
     @FXML
-    void newAssignmentButtonAction(ActionEvent event) {
+    void newAssignmentButtonAction(ActionEvent event) throws ErrorUtils {
 
-        this.MainBorderPane.setCenter(this.taskView);
+        // show error if no graph was chosen
+        currGraphName = this.getGraphName();
 
+            //make url
+            String finalUrl = HttpUrl
+                    .parse(Constants.GRAPHS_VIEW)
+                    .newBuilder()
+                    .addQueryParameter("graphname", currGraphName)
+                    .build()
+                    .toString();
+
+            // make a request
+            HttpClientUtil.runAsync(finalUrl, new Callback() {
+
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Platform.runLater(() ->
+                            errorMessageProperty.set("Something went wrong: " + e.getMessage())
+
+                    );
+                    Platform.runLater(() ->
+                            showUserErrorAlert("We failed, server problem")
+                    );
+                    System.out.println("We failed, server problem");
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    if (response.code() != 200) {
+                        String responseBody = response.body().string();
+                        Platform.runLater(() ->
+                                errorMessageProperty.set("Something went wrong: " + responseBody)
+                        );
+
+                        Platform.runLater(() ->
+                                showUserErrorAlert("Please chose graph!")
+                        );
+
+                        System.out.println(response.code());
+
+                    } else {
+                        String jsonArrayOfAllGraphInfo = response.body().string();
+                        allGraphInfo = GSON_INSTANCE.fromJson(jsonArrayOfAllGraphInfo, AllGraphInfo.class);
+                        Platform.runLater(() -> {
+
+                            try {
+                                // start data
+                                newTaskController.initGraphInfo(allGraphInfo);
+
+                                // show component
+                                showTaskComponent();
+                            } catch (ErrorUtils | IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+
+                    }
+                }
+            });
+    }
+
+    private void showTaskComponent() throws ErrorUtils {
+
+        if(newTaskController == null || allGraphInfo == null)
+            throw new ErrorUtils(ErrorUtils.NEEDED_DATA_IS_NULL);
+
+        // open in a new page
+        Stage stage = new Stage();
+        stage.setScene(new Scene(newTaskComponent, 450, 450));
+        stage.show();
     }
 
     @FXML
@@ -247,16 +351,13 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
                 } else {
                     String jsonArrayOfAllGraphInfo = response.body().string();
-                    AllGraphInfo allGraphInfo = GSON_INSTANCE.fromJson(jsonArrayOfAllGraphInfo, AllGraphInfo.class);
+                    allGraphInfo = GSON_INSTANCE.fromJson(jsonArrayOfAllGraphInfo, AllGraphInfo.class);
                     Platform.runLater(() -> {
                         updateGraphInfoToComponents(allGraphInfo);
                     });
-
                 }
             }
         });
-
-
     }
 
     private String getGraphName() throws ErrorUtils {
@@ -285,37 +386,6 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public void initComponents() {
-
-        this.initLeftSide();
-        this.initNewAssignment();
-    }
-
-    private void initNewAssignment() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/taskView/taskViewFxml.fxml"));
-            this.taskView = loader.load();
-            this.taskController = loader.getController();
-//            this.taskController.setbDM(this.bDM);
-//            this.taskController.initTaskView();   todo to change everything there to allGraphInfo object!
-        } catch (IOException e) {
-            //e.printStackTrace();
-        }
-    }
-
-    public void initLeftSide() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/leftSideMenu/leftSideMenuFxml.fxml"));
-            this.leftSideMenuForGraphView = loader.load();
-            this.leftSideController = loader.getController();
-            this.leftSideController.initComponents();
-            this.leftSideController.setLeftSideMenuForGraphView(this.leftSideMenuForGraphView);
-            this.leftSideController.setMainDashboardController(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public GraphInfoTableController getGraphInfoTableController(){return this.graphInfoTableController;}

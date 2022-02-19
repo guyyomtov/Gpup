@@ -80,4 +80,12 @@ public class ErrorUtils extends Exception {
         errorAlert.setContentText(error);
         errorAlert.showAndWait();
     }
+
+    public static void showUserErrorAlertJavaFX(String errorType) {
+
+        Alert alertUser = new Alert(Alert.AlertType.ERROR);
+        alertUser.setHeaderText(errorType);
+        alertUser.setContentText(ErrorUtils.invalidFile());
+        alertUser.showAndWait();
+    }
 }

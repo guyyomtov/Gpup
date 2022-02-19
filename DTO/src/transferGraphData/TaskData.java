@@ -12,6 +12,7 @@ public class TaskData {
     private Integer pricePerTarget;
     private String whatKindOfTask;
     private Boolean fromScratch;
+    private String graphName;
     //todo maybe we dont need those members
     private BooleanProperty pauseProperty;
     private BooleanProperty stopProperty;
@@ -30,11 +31,12 @@ public class TaskData {
 
 
     public TaskData(){}
-    public TaskData(String taskName, Integer pricePerTarget, List<TargetInfo> targetInfoList, String whatKindOfTask) {
+    public TaskData(String taskName, Integer pricePerTarget, List<TargetInfo> targetInfoList, String whatKindOfTask, String graphName) {
         this.taskName = taskName;
         this.pricePerTarget = pricePerTarget;
         this.targetInfoList = targetInfoList;
         this.whatKindOfTask = whatKindOfTask;
+        this.graphName = graphName;
     }
 
     public String getTaskName() {
@@ -136,5 +138,13 @@ public class TaskData {
 
     public void setRandom(Boolean random) {
         isRandom = random;
+    }
+
+    public String getGraphName() {
+        return graphName;
+    }
+
+    public void setGraphName(String graphName) {
+        this.graphName = graphName;
     }
 }

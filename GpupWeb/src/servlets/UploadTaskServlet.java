@@ -20,8 +20,6 @@ public class UploadTaskServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=UTF-8");
 
-
-        String absolutePath = request.getParameter(GRAPH_PATH_NAME);
         String userName = request.getParameter("username");
         GraphManager graphManager = ServletUtils.getGraphManager(getServletContext());
 
@@ -33,7 +31,7 @@ public class UploadTaskServlet extends HttpServlet {
             // Check that the file is valid & add graph to DB
             try {
                 //This function CHECKS & STARTS a graph
-                bDM.checkFile(absolutePath);
+             //   bDM.checkFile(absolutePath);
 
                 // get cur graph
                 Graph curGraph = bDM.getGraph();

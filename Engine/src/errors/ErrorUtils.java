@@ -18,6 +18,7 @@ public class ErrorUtils extends Exception {
     public static final String TYPE_OF_PROCESS = "Process can't be of two types";
     public static final String PROCESS_RANDOM = "Appropriate flag wasn't started or was the oppisite from wanted";
     public static final String INVALID_INPUT = "The input given is invalid.";
+    public static final String CHOOSE_GRAPH = "Please choose graph!";
 
     public static String invalidProcess() {
         return "Two types of diffrent process can't work together";

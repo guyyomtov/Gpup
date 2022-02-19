@@ -1,6 +1,7 @@
 package DashBoardAdmin.GraphsInfoTableComponent;
 
 import api.HttpStatusUpdate;
+import errors.ErrorUtils;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -12,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import transferGraphData.GraphInfo;
+import transferGraphData.TargetInfo;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -64,9 +66,8 @@ public class GraphInfoTableController implements Closeable {
             if(items.size() != graphInfoList.size()) {
                 items.clear();
                 items = FXCollections.observableArrayList(graphInfoList);
-                items.stream().forEach((item)-> nameOfGraphToRadioButton.put(item.getName(), item.getRadioButton()));
-                this.initToggleGroup();
                 graphInfoTable.setItems(items);
+                initRadioButton();
                 totalGraph.set(graphInfoList.size());
             }
         });
@@ -125,13 +126,24 @@ public class GraphInfoTableController implements Closeable {
         return this.graphInfoTable.getItems().size();
     }
 
-    public String getNameOfTheSelectedGraph() {
+    public String getNameOfTheSelectedGraph() throws ErrorUtils{
         String graphName = new String("");
-       Toggle radioButton =  toggleGroup.getSelectedToggle();
-        for(String name : this.nameOfGraphToRadioButton.keySet()){
-            if(this.nameOfGraphToRadioButton.get(name).isPressed())
-                graphName = name;
+        boolean find = false;
+        for(GraphInfo graphInfo : this.graphInfoTable.getItems()){
+            if(graphInfo.getRadioButton().isSelected()) {
+                graphName = graphInfo.getName();
+                find = true;
+            }
         }
+        if(!find)
+            throw new ErrorUtils(ErrorUtils.CHOOSE_GRAPH);
         return graphName;
+    }
+
+    public void initRadioButton() {
+        this.graphInfoTable.getItems().stream().forEach((item) -> {
+            item.makeRadioButton();
+            item.setToggleGroup(this.toggleGroup);
+        });
     }
 }

@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import leftSideMenu.LeftSideController;
@@ -77,7 +78,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
     private InterrogatorController interrogatorController;
     private Parent interrogatorView;
 
-    private Parent newTaskComponent;
+    private GridPane newTaskComponent;
     private NewTaskController newTaskController;
 
 
@@ -94,7 +95,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/taskView/NewTask/newTask.fxml"));
             this.newTaskComponent = loader.load();
             this.newTaskController = loader.getController();
-
+            this.newTaskController.initBabyComponents();
             newTaskController.setMainBorderPane(this.MainBorderPane);
         }
         catch (IOException e) {
@@ -179,8 +180,9 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
     void newAssignmentButtonAction(ActionEvent event) throws ErrorUtils {
 
         // show error if no graph was chosen
-        currGraphName = this.getGraphName();
-
+        try {
+            currGraphName = this.getGraphName();
+        }catch (ErrorUtils e) { ErrorUtils.makeJavaFXCutomAlert(e.getMessage()); return; }
             //make url
             String finalUrl = HttpUrl
                     .parse(Constants.GRAPHS_VIEW)
@@ -225,6 +227,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
                             try {
                                 // start data
+                                initNewAssignment();
                                 newTaskController.initGraphInfo(allGraphInfo);
 
                                 // show component
@@ -246,7 +249,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
         // open in a new page
         Stage stage = new Stage();
-        stage.setScene(new Scene(newTaskComponent, 450, 450));
+        stage.setScene(new Scene(this.newTaskComponent, 800, 800));
         stage.show();
     }
 

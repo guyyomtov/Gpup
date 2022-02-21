@@ -21,6 +21,7 @@ public class Constants {
     private final static String FULL_SERVER_PATH = BASE_URL + CONTEXT_PATH;
 
     public static final String UPLOAD_FILE = FULL_SERVER_PATH + "/uploadGraphShortResponse";
+    public static final String UPLOAD_TASK = FULL_SERVER_PATH + "/uploadTaskShortResponse";
     public final static String LOGIN_PAGE = FULL_SERVER_PATH + "/loginShortResponse";
     public final static String USERS_LIST = FULL_SERVER_PATH + "/adminsListServlet";
     public final static String GRAPHS_LIST = FULL_SERVER_PATH + "/graphsListServlet";

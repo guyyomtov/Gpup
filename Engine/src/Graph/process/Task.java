@@ -556,4 +556,6 @@ public abstract class Task extends javafx.concurrent.Task<Object> implements Ser
     public void cancelTask() {
         this.cancel();
     }
+
+    public String getTaskName(){return this.taskName;}
 }

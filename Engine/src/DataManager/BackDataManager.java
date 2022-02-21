@@ -1,5 +1,6 @@
 package DataManager;
 
+import Flagger.Flagger;
 import GpupClassesEx3.GPUPDescriptor;
 import Graph.process.*;
 import errors.ErrorUtils;
@@ -16,6 +17,7 @@ import Graph.*;
 import fileHandler.GraphizHHandler;
 import taskView.TaskController;
 import transferGraphData.TargetInfo;
+import transferGraphData.TaskData;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -183,28 +185,28 @@ public class BackDataManager implements DataManager {
         dSP.serialSets(this.graph.getmSerialSets());
         dSP.bDM = this;
 
-        // Choose process
-        if(dSP.flagger.processIsSimulation){
-
-            gpupTask = new Simulation(dSP);
-
-            this.taskController.bindTaskToUIComponents(gpupTask);
-
-            new Thread(gpupTask).start();
-        }
-        else if(dSP.flagger.processIsCompilation){
-
-            if(dSP.compilationProcessHasNeededData()){
-                gpupTask = new Compilation(dSP);
-
-                this.taskController.bindTaskToUIComponents(gpupTask);
-
-                new Thread(gpupTask).start();
-            }
-            else{
-                throw new ErrorUtils(ErrorUtils.MISSING_COMPILATION_NEEDED_DATA);
-            }
-        }
+//        // Choose process
+//        if(dSP.flagger.processIsSimulation){
+//
+//            gpupTask = new Simulation(dSP);
+//
+//            this.taskController.bindTaskToUIComponents(gpupTask);
+//
+//            new Thread(gpupTask).start();
+//        }
+//        else if(dSP.flagger.processIsCompilation){
+//
+//            if(dSP.compilationProcessHasNeededData()){
+//                gpupTask = new Compilation(dSP);
+//
+//                this.taskController.bindTaskToUIComponents(gpupTask);
+//
+//                new Thread(gpupTask).start();
+//            }
+//            else{
+//                throw new ErrorUtils(ErrorUtils.MISSING_COMPILATION_NEEDED_DATA);
+//            }
+//        }
 
     }
 
@@ -345,4 +347,63 @@ public class BackDataManager implements DataManager {
         }
         return res;
     }
+
+    // todo we cant do it in the server because Task is A task of java fx afer new simulation the server failed!
+    //to talk with Nadav, i understand that when the worker can to work on the task the admin make a new task and run it like it was in ex2
+    //of course with new request (update for the others users).
+    public Task makeNewTask(TaskData taskData) throws ErrorUtils {
+
+        DataSetupProcess dSP = this.createNewDataSetUpProcess(taskData);
+        Task newTask;
+        try {
+            if (taskData.getWhatKindOfTask().equals("simulation")) {
+                newTask = new Simulation(dSP);
+            }
+
+            else {//its compilation
+                newTask = new Compilation(dSP);
+            }
+            return newTask;
+        }catch (ErrorUtils e){throw e;}
+    }
+
+    private DataSetupProcess createNewDataSetUpProcess(TaskData taskData) {
+        DataSetupProcess dSP = new DataSetupProcess();
+        Flagger flagger = createNewFlagger(taskData);
+        dSP.flagger = flagger;
+        dSP.bDM = this;
+        dSP.allGraphTargets = this.graph.getAllTargets();
+        dSP.minionsChoosenByUser = createMinionsForProcess(taskData);
+        dSP.chancesToSucceed = taskData.getChancesToSuccess();
+        dSP.chancesToBeAWarning = taskData.getChancesToWarning();
+        return dSP;
+    }
+
+    private List<Minion> createMinionsForProcess(TaskData taskData) {
+        List<Minion> minions = new ArrayList<>();
+        List<TargetInfo> targetInfoList = taskData.getTargetInfoList();
+        Map<String, Target> nameToTarget = this.graph.getmNameToTarget();
+        for(TargetInfo targetInfo : targetInfoList){
+            // -> make minion for simulation.
+            if(taskData.getWhatKindOfTask().equals("simulation"))
+            {
+                minions.add(new Minion(nameToTarget.get(targetInfo.getName()), taskData.getMaxTimePerTarget(), taskData.getChancesToSuccess(), taskData.getChancesToWarning(), true));
+            }
+            else{ // -> make minion for compilation.
+
+                minions.add(new Minion(nameToTarget.get(targetInfo.getName()), taskData.getMaxTimePerTarget(), taskData.getChancesToSuccess(), taskData.getChancesToWarning(), false, taskData.getFullPathSource(), taskData.getFullPathDestination()));
+
+            }
+        }
+        return minions;
+    }
+
+    private Flagger createNewFlagger(TaskData taskData) {
+        Flagger flagger = new Flagger();
+        flagger.processIsSimulation = taskData.getWhatKindOfTask() == "simulation" ? true : false;
+        flagger.processFromScratch = taskData.getFromScratch();
+        flagger.chancesIsRandomInProcess = taskData.getRandom();
+        return flagger;
+    }
+
 }

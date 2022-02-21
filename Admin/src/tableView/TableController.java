@@ -19,29 +19,35 @@ import java.util.Set;
 
 public class TableController {
 
-    @FXML private TableView<TargetInfo> tableView;
-    @FXML private TableColumn<TargetInfo, String> targetNameColumn;
-    @FXML private TableColumn<TargetInfo, String> levelColumn;
-    @FXML private TableColumn<TargetInfo, Integer> dependsOnColumn;
-    @FXML private TableColumn<TargetInfo, Integer> requiredForColumn;
-    @FXML private TableColumn<TargetInfo, String> infoColumn;
-    @FXML private TableColumn<TargetInfo, CheckBox> selectColumn;
-    @FXML private CheckBox selectAllCheckBox;
+    @FXML
+    private TableView<TargetInfo> tableView;
+    @FXML
+    private TableColumn<TargetInfo, String> targetNameColumn;
+    @FXML
+    private TableColumn<TargetInfo, String> levelColumn;
+    @FXML
+    private TableColumn<TargetInfo, Integer> dependsOnColumn;
+    @FXML
+    private TableColumn<TargetInfo, Integer> requiredForColumn;
+    @FXML
+    private TableColumn<TargetInfo, String> infoColumn;
+    @FXML
+    private TableColumn<TargetInfo, CheckBox> selectColumn;
+    @FXML
+    private CheckBox selectAllCheckBox;
     private GraphInfoController graphInfoController;
-    private List<CheckBox> checkBoxes  = new ArrayList<>();
+    // private List<CheckBox> checkBoxes  = new ArrayList<>();
 
     @FXML
     void selectAllCheckBoxAction(ActionEvent event) {
 
-        List<Target> targets = this.graphInfoController.getbDM().getAllTargets();
-
-        if(this.selectAllCheckBox.isSelected()) {
-            for(Target target : targets)
-                target.getRemark().setSelected(true);
+        if (this.selectAllCheckBox.isSelected()) {
+            for (TargetInfo targetInfo : this.tableView.getItems())
+                targetInfo.getCheckBox().setSelected(true);
+        } else {
+            for (TargetInfo targetInfo : this.tableView.getItems())
+                targetInfo.getCheckBox().setSelected(false);
         }
-        else
-            for(Target target : targets)
-                target.getRemark().setSelected(false);
 
     }
 
@@ -81,7 +87,7 @@ public class TableController {
     }
 
     private void initCheckBox(ObservableList<TargetInfo> data) {
-        data.stream().forEach((targetInfo)-> this.checkBoxes.add(targetInfo.getCheckBox()));
+        data.stream().forEach((targetInfo) -> targetInfo.getCheckBox());
     }
 
     private void makeColumsSurtable() {
@@ -100,9 +106,8 @@ public class TableController {
 
     }
 
-//    private void initActionOnCheckBoxes(List<Target> targets) {
-//        for(Target target : targets){
-//            CheckBox currCheckBox = target.getRemark();
+//    private void initActionOnCheckBoxes() {
+//        for(CheckBox currCheckBox : this.checkBoxes){
 //            currCheckBox.setOnAction(event -> checkBoxAction(target));
 //        }
 //    }
@@ -129,14 +134,28 @@ public class TableController {
 
     private void updateCheckBoxesWith(Set<List<Target>> allPath) {
 
-        for(List<Target> path : allPath)
+        for (List<Target> path : allPath)
             path.forEach(target -> target.getRemark().setSelected(true));
 
     }
 
-    public TableView<TargetInfo> getTableView(){ return this.tableView;}
+    public TableView<TargetInfo> getTableView() {
+        return this.tableView;
+    }
 
     public void setGraphInfoController(GraphInfoController graphInfoController) {
         this.graphInfoController = graphInfoController;
     }
+
+    public List<TargetInfo> getTargetInfoThatUserSelected() {
+        List<TargetInfo> targetsSelectedByUser = new ArrayList<>();
+        this.tableView.getItems().forEach((item) -> {
+            if (item.getCheckBox().isSelected()) {
+                TargetInfo targetInfo = new TargetInfo(item);
+                targetsSelectedByUser.add(targetInfo);
+            }
+        });
+        return targetsSelectedByUser;
+    }
+
 }

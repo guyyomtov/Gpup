@@ -558,6 +558,7 @@ public class Minion implements Serializable, Runnable {
 
         this.tryToRunMe(myKids, allNamesToMinions,this.cUI);
 
+
         this.checkIfToAddMyParents();
 
         if(!myPData.isEmpty()) {
@@ -573,7 +574,7 @@ public class Minion implements Serializable, Runnable {
 
     private void checkIfToAddMyParents() {
 
-        if(this.ISucceeded()) {
+       if(this.ISucceeded()) {
 
             for(Minion curD : this.parents) {
                 if(curD.getCanIRun() && !curD.imFinished()) {

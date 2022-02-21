@@ -3,46 +3,47 @@ package DashBoardAdmin.TaskInfoTableComponent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import transferGraphData.TaskData;
 
 public class TaskInfoTableController {
 
     @FXML
-    private TableView<?> taskInfoTable;
+    private TableView<TaskData> taskInfoTable;
 
     @FXML
-    private TableColumn<?, ?> taskNameCol;
+    private TableColumn<TaskData, String> taskNameCol;
 
     @FXML
-    private TableColumn<?, ?> uploadedByCol;
+    private TableColumn<TaskData, String> uploadedByCol;
 
     @FXML
-    private TableColumn<?, ?> graphNameCol;
+    private TableColumn<TaskData, String> graphNameCol;
 
     @FXML
-    private TableColumn<?, ?> totalTargetsCol;
+    private TableColumn<TaskData, Integer> totalTargetsCol;
 
     @FXML
-    private TableColumn<?, ?> independentCol;
+    private TableColumn<TaskData, Integer> independentCol;
 
     @FXML
-    private TableColumn<?, ?> leafCol;
+    private TableColumn<TaskData, Integer> leafCol;
 
     @FXML
-    private TableColumn<?, ?> middleCol;
+    private TableColumn<TaskData, Integer> middleCol;
 
     @FXML
-    private TableColumn<?, ?> rootCol;
+    private TableColumn<TaskData, Integer> rootCol;
 
     @FXML
-    private TableColumn<?, ?> totalPriceCol;
+    private TableColumn<TaskData, Integer> totalPriceCol;
 
     @FXML
-    private TableColumn<?, ?> pricePerTargetCol;
+    private TableColumn<TaskData, Integer> totalWorkersCol;
 
     @FXML
-    private TableColumn<?, ?> totalWorkersCol;
+    private TableColumn<TaskData, String> statusCol;
 
-    @FXML
-    private TableColumn<?, ?> statusCol;
+
+
 
 }

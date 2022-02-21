@@ -13,6 +13,16 @@ public class TaskData {
     private String whatKindOfTask;
     private Boolean fromScratch;
     private String graphName;
+    private String uploadedBy;
+    private Integer totalTargets;
+    private Integer totalIndependent;
+    private Integer totalLeaf;
+    private Integer totalMiddles;
+    private Integer totalRoots;
+    private Integer totalPrice;
+    private Integer totalWorker;
+    private String status;
+
     //todo maybe we dont need those members
     private BooleanProperty pauseProperty;
     private BooleanProperty stopProperty;
@@ -61,6 +71,28 @@ public class TaskData {
 
     public void setTargetInfoList(List<TargetInfo> targetInfoList) {
         this.targetInfoList = targetInfoList;
+        this.totalTargets = this.targetInfoList.size();
+        this.updateTargetsTypeCounter();
+    }
+
+    private void updateTargetsTypeCounter() {
+        for(TargetInfo targetInfo : this.targetInfoList){
+            String type = targetInfo.getType();
+            switch(type){
+                case "Independent":
+                    this.totalIndependent++;
+                    break;
+                case "Leaf":
+                    this.totalLeaf++;
+                    break;
+                case "Middle":
+                    this.totalMiddles++;
+                    break;
+                case "Root":
+                    this.totalRoots++;
+                    break;
+            }
+        }
     }
 
     public String getWhatKindOfTask() {
@@ -72,7 +104,7 @@ public class TaskData {
     }
 
 
-    public Boolean fromScratchProperty() {
+    public Boolean getFromScratch() {
         return fromScratch;
     }
 
@@ -146,5 +178,77 @@ public class TaskData {
 
     public void setGraphName(String graphName) {
         this.graphName = graphName;
+    }
+
+    public String getUploadedBy() {
+        return uploadedBy;
+    }
+
+    public void setUploadedBy(String uploadedBy) {
+        this.uploadedBy = uploadedBy;
+    }
+
+    public Integer getTotalTargets() {
+        return totalTargets;
+    }
+
+    public void setTotalTargets(Integer totalTargets) {
+        this.totalTargets = totalTargets;
+    }
+
+    public Integer getTotalIndependent() {
+        return totalIndependent;
+    }
+
+    public void setTotalIndependent(Integer totalIndependent) {
+        this.totalIndependent = totalIndependent;
+    }
+
+    public Integer getTotalLeaf() {
+        return totalLeaf;
+    }
+
+    public void setTotalLeaf(Integer totalLeaf) {
+        this.totalLeaf = totalLeaf;
+    }
+
+    public Integer getTotalMiddles() {
+        return totalMiddles;
+    }
+
+    public void setTotalMiddles(Integer totalMiddles) {
+        this.totalMiddles = totalMiddles;
+    }
+
+    public Integer getTotalRoots() {
+        return totalRoots;
+    }
+
+    public void setTotalRoots(Integer totalRoots) {
+        this.totalRoots = totalRoots;
+    }
+
+    public Integer getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Integer totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Integer getTotalWorker() {
+        return totalWorker;
+    }
+
+    public void setTotalWorker(Integer totalWorker) {
+        this.totalWorker = totalWorker;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

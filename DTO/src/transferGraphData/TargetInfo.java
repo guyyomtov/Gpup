@@ -12,9 +12,19 @@ public class TargetInfo {
     private Integer totalDependsOn;
     private Integer totalRequiredFor;
     private String information;
+    private Object checkBox;
    // private List<TargetInfo> dependsOn = new ArrayList<>();
     //private List<TargetInfo> requiredFor = new ArrayList<>();
 
+    public TargetInfo(){};
+
+    public TargetInfo(TargetInfo targetInfo){
+        this.name = targetInfo.getName();
+        this.type = targetInfo.getType();
+        this.totalDependsOn = targetInfo.getTotalDependsOn();
+        this.totalRequiredFor = targetInfo.getTotalRequiredFor();
+        this.information = targetInfo.getInformation();
+    }
     public String getName() {
         return name;
     }
@@ -56,22 +66,9 @@ public class TargetInfo {
     }
 
     public CheckBox getCheckBox() {
-        return new CheckBox();
+        if(checkBox == null)
+            this.checkBox = new CheckBox();
+        return (CheckBox) this.checkBox;
     }
 
-//    public List<TargetInfo> getDependsOn() {
-//        return dependsOn;
-//    }
-//
-//    public void setDependsOn(List<TargetInfo> dependsOn) {
-//        this.dependsOn = dependsOn;
-//    }
-//
-//    public List<TargetInfo> getRequiredFor() {
-//        return requiredFor;
-//    }
-//
-//    public void setRequiredFor(List<TargetInfo> requiredFor) {
-//        this.requiredFor = requiredFor;
-//    }
 }

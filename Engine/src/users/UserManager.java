@@ -11,25 +11,47 @@ of the user of this class to handle the synchronization of isUserExists with oth
  */
 public class UserManager {
 
-    private final Set<String> usersSet;
+    private final Set<String> usersAndJobSet;
+    private final Set<String> userNamesWithoutJob;
 
     public UserManager() {
-        usersSet = new HashSet<>();
+
+        usersAndJobSet = new HashSet<>();
+        userNamesWithoutJob = new HashSet<>();
     }
 
-    public synchronized void addUser(String username) {
-        usersSet.add(username);
+    public synchronized void addUser(String usernameAndJob) {
+
+        usersAndJobSet.add(usernameAndJob);
+
+        String onlyUserName = this.getOnlyUserNameFrom(usernameAndJob);
+
+        userNamesWithoutJob.add(onlyUserName);
+    }
+
+    private String getOnlyUserNameFrom(String usernameAndJob) {
+
+        // Can only be -->  worker || admin
+        String res = usernameAndJob.replace("Worker", "");
+        res = res.replace("Admin", "");
+
+        return res;
     }
 
     public synchronized void removeUser(String username) {
-        usersSet.remove(username);
+        usersAndJobSet.remove(username);
     }
 
     public synchronized Set<String> getUsers() {
-        return Collections.unmodifiableSet(usersSet);
+        return Collections.unmodifiableSet(usersAndJobSet);
     }
 
-    public boolean isUserExists(String username) {
-        return usersSet.contains(username);
+    public boolean isUserExists(String usernameAndJob) {
+
+        String onlyUserName = this.getOnlyUserNameFrom(usernameAndJob);
+
+        return userNamesWithoutJob.contains(onlyUserName);
     }
+
+
 }

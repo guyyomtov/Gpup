@@ -1,6 +1,7 @@
 package taskView.NewTask;
 
 import DashBoardAdmin.MainDashboardController2;
+import DashBoardAdmin.TaskInfoTableComponent.TaskInfoTableController;
 import Graph.process.Task;
 import errors.ErrorUtils;
 import javafx.application.Platform;
@@ -59,7 +60,7 @@ public class NewTaskController {
     private CompilationController compilationController;
     private Parent simulationComponent;
     private SimulationComponentController simulationController;
-
+    private TaskInfoTableController taskInfoTableController;
     //todo to handle with panel controller and those boolean property!
     private BooleanProperty pauseProperty;
     private BooleanProperty stopProperty;
@@ -226,9 +227,12 @@ public class NewTaskController {
         taskData.setTaskName(this.taskNameTextInput.getText());
         taskData.setGraphName(MainDashboardController2.currGraphName);
         taskData.setTargetInfoList(this.targetTableController.getTargetInfoThatUserSelected());
+        taskData.setStatus(TaskData.Status.CREATED);
         taskData.setWhatKindOfTask(this.compilationRB.isSelected() ? COMPILATION : SIMULATION);
+        taskData.setUploadedBy(MainDashboardController2.userName);
         taskData.setFromScratch(true);
         taskData.setPricePerTarget(this.getPricePerTarget());
+        taskData.calculateTotalPrice();
         if(this.simulationRB.isSelected()){
             this.getDataForSimulation(taskData);
         }
@@ -250,9 +254,26 @@ public class NewTaskController {
     }
 
     private Integer getPricePerTarget() {
+        Integer pricePerTarget = new Integer(0);
         String taskInfo = this.curGraphInfo.getGraphInfo().getTaskInfo();
-        //todo handle with string i dont have a power right now!
-        return 5;
+        String[] allPrices = taskInfo.split("\n");
+        for(String price : allPrices){
+         if(this.simulationRB.isSelected()){
+             if(price.contains("Simulation")){
+                 String tmp = price.substring(SIMULATION.length() + 1); // + 1 for spacing
+                 pricePerTarget = Integer.valueOf(tmp);
+
+             }
+         }
+         else { // -> its compilation
+                 if(price.contains("Compilation"))
+                 {
+                     String tmp = price.substring(COMPILATION.length() + 1);
+                     pricePerTarget = Integer.valueOf(tmp);
+                 }
+             }
+         }
+        return pricePerTarget;
     }
 
     private void checkValidity() throws ErrorUtils {
@@ -284,4 +305,11 @@ public class NewTaskController {
     }
 
 
+    public TaskInfoTableController getTaskInfoTableController() {
+        return taskInfoTableController;
+    }
+
+    public void setTaskInfoTableController(TaskInfoTableController taskInfoTableController) {
+        this.taskInfoTableController = taskInfoTableController;
+    }
 }

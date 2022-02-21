@@ -63,7 +63,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
     public static String currGraphName;
 
-    private String userName;
+    public static String userName;
     private final StringProperty errorMessageProperty = new SimpleStringProperty();
 
     private LeftSideController leftSideController;
@@ -229,7 +229,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
                                 // start data
                                 initNewAssignment();
                                 newTaskController.initGraphInfo(allGraphInfo);
-
+                                newTaskController.setTaskInfoTableController(taskInfoTableController);
                                 // show component
                                 showTaskComponent();
                             } catch (ErrorUtils | IOException e) {
@@ -264,8 +264,12 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
         this.graphInfoTableController.setHttpStatusUpdate(this);
         graphInfoTableController.startGraphInfoRefresher();
-
         this.graphInfoTableController.initTable();
+
+        this.taskInfoTableController.setHttpStatusUpdate(this);
+        this.taskInfoTableController.startTaskListRefresher();
+        this.taskInfoTableController.initTable();
+
     }
 
     private String letUserChooseAFile() {

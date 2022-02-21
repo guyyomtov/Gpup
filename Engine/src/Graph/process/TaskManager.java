@@ -23,6 +23,10 @@ public class TaskManager {
 
     }
 
+    public Map<String, TaskData> getNameToTask() {
+        return nameToTask;
+    }
+
     public boolean taskExist(String taskName) {
 
         return this.nameToTask.containsKey(taskName);

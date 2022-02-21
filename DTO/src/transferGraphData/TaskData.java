@@ -2,6 +2,7 @@ package transferGraphData;
 
 import javafx.beans.property.BooleanProperty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +16,44 @@ public class TaskData {
     private String graphName;
     private String uploadedBy;
     private Integer totalTargets;
-    private Integer totalIndependent;
-    private Integer totalLeaf;
-    private Integer totalMiddles;
-    private Integer totalRoots;
-    private Integer totalPrice;
-    private Integer totalWorker;
-    private String status;
+    private Integer totalIndependent = new Integer(0);
+    private Integer totalLeaf = new Integer(0);
+    private Integer totalMiddles = new Integer(0);
+    private Integer totalRoots = new Integer(0);
+    private Integer totalPrice = new Integer(0);
+    private Integer totalWorker = new Integer(0);
+
+    public enum Status {
+        CREATED {
+            public String toString() {
+                return "CREATED";
+            }
+        }, AVAILABLE {
+            public String toString() {
+                return "AVAILABLE";
+            }
+        },
+        PAUSED {
+            public String toString() {
+                return "PAUSED";
+            }
+        }, STOPPED {
+            public String toString() {
+                return "STOPPED";
+            }
+        }
+        , LACKING {
+            public String toString() {
+                return "LACKING";
+            }
+        }, DONE {
+            public String toString() {
+                return "DONE";
+            }
+        };
+    }
+
+    private Status status;
 
     //todo maybe we dont need those members
     private BooleanProperty pauseProperty;
@@ -63,6 +95,9 @@ public class TaskData {
 
     public void setPricePerTarget(Integer pricePerTarget) {
         this.pricePerTarget = pricePerTarget;
+    }
+    public void calculateTotalPrice(){
+        this.totalPrice = this.pricePerTarget * this.totalTargets;
     }
 
     public List<TargetInfo> getTargetInfoList() {
@@ -244,11 +279,11 @@ public class TaskData {
         this.totalWorker = totalWorker;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 }

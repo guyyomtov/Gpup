@@ -1,4 +1,4 @@
-package tableForProcess;
+package taskView.tableForProcess;
 
 import Graph.Target;
 import Graph.process.Minion;

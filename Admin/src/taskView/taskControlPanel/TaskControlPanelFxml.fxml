@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="800.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="taskView.taskControlPanel.TaskControlPanelController">
+   <content>
+      <TabPane minHeight="500.0" minWidth="1500.0" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab text="Panel controller">
+               <content>
+                  <GridPane>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="45.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="240.0" minHeight="10.0" percentHeight="10.0" prefHeight="167.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="332.0" minHeight="10.0" percentHeight="90.0" prefHeight="292.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="332.0" minHeight="10.0" percentHeight="20.0" prefHeight="292.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                           <children>
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                 <children>
+                                    <Button fx:id="startButton" mnemonicParsing="false" onAction="#startButtonAction" prefHeight="31.0" prefWidth="62.0" text="Start" />
+                                    <Button fx:id="stopButton" disable="true" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="31.0" prefWidth="71.0" text="Stop" />
+                                    <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseButtonAction" prefHeight="31.0" prefWidth="68.0" text="Pause" />
+                                    <Button fx:id="resumeButton" disable="true" mnemonicParsing="false" onAction="#resumeButtonAction" text="Resume" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="5.0" top="5.0" />
+                                 </padding>
+                              </HBox>
+                              <Label fx:id="taskIsFinishedLabel" prefHeight="21.0" prefWidth="511.0" textFill="RED" />
+                           </children>
+                        </VBox>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <HBox prefHeight="39.0" prefWidth="549.0" spacing="10.0">
+                                 <children>
+                                    <Label prefHeight="38.0" prefWidth="100.0" text="Task Progress">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="precentOfProgressBar" prefHeight="39.0" prefWidth="64.0" />
+                                 </children>
+                              </HBox>
+                              <ProgressBar fx:id="progressBar" prefHeight="31.0" prefWidth="762.0" progress="0.0" />
+                           </children>
+                        </VBox>
+                        <TextArea fx:id="textAreaProcessInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextArea fx:id="textAreaTargetInfo" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2" />
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label prefHeight="21.0" prefWidth="87.0" text="Task Name:" />
+                                    <Label fx:id="taskNameLabel" prefHeight="21.0" prefWidth="97.0" text="---" />
+                                    <Label prefHeight="21.0" prefWidth="95.0" text="Graph Name:" />
+                                    <Label fx:id="graphNameLabel" prefHeight="21.0" prefWidth="92.0" text="---" />
+                                    <Label prefHeight="21.0" prefWidth="98.0" text="Total workers" />
+                                    <Label fx:id="totalWorkerLabel" prefHeight="21.0" prefWidth="71.0" text="----" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label prefHeight="21.0" prefWidth="64.0" text="Targets:" />
+                                    <Label fx:id="totalTargetsLabel" prefHeight="21.0" prefWidth="52.0" text="---" />
+                                    <Label prefHeight="21.0" prefWidth="103.0" text="Independents:" />
+                                    <Label fx:id="totalIndependentsLabel" prefHeight="21.0" prefWidth="45.0" text="----" />
+                                    <Label prefHeight="21.0" prefWidth="35.0" text="leaf:" />
+                                    <Label fx:id="totalLeafLabel" prefHeight="21.0" prefWidth="32.0" text="---" />
+                                    <Label prefHeight="21.0" prefWidth="64.0" text="Middles:" />
+                                    <Label fx:id="middleLabel" prefHeight="21.0" prefWidth="43.0" text="---" />
+                                    <Label prefHeight="21.0" prefWidth="49.0" text="Roots:" />
+                                    <Label fx:id="totalRootsLabel" prefHeight="21.0" prefWidth="38.0" text="---" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <fx:include fx:id="tableForProcess" source="../tableForProcess/tableForProcessFxml.fxml" GridPane.rowIndex="1" />
+                     </children>
+                  </GridPane>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </content>
+</ScrollPane>

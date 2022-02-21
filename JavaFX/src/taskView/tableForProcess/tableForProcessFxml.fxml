@@ -4,9 +4,9 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tableForProcess.TableForProcessController">
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="taskView.tableForProcess.TableForProcessController">
    <content>
-      <TableView fx:id="tableForProcess" minHeight="300.0" minWidth="600.0" prefHeight="323.0" prefWidth="600.0">
+      <TableView fx:id="taskView.tableForProcess" minHeight="300.0" minWidth="600.0" prefHeight="323.0" prefWidth="600.0">
          <columns>
             <TableColumn fx:id="targetNameColumn" prefWidth="106.0" text="Target name" />
             <TableColumn fx:id="levelColumn" prefWidth="88.0" text="Level" />

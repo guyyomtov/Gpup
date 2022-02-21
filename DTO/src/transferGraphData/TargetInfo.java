@@ -13,6 +13,7 @@ public class TargetInfo {
     private Integer totalRequiredFor;
     private String information;
     private Object checkBox;
+    private String status;
    // private List<TargetInfo> dependsOn = new ArrayList<>();
     //private List<TargetInfo> requiredFor = new ArrayList<>();
 
@@ -24,6 +25,7 @@ public class TargetInfo {
         this.totalDependsOn = targetInfo.getTotalDependsOn();
         this.totalRequiredFor = targetInfo.getTotalRequiredFor();
         this.information = targetInfo.getInformation();
+        this.status = "not initialized"; // todo handle with it in back end.
     }
     public String getName() {
         return name;
@@ -71,4 +73,11 @@ public class TargetInfo {
         return (CheckBox) this.checkBox;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

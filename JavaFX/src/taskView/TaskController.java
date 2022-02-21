@@ -19,7 +19,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import tableForProcess.TableForProcessController;
+import taskView.tableForProcess.TableForProcessController;
 import taskView.compilationComponent.CompilationController;
 import taskView.simulationComponent.SimulationComponentController;
 

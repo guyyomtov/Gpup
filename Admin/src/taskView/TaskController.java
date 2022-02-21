@@ -21,7 +21,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import tableForProcess.TableForProcessController;
+import taskView.tableForProcess.TableForProcessController;
 import tableView.TableController;
 import taskView.compilationComponent.CompilationController;
 import taskView.simulationComponent.SimulationComponentController;
@@ -296,7 +296,7 @@ public class TaskController {
         }
         if(this.fromScratchButton.isSelected())
             this.updateStatusOfUnchosenMinions();
-        tableProcessController.initTable(minions, this.textAreaTargetInfo);
+        //ableProcessController.initTable(minions, this.textAreaTargetInfo);
         if(!minions.isEmpty())
             this.startButtonProperty.setValue(false);
     }

@@ -25,6 +25,7 @@ public class Constants {
     public final static String LOGIN_PAGE = FULL_SERVER_PATH + "/loginShortResponse";
     public final static String USERS_LIST = FULL_SERVER_PATH + "/adminsListServlet";
     public final static String GRAPHS_LIST = FULL_SERVER_PATH + "/graphsListServlet";
+    public final static String TASKS_LIST = FULL_SERVER_PATH + "/tasksListServlet";
     public final static String GRAPHS_VIEW = FULL_SERVER_PATH + "/graphViewResponse";
     public final static String FIND_PATH = FULL_SERVER_PATH + "/findPath";
     public final static String FIND_CIRCLE = FULL_SERVER_PATH + "/findCircle";

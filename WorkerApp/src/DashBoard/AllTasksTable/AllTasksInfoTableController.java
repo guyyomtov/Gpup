@@ -1,5 +1,7 @@
 package DashBoard.AllTasksTable;
 
+import DashBoard.NewJob.NewJobController;
+import Utils.ErrorHandling.ErrorHandling;
 import api.HttpStatusUpdate;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -48,8 +50,8 @@ public class AllTasksInfoTableController implements Closeable {
     private BooleanProperty autoUpdate;
     private HttpStatusUpdate httpStatusUpdate;
 
-    private TaskControlPanelController taskControlPanelController;
-    private Parent taskControlPanelComponent;
+    private NewJobController newJobController;
+    private Parent newJobComponent;
 
 
     public AllTasksInfoTableController(){
@@ -77,7 +79,6 @@ public class AllTasksInfoTableController implements Closeable {
                 taskInfoTable.setItems(items);
                 totalGraph.set(taskDataList.size());
                 addListenerToRows();
-                // todo maybe here to add the addLisener on every item in the table
         });
     }
 
@@ -87,83 +88,62 @@ public class AllTasksInfoTableController implements Closeable {
             TableRow<TaskData> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
+
                     TaskData taskData = row.getItem();
-                    this.initAndUploadTaskControlPanel(taskData);
-                    this.makeNewSceneForTaskPanel();
+
+                    try {
+                        openNewJobPage();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             return row;
         });
     }
 
-    private void makeNewSceneForTaskPanel() {
+    private void openNewJobPage() throws IOException {
+
+        //start resources
+        String curP = "/DashBoard/NewJob/NewJob.fxml";
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(curP));
+        this.newJobComponent = loader.load();
+        this.newJobController = loader.getController();
+
+        //open component in new page
         Stage stage = new Stage();
-        stage.setScene(new Scene(this.taskControlPanelComponent, 800, 800));
+        stage.setScene(new Scene(this.newJobComponent, 800, 800));
         stage.show();
     }
 
-    private void initAndUploadTaskControlPanel(TaskData taskData) {
-        //open with fxml loader the control panel
-        this.initControlPanelComponent(taskData);
-    }
-
-    private void initControlPanelComponent(TaskData taskData) {
-        try {
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/taskView/taskControlPanel/TaskControlPanelFxml.fxml"));
-            this.taskControlPanelComponent = loader.load();
-            this.taskControlPanelController = loader.getController();
-            this.taskControlPanelController.init(taskData);
-        }
-        catch (IOException e) {
-        }
-
-    }
-
-
     public void initTable(){
 
-        taskNameCol.setCellValueFactory(
-                new PropertyValueFactory<>("taskName")
-        );
-        taskTypeCol.setCellValueFactory(
-                new PropertyValueFactory<>("whatKindOfTask")
-        );
-        graphNameCol.setCellValueFactory(
-                new PropertyValueFactory<>("graphName")
-        );
-        uploadedByCol.setCellValueFactory(
-                new PropertyValueFactory<>("uploadedBy")
-        );
-        totalTargetsCol.setCellValueFactory(
-                new PropertyValueFactory<>("totalTargets")
-        );
-        independentCol.setCellValueFactory(
-                new PropertyValueFactory<>("totalIndependent")
-        );
-        leafCol.setCellValueFactory(
-                new PropertyValueFactory<>("totalLeaf")
-        );
-        middleCol.setCellValueFactory(
-                new PropertyValueFactory<>("totalMiddles")
-        );
-        rootCol.setCellValueFactory(
-                new PropertyValueFactory<>("totalRoots")
-        );
-        totalPriceCol.setCellValueFactory(
-                new PropertyValueFactory<>("totalPrice")
-        );
-        totalWorkersCol.setCellValueFactory(
-                new PropertyValueFactory<>("totalWorker")
-        );
+        taskNameCol.setCellValueFactory(new PropertyValueFactory<>("taskName"));
 
-        statusCol.setCellValueFactory(
-                new PropertyValueFactory<>("status")
+        taskTypeCol.setCellValueFactory(new PropertyValueFactory<>("whatKindOfTask"));
+
+        graphNameCol.setCellValueFactory(new PropertyValueFactory<>("graphName"));
+
+        uploadedByCol.setCellValueFactory(new PropertyValueFactory<>("uploadedBy"));
+
+        totalTargetsCol.setCellValueFactory(new PropertyValueFactory<>("totalTargets"));
+
+        independentCol.setCellValueFactory(new PropertyValueFactory<>("totalIndependent"));
+
+        leafCol.setCellValueFactory(new PropertyValueFactory<>("totalLeaf"));
+
+        middleCol.setCellValueFactory(new PropertyValueFactory<>("totalMiddles"));
+
+        rootCol.setCellValueFactory(new PropertyValueFactory<>("totalRoots"));
+
+        totalPriceCol.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
+
+        totalWorkersCol.setCellValueFactory(new PropertyValueFactory<>("totalWorker"));
+
+        statusCol.setCellValueFactory(new PropertyValueFactory<>("status")
         );
     }
 
-
-    //todo to handle with all the close!
     @Override
     public void close() throws IOException {
 

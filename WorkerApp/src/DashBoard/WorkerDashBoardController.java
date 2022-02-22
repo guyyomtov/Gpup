@@ -1,6 +1,7 @@
 package DashBoard;
 
 import DashBoard.AllTasksTable.AllTasksInfoTableController;
+import DashBoard.NewJob.NewJobController;
 import DashBoardAdmin.onlineAdminsComponent.OnlineAdminsController;
 import api.HttpStatusUpdate;
 import javafx.event.ActionEvent;
@@ -26,6 +27,8 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
     private Stage primaryStage;
     private OnlineAdminsController onlineUsersController;
     private AllTasksInfoTableController allTasksTableController;
+    private NewJobController newJobController;
+    private Parent newJobComponent;
 
 
     @FXML

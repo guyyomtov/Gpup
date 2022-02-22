@@ -1,5 +1,6 @@
 package Login;
 
+import DashBoard.WorkerDashBoardController;
 import Utils.Constants;
 import Utils.ErrorHandling.ErrorHandling;
 import Utils.http.HttpClientUtil;
@@ -9,6 +10,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -19,6 +23,8 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+
+import static Utils.Constants.DASHBOARD_FXML;
 
 /* This class is responsible for the login logic & the actual login of the worker to the app*/
 
@@ -93,15 +99,26 @@ public class LoginPageController {
                     );
                 } else {
                     Platform.runLater(() -> {
-                        switchToDashBoard();
+                        try {
+                            switchToDashBoard();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     });
                 }
             }
         });
     }
 
-    private void switchToDashBoard() {
+    private void switchToDashBoard() throws IOException {
 
+        // This takes us to worker dashboard
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(DASHBOARD_FXML));
+        Parent load = loader.load();
+        WorkerDashBoardController dashBoardController= (WorkerDashBoardController) loader.getController();
+        dashBoardController.setPrimaryStage(this.primaryStage);
+        Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
+        primaryStage.setScene(scene);
     }
 
     private String makeUrl(String urlPath, String queryParameter1Name, String queryParameter1Value) throws ErrorUtils {

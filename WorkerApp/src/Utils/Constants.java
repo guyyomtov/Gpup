@@ -9,6 +9,7 @@ public class Constants {
 
     // fxml locations
     public final static String Login_PAGE_FXML_RESOURCE_LOCATION = "/Login/LoginPage.fxml";
+    public final static String DASHBOARD_FXML = "/DashBoard/WorkerDashBoard.fxml";
 
     // Server resources locations
     public final static String BASE_DOMAIN = "localhost";

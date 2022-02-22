@@ -10,5 +10,7 @@
     <orderEntry type="library" name="okHttp" level="project" />
     <orderEntry type="library" name="google-gson-2" level="project" />
     <orderEntry type="module" module-name="Engine" />
+    <orderEntry type="module" module-name="Admin" />
+    <orderEntry type="module" module-name="DTO" />
   </component>
 </module>

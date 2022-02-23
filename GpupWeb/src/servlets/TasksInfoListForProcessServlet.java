@@ -14,9 +14,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "TasksListServlet", urlPatterns = {"/tasksListServlet"})
-public class TasksInfoListServlet extends HttpServlet {
-
+@WebServlet(name = "TasksListForProcessServlet", urlPatterns = {"/tasksListForProcess"})
+public class TasksInfoListForProcessServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         //returning JSON objects, not HTML
@@ -30,4 +29,5 @@ public class TasksInfoListServlet extends HttpServlet {
             out.flush();
         }
     }
+
 }

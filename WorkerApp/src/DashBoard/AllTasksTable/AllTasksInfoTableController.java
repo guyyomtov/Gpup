@@ -17,7 +17,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import taskView.taskControlPanel.TaskControlPanelController;
 import transferGraphData.TaskData;
@@ -88,32 +90,33 @@ public class AllTasksInfoTableController implements Closeable {
             TableRow<TaskData> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
-
                     TaskData taskData = row.getItem();
-
-                    try {
-                        openNewJobPage();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    openNewJobPage();
                 }
             });
             return row;
         });
     }
 
-    private void openNewJobPage() throws IOException {
+    private void openNewJobPage(){
 
-        //start resources
-        String curP = "/DashBoard/NewJob/NewJob.fxml";
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(curP));
-        this.newJobComponent = loader.load();
-        this.newJobController = loader.getController();
+        try {
+            //start resources
+            String curP = "/DashBoard/NewJob/NewJob.fxml";
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(curP));
+            Parent newJob = loader.load();
+            this.newJobComponent = newJob;
+            this.newJobController = loader.getController();
 
-        //open component in new page
-        Stage stage = new Stage();
-        stage.setScene(new Scene(this.newJobComponent, 800, 800));
-        stage.show();
+            //open component in new page
+            Stage stage = new Stage();
+            stage.setScene(new Scene(newJob, 600, 600));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("failed");
+            e.printStackTrace();
+        }
+
     }
 
     public void initTable(){

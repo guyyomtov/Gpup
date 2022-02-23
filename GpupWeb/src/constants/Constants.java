@@ -3,6 +3,7 @@ package constants;
 public class Constants {
     public static final String USERNAME = "username";
     public static final String GRAPHNAME = "graphname";
+    public static final String TASKNAME = "taskname";
     public static final String GRAPH_PATH_NAME = "absolutePath";
     public static final String USER_NAME_ERROR = "username_error";
 

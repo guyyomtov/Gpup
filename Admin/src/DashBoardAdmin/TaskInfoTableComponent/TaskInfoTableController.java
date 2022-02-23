@@ -85,6 +85,7 @@ public class TaskInfoTableController implements Closeable {
 
         this.taskInfoTable.setRowFactory(tmp -> {
             TableRow<TaskData> row = new TableRow<>();
+           // String nameOfMakeTask = row.getItem().getUploadedBy();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     TaskData taskData = row.getItem();

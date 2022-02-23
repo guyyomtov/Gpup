@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import workerManager.WorkerManagerController;
 
 import java.io.IOException;
 
@@ -25,10 +26,17 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
     @FXML private Button workManagerButton;
     @FXML private TitledPane rightSideTitlePane;
     private Stage primaryStage;
+    private Parent allTasksTableComponent;
     private OnlineAdminsController onlineUsersController;
     private AllTasksInfoTableController allTasksTableController;
+
     private NewJobController newJobController;
     private Parent newJobComponent;
+
+    private WorkerManagerController workerManagerController;
+    private Parent workerManagerComponent;
+
+    private Integer amountOfThreads;
 
 
     @FXML
@@ -37,6 +45,21 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
         this.initOnlineUsersComponent();
 
         this.initTasksTableComponent();
+
+        this.initWorkManagerComponent();
+
+    }
+
+    private void initWorkManagerComponent() {
+        try {
+            String curP = "/workerManager/workerManagerFxml.fxml";
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(curP));
+            this.workerManagerComponent = loader.load();
+            this.workerManagerController = loader.getController();
+            this.workerManagerController.init(amountOfThreads);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initTasksTableComponent() throws IOException {
@@ -45,6 +68,7 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
         String curP = "/DashBoard/AllTasksTable/TasksInfoTableComponent.fxml";
         FXMLLoader loader = new FXMLLoader(getClass().getResource(curP));
         Parent allTasksTableComponent = loader.load();
+        this.allTasksTableComponent = allTasksTableComponent;
         this.allTasksTableController = loader.getController();
 
         // start "get data all the time"
@@ -80,7 +104,7 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
 
         // right side table
         this.initOnlineUsersComponent();
-
+        this.boarderPane.setCenter(allTasksTableComponent);
         // center table
     }
 
@@ -88,7 +112,7 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
     void workManagerButtonAction(ActionEvent event) {
 
         // remove unwanted components from page
-        this.boarderPane.setRight(null);
+        this.boarderPane.setCenter(this.workerManagerComponent);
     }
 
     public void setPrimaryStage(Stage primaryStage) {this.primaryStage = primaryStage;}
@@ -97,4 +121,17 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
     public void updateHttpLine(String line) {
 
     }
+
+    public Integer getAmountOfThreads() {
+        return amountOfThreads;
+    }
+
+    public void setAmountOfThreads(Integer amountOfThreads) {
+        this.amountOfThreads = amountOfThreads;
+    }
+
+    public void updateAmountOfThreadsTextField(Integer value) {
+        this.amountOfCreditsEarnedField.setText(String.valueOf(value));
+    }
+
 }

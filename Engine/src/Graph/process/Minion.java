@@ -567,7 +567,7 @@ public class Minion implements Serializable, Runnable {
 
             FormatAllTask.updateCounter(myPData.get(3));// the status
         }
-        Task.threadCounter = Task.threadCounter - 1 ;
+       // Task.threadCounter = Task.threadCounter - 1 ; ////todo delete because server failed with static
         this.iAmFinished = true;
     }
 
@@ -579,8 +579,9 @@ public class Minion implements Serializable, Runnable {
             for(Minion curD : this.parents) {
                 if(curD.getCanIRun() && !curD.imFinished()) {
 
-                    if(!Graph.process.Task.waitingList.contains(curD))
-                        Graph.process.Task.waitingList.add(curD);
+                    //todo delete because server failed with static
+//                    if(!Graph.process.Task.waitingList.contains(curD))
+//                        Graph.process.Task.waitingList.add(curD);
                 }
             }
         }
@@ -684,6 +685,11 @@ public class Minion implements Serializable, Runnable {
     public void setFullPathDestination(String fullPathDestination) {this.fullPathDestination = fullPathDestination;}
 
     public void setFullPathSource(String fullPathSource) {this.fullPathSource = fullPathSource;}
+
+    public Integer getTimeIRun(){return this.timeIRun;}
+    public Integer getChancesISucceed(){return this.chancesISucceed;}
+    public Integer getChancesImAWarning(){return this.chancesImAWarning;}
+
 
 
 }

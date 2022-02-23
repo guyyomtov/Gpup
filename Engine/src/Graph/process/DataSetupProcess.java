@@ -33,6 +33,7 @@ public class DataSetupProcess {
     public String lastProcessTextArea;
     public String fullPathSource = new String();
     public String fullPathDestination = new String();
+    public String taskName;
 
     public DataSetupProcess builder(){ return this;}
 

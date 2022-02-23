@@ -18,7 +18,7 @@ public class WorkerManagerController {
 
     @FXML private Parent taskWorkerTable;
     @FXML private TaskWorkerTableController taskWorkerTableController;
-
+    private Integer amountOfThreads;
 
     @FXML private void pauseButtonAction(ActionEvent actionEvent) {
     }
@@ -27,5 +27,11 @@ public class WorkerManagerController {
     }
 
     @FXML private void stopButtonAction(ActionEvent actionEvent) {
+    }
+
+    public void init(Integer amountOfThreads) {
+        this.amountOfThreads = amountOfThreads;
+        amountOfThreadsLabel.setText(String.valueOf(amountOfThreads));
+        this.taskWorkerTableController.initTable();
     }
 }

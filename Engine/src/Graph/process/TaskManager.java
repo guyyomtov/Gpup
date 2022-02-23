@@ -7,32 +7,55 @@ import java.util.Map;
 
 public class TaskManager {
 
-    private Map<String, TaskData> nameToTask;
+    private Map<String, TaskData> nameToTaskData; // -> dto class
 
-    public TaskManager(){this.nameToTask = new HashMap<>();}
+    private Map<String, Task> nameToTask; // -> original task class
 
-    public synchronized void addTask(TaskData taskData){
-        this.nameToTask.put(taskData.getTaskName(), taskData);
+    public TaskManager(){
+        this.nameToTaskData = new HashMap<>();
+        this.nameToTask = new HashMap<>();
+    }
+//methods for taskData
+    public synchronized void addTaskData(TaskData taskData){
+        this.nameToTaskData.put(taskData.getTaskName(), taskData);
     }
 
-    public synchronized void removeTask(TaskData taskData){ this.nameToTask.remove(taskData.getTaskName());}
+    public synchronized void removeTaskData(TaskData taskData){ this.nameToTaskData.remove(taskData.getTaskName());}
 
-    public boolean taskExist(TaskData taskData){
+    public boolean taskDataExist(TaskData taskData){
 
-        return this.nameToTask.containsKey(taskData.getTaskName());
+        return this.nameToTaskData.containsKey(taskData.getTaskName());
 
     }
 
-    public Map<String, TaskData> getNameToTask() {
+    public Map<String, TaskData> getNameToTaskData() {
+        return nameToTaskData;
+    }
+
+    public boolean taskDataExist(String taskName) {
+
+        return this.nameToTaskData.containsKey(taskName);
+
+    }
+
+    // methods for task
+    public synchronized void addTask(Task task){
+        this.nameToTask.put(task.getTaskName(), task);
+    }
+
+    public synchronized void removeTask(Task task){ this.nameToTask.remove(task.getTaskName());}
+
+    public boolean taskExist(Task task){
+        return this.nameToTask.containsKey(task.getTaskName());
+    }
+
+    public Map<String, Task> getNameToTask() {
         return nameToTask;
     }
 
     public boolean taskExist(String taskName) {
-
         return this.nameToTask.containsKey(taskName);
-
     }
 
 
-
-    }
+}

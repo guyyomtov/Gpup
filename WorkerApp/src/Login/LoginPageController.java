@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -117,6 +118,8 @@ public class LoginPageController {
         Parent load = loader.load();
         WorkerDashBoardController dashBoardController= (WorkerDashBoardController) loader.getController();
         dashBoardController.setPrimaryStage(this.primaryStage);
+        dashBoardController.setAmountOfThreads(this.threadSpinnerButton.getValue());
+        dashBoardController.updateAmountOfThreadsTextField(this.threadSpinnerButton.getValue());
         Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
         primaryStage.setScene(scene);
     }

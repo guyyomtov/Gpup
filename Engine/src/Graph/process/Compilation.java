@@ -14,8 +14,9 @@ public class Compilation extends Task implements Serializable{
         super(dSp); //
         this.fullPathSource = dSp.fullPathSource;
         this.fullPathDestination = dSp.fullPathDestination;
-        TaskFile taskFile = new TaskFile();
-        taskFile.makeTaskDir("Compilation");
+        //todo should be in the client
+//        TaskFile taskFile = new TaskFile();
+//        taskFile.makeTaskDir("Compilation");
     }
 
 

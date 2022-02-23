@@ -2,7 +2,6 @@ package transferGraphData;
 
 import javafx.beans.property.BooleanProperty;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +21,9 @@ public class TaskData {
     private Integer totalRoots = new Integer(0);
     private Integer totalPrice = new Integer(0);
     private Integer totalWorker = new Integer(0);
+    private List<ExecuteTarget> executeTargetList = new ArrayList<>();
+
+
 
     public enum Status {
         CREATED {
@@ -52,27 +54,27 @@ public class TaskData {
             }
         };
     }
-
     private Status status;
 
     //todo maybe we dont need those members
+
     private BooleanProperty pauseProperty;
     private BooleanProperty stopProperty;
 
-
     //args for simulation
+
     private Boolean isRandom;
     private Integer maxTimePerTarget;
     private Integer chancesToSuccess;
     private Integer chancesToWarning;
-
     //args for compilation
+
     private String fullPathSource;
     private String fullPathDestination;
 
 
-
     public TaskData(){}
+
     public TaskData(String taskName, Integer pricePerTarget, List<TargetInfo> targetInfoList, String whatKindOfTask, String graphName) {
         this.taskName = taskName;
         this.pricePerTarget = pricePerTarget;
@@ -80,7 +82,6 @@ public class TaskData {
         this.whatKindOfTask = whatKindOfTask;
         this.graphName = graphName;
     }
-
     public String getTaskName() {
         return taskName;
     }
@@ -96,10 +97,10 @@ public class TaskData {
     public void setPricePerTarget(Integer pricePerTarget) {
         this.pricePerTarget = pricePerTarget;
     }
+
     public void calculateTotalPrice(){
         this.totalPrice = this.pricePerTarget * this.totalTargets;
     }
-
     public List<TargetInfo> getTargetInfoList() {
         return targetInfoList;
     }
@@ -286,4 +287,12 @@ public class TaskData {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    public List<ExecuteTarget> getExecuteTargetList() {
+        return this.executeTargetList;
+    }
+    public void setExecuteTargetList(List<ExecuteTarget> executeTargetList) {
+        this.executeTargetList = executeTargetList;
+    }
+
 }

@@ -7,6 +7,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import transferGraphData.ExecuteTarget;
 import transferGraphData.TargetInfo;
 
 import java.util.ArrayList;
@@ -15,25 +16,25 @@ import java.util.List;
 public class TableForProcessController {
 
     @FXML
-    private TableView<TargetInfo> tableForProcess;
+    private TableView<ExecuteTarget> tableForProcess;
 
     @FXML
-    private TableColumn<TargetInfo, String> targetNameColumn;
+    private TableColumn<ExecuteTarget, String> targetNameColumn;
 
     @FXML
-    private TableColumn<TargetInfo, String> levelColumn;
+    private TableColumn<ExecuteTarget, String> levelColumn;
 
     @FXML
-    private TableColumn<TargetInfo, String> statusColumn;
+    private TableColumn<ExecuteTarget, String> statusColumn;
 
 
-    public void initTable(List<TargetInfo> targetInfoList, TextArea textAreaForTargetInfo){
+    public void initTable(List<ExecuteTarget> targetInfoList, TextArea textAreaForTargetInfo){
 
-        ObservableList<TargetInfo> data =
+        ObservableList<ExecuteTarget> data =
                 FXCollections.observableArrayList(targetInfoList);
 
         targetNameColumn.setCellValueFactory(
-                new PropertyValueFactory<>("name")
+                new PropertyValueFactory<>("targetName")
         );
         levelColumn.setCellValueFactory(
                 new PropertyValueFactory<>("type")
@@ -43,6 +44,7 @@ public class TableForProcessController {
         );
 
         tableForProcess.setEditable(true);
+        tableForProcess.getItems().clear();
         tableForProcess.setItems(data);
 
      //   this.addListener(targetInfo); // todo to see what object return to me the relevant data.
@@ -57,7 +59,7 @@ public class TableForProcessController {
 //
 //    }
 
-    public List<TargetInfo> getMinionsFromTable(){
+    public List<ExecuteTarget> getMinionsFromTable(){
         return new ArrayList<>(this.tableForProcess.getItems());
     }
 

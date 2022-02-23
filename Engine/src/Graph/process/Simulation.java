@@ -22,9 +22,9 @@ public class Simulation extends Task implements Serializable, Runnable {
         super(dSp);
 
         this.setName();
-
-        TaskFile taskFile = new TaskFile();
-        taskFile.makeTaskDir("Simulation");
+//todo not should be in the server, should be in the client
+//        TaskFile taskFile = new TaskFile();
+//        taskFile.makeTaskDir("Simulation");
     }
 
     public Simulation(DataSetupProcess dSp, boolean isDemo){
@@ -153,35 +153,35 @@ public class Simulation extends Task implements Serializable, Runnable {
     public void setName(){this.taskName = "simulation";}
 
 
-    public void runMinions(){
-
-        ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
-
-        //first case
-        Minion minion = waitingList.poll();
-        executorService.execute(minion);
-        threadCounter++;
-
-        // go out of while when: no thread exist & queue is empty
-        while(threadCounter != 0 || !waitingList.isEmpty()) {
-
-            minion = waitingList.poll();
-
-            if(minion != null) {
-
-                executorService.execute(minion);
-
-                threadCounter++;
-            }
-            else{
-                try {
-                    Thread.sleep(300);
-                }catch (InterruptedException e) {
-                   // e.printStackTrace();
-                }
-            }
-        }
-        int x = 5;
-    }
+//    public void runMinions(){
+//
+//        ExecutorService executorService = Executors.newFixedThreadPool(maxParallelism);
+//
+//        //first case
+//        Minion minion = waitingList.poll();
+//        executorService.execute(minion);
+//        threadCounter++;
+//
+//        // go out of while when: no thread exist & queue is empty
+//        while(threadCounter != 0 || !waitingList.isEmpty()) {
+//
+//            minion = waitingList.poll();
+//
+//            if(minion != null) {
+//
+//                executorService.execute(minion);
+//
+//                threadCounter++;
+//            }
+//            else{
+//                try {
+//                    Thread.sleep(300);
+//                }catch (InterruptedException e) {
+//                   // e.printStackTrace();
+//                }
+//            }
+//        }
+//        int x = 5;
+//    }
 
 }

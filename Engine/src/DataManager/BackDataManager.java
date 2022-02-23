@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import Graph.*;
 import fileHandler.GraphizHHandler;
 import taskView.TaskController;
+import transferGraphData.ExecuteTarget;
 import transferGraphData.TargetInfo;
 import transferGraphData.TaskData;
 
@@ -348,9 +349,6 @@ public class BackDataManager implements DataManager {
         return res;
     }
 
-    // todo we cant do it in the server because Task is A task of java fx afer new simulation the server failed!
-    //to talk with Nadav, i understand that when the worker can to work on the task the admin make a new task and run it like it was in ex2
-    //of course with new request (update for the others users).
     public Task makeNewTask(TaskData taskData) throws ErrorUtils {
 
         DataSetupProcess dSP = this.createNewDataSetUpProcess(taskData);
@@ -376,6 +374,8 @@ public class BackDataManager implements DataManager {
         dSP.minionsChoosenByUser = createMinionsForProcess(taskData);
         dSP.chancesToSucceed = taskData.getChancesToSuccess();
         dSP.chancesToBeAWarning = taskData.getChancesToWarning();
+        dSP.timeToRun = taskData.getMaxTimePerTarget();
+        dSP.taskName = taskData.getTaskName();
         return dSP;
     }
 
@@ -402,8 +402,35 @@ public class BackDataManager implements DataManager {
         Flagger flagger = new Flagger();
         flagger.processIsSimulation = taskData.getWhatKindOfTask() == "simulation" ? true : false;
         flagger.processFromScratch = taskData.getFromScratch();
+        flagger.processIncremental = !taskData.getFromScratch();
         flagger.chancesIsRandomInProcess = taskData.getRandom();
         return flagger;
     }
 
+    // after the admin press start.
+    public List<ExecuteTarget> transferFromMinionToExecuteTarget(Task newTask, TaskData taskData) {
+        List<ExecuteTarget> executeTargetList = new ArrayList<>();
+        Map<String, Minion> nameToMinion = Minion.startMinionMapFrom(newTask.getMinionsThatUserChose());
+        List<TargetInfo> targetInfoList = taskData.getTargetInfoList();
+
+        for(TargetInfo targetInfo : targetInfoList){
+
+            Minion minion = nameToMinion.get(targetInfo.getName());
+            ExecuteTarget executeTarget = new ExecuteTarget(taskData, targetInfo, minion);
+            executeTargetList.add(executeTarget);
+
+        }
+        return executeTargetList;
+    }
+
+    // the 'execute target' will be with the status not initialized.
+    public List<ExecuteTarget> makeExecuteTargetsBeforeAdminPressStart(TaskData taskData) {
+        List<ExecuteTarget> executeTargetList = new ArrayList<>();
+        List<TargetInfo> targetInfoList = taskData.getTargetInfoList();
+        for(TargetInfo targetInfo : targetInfoList){
+            ExecuteTarget executeTarget = new ExecuteTarget(targetInfo);
+            executeTargetList.add(executeTarget);
+        }
+        return executeTargetList;
+    }
 }

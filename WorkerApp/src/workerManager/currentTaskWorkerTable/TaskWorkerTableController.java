@@ -5,7 +5,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 public class TaskWorkerTableController {
-
+//todo to chose what kind of object should be here .
     @FXML
     private TableView<?> taskInfoTable;
 
@@ -24,4 +24,6 @@ public class TaskWorkerTableController {
     @FXML
     private TableColumn<?, ?> creditGotCol;
 
+    public void initTable() {
+    }
 }

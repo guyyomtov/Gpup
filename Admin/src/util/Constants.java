@@ -26,10 +26,13 @@ public class Constants {
     public final static String USERS_LIST = FULL_SERVER_PATH + "/adminsListServlet";
     public final static String GRAPHS_LIST = FULL_SERVER_PATH + "/graphsListServlet";
     public final static String TASKS_LIST = FULL_SERVER_PATH + "/tasksListServlet";
+    public final static String TASKS_LIST_FOR_PROCESS = FULL_SERVER_PATH + "/tasksListForProcess";
+    public final static String TASK_DATA = FULL_SERVER_PATH + "/taskDataServlet";
     public final static String GRAPHS_VIEW = FULL_SERVER_PATH + "/graphViewResponse";
     public final static String FIND_PATH = FULL_SERVER_PATH + "/findPath";
     public final static String FIND_CIRCLE = FULL_SERVER_PATH + "/findCircle";
     public final static String WHAT_IF_REQUEST = FULL_SERVER_PATH + "/whatIfRequest";
+    public static final String START_TASK = FULL_SERVER_PATH + "/startTaskServlet";
 
     // GSON instance
     public final static Gson GSON_INSTANCE = new Gson();

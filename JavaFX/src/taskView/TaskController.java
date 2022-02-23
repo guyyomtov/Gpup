@@ -30,6 +30,7 @@ import java.util.List;
 
 public class TaskController {
 
+    @FXML private Label taskName;
     @FXML private GridPane gridPaneSettingTab;
     @FXML private RadioButton simulationButton;
     @FXML private RadioButton compilationButton;

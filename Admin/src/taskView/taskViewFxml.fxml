@@ -85,7 +85,7 @@
                                           <Label fx:id="taskName" alignment="TOP_LEFT" text="task name:" />
                                           <RadioButton fx:id="simulationButton" mnemonicParsing="false" onAction="#simulationButtonAction" selected="true" text="Simulation">
                                              <toggleGroup>
-                                                <ToggleGroup fx:id="taskName" />
+                                                <ToggleGroup fx:id="taskName2" />
                                              </toggleGroup></RadioButton>
                                           <RadioButton fx:id="compilationButton" mnemonicParsing="false" onAction="#compilationButtonAction" prefHeight="21.0" prefWidth="121.0" text="Compilation" />
                                        </children>
@@ -155,7 +155,7 @@
                         <RowConstraints maxHeight="332.0" minHeight="10.0" percentHeight="20.0" prefHeight="292.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <fx:include fx:id="tableProcess" source="../taskView.tableForProcess/tableForProcessFxml.fxml" GridPane.rowIndex="1" />
+
                         <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
                            <children>
                               <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">

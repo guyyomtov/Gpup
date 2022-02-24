@@ -7,6 +7,9 @@ public class Constants {
     public static final String GRAPH_PATH_NAME = "absolutePath";
     public static final String USER_NAME_ERROR = "username_error";
 
+    public static final String AMOUNT_OF_TARGETS = "amountOfTargets";
+    public static final String AMOUNT_OF_THREADS = "amountOfThreads";
+
     public static final String SRC = "src";
     public static final String DST = "dest";
     public static final String RELATIONSHIP = "relationship";

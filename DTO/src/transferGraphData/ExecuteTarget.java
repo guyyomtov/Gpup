@@ -31,6 +31,7 @@ public class ExecuteTarget implements Runnable {
     private String fullPathDestination;
     private String generalInfo;
 
+    //after user press start
     public ExecuteTarget(TaskData taskData, TargetInfo currentTargetInfo, Minion minion){
         this.targetInfo = currentTargetInfo;
         this.targetName = currentTargetInfo.getName();
@@ -74,6 +75,7 @@ public class ExecuteTarget implements Runnable {
         outPut = "The result of the target " + this.targetName + " is: " + this.status;
         cTI.getInfo(outPut);
         cTI.closeFile();
+
     }
 
     // todo handle with the files tomorrow to see what we need to had

@@ -91,14 +91,14 @@ public class AllTasksInfoTableController implements Closeable {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     TaskData taskData = row.getItem();
-                    openNewJobPage();
+                    openNewJobPage(taskData);
                 }
             });
             return row;
         });
     }
 
-    private void openNewJobPage(){
+    private void openNewJobPage(TaskData taskData){
 
         try {
             //start resources
@@ -107,7 +107,7 @@ public class AllTasksInfoTableController implements Closeable {
             Parent newJob = loader.load();
             this.newJobComponent = newJob;
             this.newJobController = loader.getController();
-
+            this.newJobController.setTaskData(taskData);
             //open component in new page
             Stage stage = new Stage();
             stage.setScene(new Scene(newJob, 600, 600));

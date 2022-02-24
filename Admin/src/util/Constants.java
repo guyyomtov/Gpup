@@ -34,6 +34,7 @@ public class Constants {
     public final static String WHAT_IF_REQUEST = FULL_SERVER_PATH + "/whatIfRequest";
     public static final String START_TASK = FULL_SERVER_PATH + "/startTaskServlet";
 
+    public static final String NEW_JOB = FULL_SERVER_PATH + "/newJobServlet";
     // GSON instance
     public final static Gson GSON_INSTANCE = new Gson();
 }

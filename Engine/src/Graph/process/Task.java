@@ -179,7 +179,7 @@ public abstract class Task implements Serializable, Consumer<String>{
        // this.updateMinionLiveDataSerialSet(); // todo to add this in all the function that start minions!!!!
         this.updateMinions();
     }
-// todo guy problem in the past
+// todo guy problem in the ohh no
 //    private void updateMinionLiveDataSerialSet() {
 //        for(Minion minion : minionsChosenByUser){
 //            minion.getMinionLiveData().setNamesOfSerialSetsThatMinionInclude(this.serialSetsThatIncluded(minion));
@@ -555,4 +555,6 @@ public abstract class Task implements Serializable, Consumer<String>{
     }
 
     public String getTaskName(){return this.taskName;}
+
+    public Queue<Minion> getWaitingList(){return this.waitingList;}
 }

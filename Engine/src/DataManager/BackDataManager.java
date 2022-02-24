@@ -433,4 +433,38 @@ public class BackDataManager implements DataManager {
         }
         return executeTargetList;
     }
+
+    public List<ExecuteTarget> makeExecuteTargetsToSend(Task currentTask, TaskData taskData, Integer amountOfThreads) {
+        // to get from the queue the minions that can run
+        //List<ExecuteTarget> executeTargetsToSendToProcess
+        //to change there status to in process
+        List<Minion> minionsToSend = this.getMinionsFromQueue(currentTask, amountOfThreads);
+        //to convert them execute and the change in task view the execute target
+        List<ExecuteTarget> executeTargetList = this.transferFromMinionToExecuteTarget(currentTask, taskData);
+        List<ExecuteTarget> executeTargetsToSend = this.findExecuteTargetsToSend(executeTargetList);
+        taskData.setExecuteTargetList(executeTargetList);
+        return executeTargetsToSend;
+    }
+
+    private List<ExecuteTarget> findExecuteTargetsToSend(List<ExecuteTarget> executeTargetList) {
+        List<ExecuteTarget> executeTargetsToSend = new ArrayList<>();
+        executeTargetsToSend.stream().filter((executeTarget) -> executeTarget.getStatus().equals("IN PROCESS")).forEach((executeTarget) -> executeTargetsToSend.add(executeTarget));
+        return executeTargetsToSend;
+    }
+
+    private void changeStatusToInProcess(List<Minion> minionsToSend) {
+        minionsToSend.forEach((minion -> minion.setStatus("IN PROCESS")));
+    }
+
+    private List<Minion> getMinionsFromQueue(Task task, Integer amountOfThreads) {
+        Queue<Minion> waitingList = task.getWaitingList();
+        List<Minion> minionsToSend = new ArrayList<>();
+        while(waitingList.isEmpty() && amountOfThreads!= minionsToSend.size()){
+            Minion minion = waitingList.poll();
+            minion.setStatus("IN PROCESS");
+            minionsToSend.add(minion);
+        }
+        return minionsToSend;
+
+    }
 }

@@ -88,6 +88,7 @@ public class TaskControlPanelController {
         this.makeRequestToStartTheCurrentTask();
         //to start the list refresher
         //to open the stop button and the pause button
+        this.stopButton.setDisable(true);
         this.pauseButton.setDisable(false);
         this.stopButton.setDisable(false);
     }

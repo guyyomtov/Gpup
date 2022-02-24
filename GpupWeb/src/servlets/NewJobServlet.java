@@ -39,7 +39,7 @@ public class NewJobServlet extends HttpServlet {
                     TaskData taskData = taskManager.getNameToTaskData().get(taskNameFromParameter);
                     Task currentTask = taskManager.getNameToTask().get(taskNameFromParameter);
                     List<ExecuteTarget> executeTargetListToSentToTheWorker = bdm.makeExecuteTargetsToSend(currentTask, taskData, amountOfThreads);
-                    
+
                     //code response
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (ErrorUtils e) {

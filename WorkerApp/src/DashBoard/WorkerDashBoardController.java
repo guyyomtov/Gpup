@@ -47,7 +47,6 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
         this.initTasksTableComponent();
 
         this.initWorkManagerComponent();
-
     }
 
     private void initWorkManagerComponent() {

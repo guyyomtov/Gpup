@@ -3,6 +3,7 @@ package DashBoard.AllTasksTable;
 import DashBoard.NewJob.NewJobController;
 import Utils.ErrorHandling.ErrorHandling;
 import api.HttpStatusUpdate;
+import errors.ErrorUtils;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -90,15 +91,21 @@ public class AllTasksInfoTableController implements Closeable {
             TableRow<TaskData> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
+
                     TaskData taskData = row.getItem();
-                    openNewJobPage();
+
+                    try {
+                        openNewJobPage();
+                    } catch (ErrorUtils e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             return row;
         });
     }
 
-    private void openNewJobPage(){
+    private void openNewJobPage() throws ErrorUtils {
 
         try {
             //start resources
@@ -107,6 +114,8 @@ public class AllTasksInfoTableController implements Closeable {
             Parent newJob = loader.load();
             this.newJobComponent = newJob;
             this.newJobController = loader.getController();
+
+            //set job component data
 
             //open component in new page
             Stage stage = new Stage();

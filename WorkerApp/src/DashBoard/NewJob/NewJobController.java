@@ -1,12 +1,10 @@
 package DashBoard.NewJob;
 
-import DashBoardAdmin.MainDashboardController2;
-import errors.ErrorUtils;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TitledPane;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -24,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static util.Constants.GSON_INSTANCE;
+
+import java.util.logging.ErrorManager;
 
 public class NewJobController {
 

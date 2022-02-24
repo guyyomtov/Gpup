@@ -349,7 +349,7 @@ public class TaskController {
     }
 
     private void initThreadsSpinner() {
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Task.maxParallelism, 1);
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,2, 1);
         this.threadsSpinner.setValueFactory(valueFactory);
     }
 

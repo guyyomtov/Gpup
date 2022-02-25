@@ -212,34 +212,15 @@ public class ExecuteTarget implements Runnable {
     }
 
     private void sendTheResultToTheServer() {
-        //make the gson
-        Gson gson = new Gson();
-        String executeTargetJson = gson.toJson(this);
-       // making the body of the request
-        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.MIXED)
-                .addFormDataPart("targetExecute", executeTargetJson)
-                .build();
 
-        //making the url
-        String finalUrl = HttpUrl
-                .parse("http://localhost:8080/GpupWeb_Web_exploded" + "/updateTargetResult")
-                .newBuilder()
-                //.addQueryParameter("targetExecute", executeTargetJson)
-                //.addQueryParameter("logs", logs)
-                .build()
-                .toString();
-        // making the request
-        Request request = new Request.Builder().
-                url(finalUrl)
-                .method("POST", body)
-                .build();
+        Request request = this.makeTheBodyRequest();
 
         OkHttpClient okHttpClient =
                 new OkHttpClient.Builder()
                 .followRedirects(false)
                 .build();
 
-        runAsync(finalUrl, okHttpClient,new Callback() {
+        runAsync(request, okHttpClient,new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
 
@@ -263,10 +244,32 @@ public class ExecuteTarget implements Runnable {
 
     }
 
-    public void runAsync(String finalUrl, OkHttpClient okHttpClient,Callback callback) {
-        Request request = new Request.Builder()
-                .url(finalUrl)
+    private Request makeTheBodyRequest() {
+        //make the gson
+        Gson gson = new Gson();
+        String executeTargetJson = gson.toJson(this);
+        // making the body of the request
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.MIXED)
+                .addFormDataPart("targetExecute", executeTargetJson)
                 .build();
+
+        //making the url
+        String finalUrl = HttpUrl
+                .parse("http://localhost:8080/GpupWeb_Web_exploded" + "/updateTargetResult")
+                .newBuilder()
+                //.addQueryParameter("targetExecute", executeTargetJson)
+                //.addQueryParameter("logs", logs)
+                .build()
+                .toString();
+        // making the request
+        Request request = new Request.Builder().
+                url(finalUrl)
+                .method("POST", body)
+                .build();
+        return request;
+    }
+
+    public void runAsync(Request request, OkHttpClient okHttpClient,Callback callback) {
 
         Call call = okHttpClient.newCall(request);
 

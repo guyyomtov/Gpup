@@ -22,6 +22,7 @@ public class StartTaskServlet extends HttpServlet {
 
     private final String START_PROCESS = "start";
     private final String PAUSE_PROCESS = "pause";
+    private final String RESUME_PROCESS = "resume";
     private final String STOP_PROCESS = "stop";
 
     @Override
@@ -57,6 +58,9 @@ public class StartTaskServlet extends HttpServlet {
                         case PAUSE_PROCESS:
                             this.pauseProcess(taskData);
                             break;
+                        case RESUME_PROCESS:
+                            this.resumeProcess(taskData);
+                            break;
                     }
 
                     //code response
@@ -73,6 +77,12 @@ public class StartTaskServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
 
         }
+    }
+
+    private void resumeProcess(TaskData taskData) {
+
+        // make taskData status stop
+        taskData.setStatus(TaskData.Status.AVAILABLE);
     }
 
     private void pauseProcess(TaskData taskData) {

@@ -110,7 +110,7 @@ public class TaskControlPanelController {
     void resumeButtonAction(ActionEvent event) throws ErrorUtils {
 
         // set process logic
-        this.changeStatusOfProcessTo(PAUSE_PROCESS);
+        this.changeStatusOfProcessTo(RESUME_PROCESS);
 
         // change buttons accordingly
         this.setControlButtons(true, false, false, true);
@@ -161,7 +161,7 @@ public class TaskControlPanelController {
 
     private String makeUrlForControlProcessServlet(String wantedStatus) throws ErrorUtils {
 
-        if(wantedStatus != START_PROCESS && wantedStatus != PAUSE_PROCESS && wantedStatus != STOP_PROCESS)
+        if(wantedStatus != START_PROCESS && wantedStatus != PAUSE_PROCESS && wantedStatus != STOP_PROCESS && wantedStatus != RESUME_PROCESS)
             throw new ErrorUtils(ErrorUtils.invalidInput("Status given invalid."));
 
         String finalUrl = HttpUrl

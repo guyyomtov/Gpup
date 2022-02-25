@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TitledPane;
+import javafx.stage.Stage;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
@@ -47,6 +48,10 @@ public class NewJobController {
     void applyButtonAction(ActionEvent event) {
 
         jobsManager.addNewTask(taskData);
+
+        // close current task window
+        Stage stage = (Stage) applyButton.getScene().getWindow();
+        stage.close();
     }
 
     @FXML

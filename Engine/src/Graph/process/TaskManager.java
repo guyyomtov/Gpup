@@ -8,8 +8,8 @@ import java.util.Map;
 public class TaskManager {
 
     private Map<String, TaskData> nameToTaskData; // -> dto class
-
     private Map<String, Task> nameToTask; // -> original task class
+
 
     public TaskManager(){
         this.nameToTaskData = new HashMap<>();
@@ -25,7 +25,6 @@ public class TaskManager {
     public boolean taskDataExist(TaskData taskData){
 
         return this.nameToTaskData.containsKey(taskData.getTaskName());
-
     }
 
     public Map<String, TaskData> getNameToTaskData() {

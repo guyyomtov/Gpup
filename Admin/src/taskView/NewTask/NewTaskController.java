@@ -191,9 +191,9 @@ public class NewTaskController {
 
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Platform.runLater(() ->
-                        ErrorUtils.makeJavaFXCutomAlert("server failed")
-                );
+//                Platform.runLater(() ->
+//                        ErrorUtils.makeJavaFXCutomAlert("server failed")
+//                );
                 System.out.println("We failed, server problem");
 
             }

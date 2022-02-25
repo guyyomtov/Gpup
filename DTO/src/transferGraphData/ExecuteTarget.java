@@ -91,7 +91,8 @@ public class ExecuteTarget implements Runnable {
         outPut = "The result of the target " + this.targetName + " is: " + this.status + "\n";
         this.logs += outPut;
         consumerForLog.accept(outPut);
-        //this.sendTheResultToTheServer();
+        this.sendTheResultToTheServer();
+        //i think here we should update the thread counter
     }
 
     // todo handle with the files tomorrow to see what we need to had
@@ -238,6 +239,8 @@ public class ExecuteTarget implements Runnable {
                     System.out.println("we failed " + response.code());
                 } else { // the code is 200
 
+                    int x = 5;
+
                     }
                 }
         });
@@ -246,25 +249,26 @@ public class ExecuteTarget implements Runnable {
 
     private Request makeTheBodyRequest() {
         //make the gson
+        this.consumerForLog = null;
         Gson gson = new Gson();
         String executeTargetJson = gson.toJson(this);
         // making the body of the request
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.MIXED)
-                .addFormDataPart("targetExecute", executeTargetJson)
+                .addFormDataPart("executeTarget", executeTargetJson)
                 .build();
 
         //making the url
         String finalUrl = HttpUrl
-                .parse("http://localhost:8080/GpupWeb_Web_exploded" + "/updateTargetResult")
+                .parse("http://localhost:8080/GpupWeb_Web_exploded" + "/updateExecuteTargetResult")
                 .newBuilder()
-                //.addQueryParameter("targetExecute", executeTargetJson)
+                .addQueryParameter("executeTarget", executeTargetJson)
                 //.addQueryParameter("logs", logs)
                 .build()
                 .toString();
         // making the request
         Request request = new Request.Builder().
                 url(finalUrl)
-                .method("POST", body)
+                .post(body)
                 .build();
         return request;
     }
@@ -278,5 +282,29 @@ public class ExecuteTarget implements Runnable {
 
     public void setConsumerForLog(Consumer consumerForLog) {
         this.consumerForLog = consumerForLog;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getGraphName() {
+        return graphName;
+    }
+
+    public void setGraphName(String graphName) {
+        this.graphName = graphName;
+    }
+
+    public String getLogs() {
+        return logs;
+    }
+
+    public void setLogs(String logs) {
+        this.logs = logs;
     }
 }

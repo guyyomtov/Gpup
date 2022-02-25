@@ -466,12 +466,47 @@ public class BackDataManager implements DataManager {
     private List<Minion> getMinionsFromQueue(Task task, Integer amountOfThreads) {
         Queue<Minion> waitingList = task.getWaitingList();
         List<Minion> minionsToSend = new ArrayList<>();
-        while(!waitingList.isEmpty() && amountOfThreads!= minionsToSend.size()){
-            Minion minion = waitingList.poll();
-            minion.setStatus("IN PROCESS");
-            minionsToSend.add(minion);
+        synchronized (this) {
+            while (!waitingList.isEmpty() && amountOfThreads != minionsToSend.size()) {
+                Minion minion = waitingList.poll();
+                minion.setStatus("IN PROCESS");
+                minion.setCanIRun(false); // because I send him to run and I don't want it will run again, he can't run twice!
+                minionsToSend.add(minion);
+            }
         }
         return minionsToSend;
 
+    }
+
+    public void updateExecuteTargetStatus(Task currentTask, TaskData taskData, ExecuteTarget executeTarget) {
+        // get the current minion
+        Map<String, Minion> nameToChosenMinion = currentTask.getNamesToMinionsThatUserChose();
+        Minion finishedMinion = nameToChosenMinion.get(executeTarget.getTargetName());
+        //update his status and who is open accordingly to the status
+        finishedMinion.setStatus(executeTarget.getStatus());
+        finishedMinion.setMyStatus(executeTarget.getStatus());
+        finishedMinion.setiAmFinished(true);
+        finishedMinion.setCanIRun(false);
+
+        this.checkStatusAndUpdateMinions(finishedMinion, currentTask, taskData);
+        //if there is new minion so insert them to the queue
+
+    }
+
+    private void checkStatusAndUpdateMinions(Minion finishedMinion, Task currentTask, TaskData taskData) {
+        String status = finishedMinion.getStatus();
+        //if the target done with success
+        if(status.equals("SUCCESS") || status.equals("WARNING")){
+            //check what minion he open
+            finishedMinion.iOpened(finishedMinion.getParentsNames(), finishedMinion.getAllNamesToMinions());
+            //update in task the minionsToAdd to the queue
+           synchronized (this){currentTask.updateQueue();}
+        }
+        else{ // status is failure
+            finishedMinion.checkAndUpdateWhoImClosedTORunning(finishedMinion, true);
+        }
+        // check what minions are changer and update the executeTargetsListdd
+        List<ExecuteTarget> executeTargetList = this.transferFromMinionToExecuteTarget(currentTask, taskData);
+        taskData.setExecuteTargetList(executeTargetList);
     }
 }

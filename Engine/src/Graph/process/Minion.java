@@ -523,7 +523,6 @@ public class Minion implements Serializable, Runnable {
 
                 //update status of dad
                 Minion curDad = allMinions.get(curDadName);
-                //todo --> to check logic fuck the morgan
                 if(!curDad.status.getValue().equals("SUCCESS") && !curDad.status.getValue().equals("WARNING")) {
                     curDad.setMyStatus("WAITING");
                     curDad.setStatus("WAITING");
@@ -656,8 +655,8 @@ public class Minion implements Serializable, Runnable {
                     dad.status.setValue("SKIPPED");
                     dad.setiAmFinished(true);
                 }
-                dad.minionLiveData.minionsNameThatMinionRequiredFor.add(minion.getName());
-                dad.minionLiveData.minionsNameThatMinionRequiredFor.addAll(minion.minionLiveData.minionsNameThatMinionRequiredFor);
+               // dad.minionLiveData.minionsNameThatMinionRequiredFor.add(minion.getName());
+               // dad.minionLiveData.minionsNameThatMinionRequiredFor.addAll(minion.minionLiveData.minionsNameThatMinionRequiredFor);
                 checkAndUpdateWhoImClosedTORunning(dad, updateStatus);
             }
 

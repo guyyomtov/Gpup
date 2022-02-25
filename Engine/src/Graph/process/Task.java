@@ -39,6 +39,7 @@ public abstract class Task implements Serializable, Consumer<String>{
     protected BackDataManager bDM;
     protected BooleanProperty pauseTaskProperty;
     protected String infoOfLastProcess;
+    protected Map<String, Minion> namesToMinionsThatUserChose = new HashMap<>();
 
     public Task(DataSetupProcess dSp) throws ErrorUtils {
 
@@ -73,6 +74,8 @@ public abstract class Task implements Serializable, Consumer<String>{
         this.AddDataOnMinions();
 
         this.makeQueue();
+
+        this.namesToMinionsThatUserChose = Minion.startMinionMapFrom(this.minionsChosenByUser);
     }
 
     public Task(DataSetupProcess dSp, boolean isDemo) {
@@ -270,6 +273,13 @@ public abstract class Task implements Serializable, Consumer<String>{
             if(curM.getCanIRun() && !curM.imFinished())
                 waitingList.add(curM);
     }
+
+    public void updateQueue() {
+        for(Minion curM : this.minionsChosenByUser)
+            if(curM.getCanIRun() && !curM.imFinished())
+                waitingList.add(curM);
+    }
+
 
     protected Boolean iCanRunSerialSet(Minion minionToRun){
 
@@ -559,4 +569,6 @@ public abstract class Task implements Serializable, Consumer<String>{
     public String getTaskName(){return this.taskName;}
 
     public Queue<Minion> getWaitingList(){return this.waitingList;}
+
+    public Map<String, Minion> getNamesToMinionsThatUserChose(){return this.namesToMinionsThatUserChose;}
 }

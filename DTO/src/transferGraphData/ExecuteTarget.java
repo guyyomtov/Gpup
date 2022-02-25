@@ -142,9 +142,6 @@ public class ExecuteTarget implements Runnable {
         String resSrcArg = new String();
         int res = 0;
 
-        //this.fullPathSource =  this.fullPathSource.replace("\\", "/");
-        //this.fullPathDestination = this.fullPathSource.replace("\\", "/");
-
         // append second needed part
         resSrcArg += this.fullPathSource + "/" + this.generalInfo.replace('.', '/' ) + ".java";
 

@@ -99,7 +99,7 @@ public class TaskInfoTableController implements Closeable {
 
     private void makeNewSceneForTaskPanel() {
         Stage stage = new Stage();
-        stage.setScene(new Scene(this.taskControlPanelComponent, 800, 800));
+        stage.setScene(new Scene(this.taskControlPanelComponent, 500, 400));
         stage.show();
     }
 
@@ -118,7 +118,6 @@ public class TaskInfoTableController implements Closeable {
         }
         catch (IOException e) {
         }
-
     }
 
 

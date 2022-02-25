@@ -16,6 +16,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
@@ -175,6 +176,10 @@ public class NewTaskController {
             ErrorUtils.makeJavaFXCutomAlert(e.getMessage());
             return;
         }
+
+        //close the app window after submit
+        Stage stage = (Stage) sumbitButton.getScene().getWindow();
+        stage.close();
     }
 
     private void sendTaskDataToServer(TaskData taskData) {

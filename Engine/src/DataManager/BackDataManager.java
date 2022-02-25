@@ -376,6 +376,8 @@ public class BackDataManager implements DataManager {
         dSP.chancesToBeAWarning = taskData.getChancesToWarning();
         dSP.timeToRun = taskData.getMaxTimePerTarget();
         dSP.taskName = taskData.getTaskName();
+        dSP.fullPathDestination = taskData.getFullPathDestination();
+        dSP.fullPathSource = taskData.getFullPathSource();
         return dSP;
     }
 
@@ -391,8 +393,7 @@ public class BackDataManager implements DataManager {
             }
             else{ // -> make minion for compilation.
 
-                minions.add(new Minion(nameToTarget.get(targetInfo.getName()), taskData.getMaxTimePerTarget(), taskData.getChancesToSuccess(), taskData.getChancesToWarning(), false, taskData.getFullPathSource(), taskData.getFullPathDestination()));
-
+                minions.add(new Minion(nameToTarget.get(targetInfo.getName()), taskData.getMaxTimePerTarget(), taskData.getChancesToSuccess(), taskData.getChancesToWarning(), false, taskData.getFullPathDestination(), taskData.getFullPathSource()));
             }
         }
         return minions;

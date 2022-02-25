@@ -109,11 +109,11 @@ public class AllTasksInfoTableController implements Closeable {
             Parent newJob = loader.load();
             this.newJobComponent = newJob;
             this.newJobController = loader.getController();
+
+            //set job component data
             this.newJobController.setTaskData(taskData);
             this.newJobController.setJobsManager(this.jobsManager);
-            //set job component data
 
-           // this.newJobController.setTaskData(taskData);
             //open component in new page
             Stage stage = new Stage();
             stage.setScene(new Scene(newJob, 600, 600));

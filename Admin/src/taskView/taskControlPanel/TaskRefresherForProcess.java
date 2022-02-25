@@ -43,9 +43,12 @@ public class TaskRefresherForProcess extends TimerTask {
         HttpClientUtil.runAsync(Constants.TASKS_LIST, new Callback() {
 
             @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Platform.runLater(() -> AlertMessage.showUserErrorAlert("server failed!"));
-            }
+            public void onFailure(@NotNull Call call, @NotNull IOException e)
+               {
+
+               } // todo to remove from comment
+//                Platform.runLater(() -> AlertMessage.showUserErrorAlert("server failed!"));
+//            }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {

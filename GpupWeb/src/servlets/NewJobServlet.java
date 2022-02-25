@@ -46,7 +46,7 @@ public class NewJobServlet extends HttpServlet {
                     // get waiting minions
                     List<ExecuteTarget> executeTargetListToSend = bdm.makeExecuteTargetsToSend(currentTask, taskData, amountOfThreads);
                     //make jsonh
-                    try (PrintWriter out = response.getWriter()) {
+                     try (PrintWriter out = response.getWriter()) {
                         Gson gson = new Gson();
                         String json = gson.toJson(executeTargetListToSend);
                         response.setStatus(HttpServletResponse.SC_OK);

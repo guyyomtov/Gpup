@@ -40,6 +40,7 @@ public abstract class Task implements Serializable, Consumer<String>{
     protected BooleanProperty pauseTaskProperty;
     protected String infoOfLastProcess;
     protected Map<String, Minion> namesToMinionsThatUserChose = new HashMap<>();
+    protected Map<String, Boolean> nameToWasInProcess = new HashMap<>();
 
     public Task(DataSetupProcess dSp) throws ErrorUtils {
 
@@ -268,16 +269,27 @@ public abstract class Task implements Serializable, Consumer<String>{
     public abstract void setName();
 
     public void makeQueue() {
-        waitingList.clear();
+       // waitingList.clear();
+        this.makeMapNameToInProcess();
         for(Minion curM : this.minionsChosenByUser)
-            if(curM.getCanIRun() && !curM.imFinished())
+            if(curM.getCanIRun() && !curM.imFinished()) {
                 waitingList.add(curM);
+            }
+    }
+
+    public void makeMapNameToInProcess()
+    {
+        for(Minion minion : this.minionsChosenByUser){
+            this.nameToWasInProcess.put(minion.getName(), false);
+        }
     }
 
     public void updateQueue() {
-        for(Minion curM : this.minionsChosenByUser)
-            if(curM.getCanIRun() && !curM.imFinished())
+        for(Minion curM : this.minionsChosenByUser) {
+            if (curM.getCanIRun() && !curM.imFinished()) {
                 waitingList.add(curM);
+            }
+        }
     }
 
 
@@ -488,7 +500,7 @@ public abstract class Task implements Serializable, Consumer<String>{
 
         start = Instant.now();
 
-        this.makeQueue();
+        //this.makeQueue();
         end = Instant.now();
         this.makeSummaryOfProcess(Duration.between(start, end));
 
@@ -571,4 +583,9 @@ public abstract class Task implements Serializable, Consumer<String>{
     public Queue<Minion> getWaitingList(){return this.waitingList;}
 
     public Map<String, Minion> getNamesToMinionsThatUserChose(){return this.namesToMinionsThatUserChose;}
+
+    public Boolean IWasInProcess(String minionName){return this.nameToWasInProcess.get(minionName);}
+
+    public Map<String, Boolean> getNameToWasInProcess(){return this.nameToWasInProcess;}
+
 }

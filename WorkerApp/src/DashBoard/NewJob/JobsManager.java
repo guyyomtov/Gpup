@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 
 import static util.Constants.GSON_INSTANCE;
 
-public class JobsManager implements Runnable{
+public class JobsManager implements Runnable, Consumer{
 
 
     private List<TaskData> taskThatWorkerJoined;
@@ -43,13 +43,10 @@ public class JobsManager implements Runnable{
 
     synchronized public void addToWaitingList(List<ExecuteTarget> executeTargetList) throws ErrorUtils {
 
-        this.freeThreads -= executeTargetList.size();
-
         for(ExecuteTarget executeTarget : executeTargetList){
 
-            if(thisTargetExist(executeTarget.getTargetName()))
-                throw new ErrorUtils(ErrorUtils.invalidInput("double target giving back end problem"));
-
+//            if(thisTargetExist(executeTarget.getTargetName()))
+//                throw new ErrorUtils(ErrorUtils.invalidInput("double target giving back end problem"));
             this.waitingList.add(executeTarget);
         }
     }
@@ -81,84 +78,104 @@ public class JobsManager implements Runnable{
 
         while( true /*!this.taskThatWorkerJoined.isEmpty() && !this.waitingList.isEmpty()*/){
             int x;
+            // if he doesnt aplly to a avialble task
 
-            //call to server
-            //get execute target from tasks
-            // put in the waiting list
             if(!waitingList.isEmpty())
                  x = 5;
-            this.createWaitingList();
+            this.updateWaitingList();
 
             ExecuteTarget executeTarget = this.waitingList.poll();
 
             if(executeTarget != null) {
 
-                executeTarget.setConsumerForLog(this.consumerForLogs);
+                if(this.threadCounter <= this.maxThreads) {
+                    executeTarget.setConsumerForLog(this.consumerForLogs);
+                    executeTarget.setConsumerThreadsBack(this);
+                    executorService.execute(executeTarget);
+                    ++threadCounter;
+                }
+                //we don't have a free thread
+                else
+                    this.waitingList.add(executeTarget);
 
-                executorService.execute(executeTarget);
-
-                ++threadCounter;
             }
+
             // slow down the requests
             try {
-                Thread.sleep(2000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void createWaitingList() {
+    private void updateWaitingList() {
 
-        for(TaskData taskData : this.taskThatWorkerJoined)
-            this.callToServer(taskData);
+        for(TaskData taskData : this.taskThatWorkerJoined) {
+            TaskData.Status status = taskData.getStatus();
+            // only if the status is available get minions
+            if(status == TaskData.Status.AVAILABLE)
+                this.callToServer(taskData);
+            //delete task from worker
+            else if(status == TaskData.Status.DONE || status == TaskData.Status.STOPPED)
+                this.taskThatWorkerJoined.remove(taskData);
+
+        }
     }
 
     private void callToServer(TaskData taskData) {
 
-        String finalUrl = HttpUrl
-                .parse(Constants.NEW_JOB)
-                .newBuilder()
-                .addQueryParameter("taskname", taskData.getTaskName())
-                .addQueryParameter("graphname", taskData.getGraphName())
-                .addQueryParameter("amountOfThreads", String.valueOf(this.freeThreads))
-                .build()
-                .toString();
+        this.freeThreads = this.maxThreads - this.threadCounter;
+        if(this.freeThreads > 0) {
+            String finalUrl = HttpUrl
+                    .parse(Constants.NEW_JOB)
+                    .newBuilder()
+                    .addQueryParameter("taskname", taskData.getTaskName())
+                    .addQueryParameter("graphname", taskData.getGraphName())
+                    .addQueryParameter("amountOfThreads", String.valueOf(this.freeThreads))
+                    .build()
+                    .toString();
 
-        // make a request
-        HttpClientUtil.runAsync(finalUrl, new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            // make a request
+            HttpClientUtil.runAsync(finalUrl, new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
 
 //                Platform.runLater(() ->
 //                        ErrorUtils.makeJavaFXCutomAlert("We failed, server problem")
 //                );
-            }
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.code() != 200) {
-                    String responseBody = response.body().string();
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    if (response.code() != 200) {
+                        String responseBody = response.body().string();
 //                    Platform.runLater(() ->
 //                            ErrorUtils.makeJavaFXCutomAlert(responseBody)
 //                    );
-                    System.out.println("we failed " + response.code());
-                } else { // the code is 200
-                    try {
-                        String jsonString = response.body().string();
-                        ExecuteTarget[] executeTargets = GSON_INSTANCE.fromJson(jsonString, ExecuteTarget[].class);
-                        List<ExecuteTarget> executeTargetList = Arrays.asList(executeTargets);
-                        addToWaitingList(executeTargetList);
-                    } catch (ErrorUtils errorUtils) {
-                        errorUtils.printStackTrace();
+                        System.out.println("we failed " + response.code());
+                    } else { // the code is 200
+                        try {
+                            String jsonString = response.body().string();
+                            ExecuteTarget[] executeTargets = GSON_INSTANCE.fromJson(jsonString, ExecuteTarget[].class);
+                            List<ExecuteTarget> executeTargetList = Arrays.asList(executeTargets);
+                            addToWaitingList(executeTargetList);
+                        } catch (ErrorUtils errorUtils) {
+                            errorUtils.printStackTrace();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
     }
 
-
     public void setConsumerForLogs(Consumer consumerForLogs) {
         this.consumerForLogs = consumerForLogs;
+    }
+
+    @Override
+    public void accept(Object o) {
+        this.threadCounter = this.threadCounter - 1;
     }
 }

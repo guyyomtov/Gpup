@@ -43,6 +43,7 @@ public class ExecuteTarget implements Runnable {
     private String graphName;
     private String logs;
     private Consumer consumerForLog;
+    private Consumer consumerThreadIsBack;
 
     //after user press start
     public ExecuteTarget(TaskData taskData, TargetInfo currentTargetInfo, Minion minion){
@@ -93,6 +94,7 @@ public class ExecuteTarget implements Runnable {
         outPut = "The result of the target " + this.targetName + " is: " + this.status + "\n";
         this.logs += outPut;
         consumerForLog.accept(outPut);
+        this.consumerThreadIsBack.accept(true);
         this.sendTheResultToTheServer();
         //i think here we should update the thread counter
     }
@@ -256,6 +258,7 @@ public class ExecuteTarget implements Runnable {
     private Request makeTheBodyRequest() {
         //make the gson
         this.consumerForLog = null;
+        this.consumerThreadIsBack = null;
         Gson gson = new Gson();
         String executeTargetJson = gson.toJson(this);
         // making the body of the request
@@ -312,5 +315,9 @@ public class ExecuteTarget implements Runnable {
 
     public void setLogs(String logs) {
         this.logs = logs;
+    }
+
+    public void setConsumerThreadsBack(Consumer threadIsBack) {
+        this.consumerThreadIsBack = threadIsBack;
     }
 }

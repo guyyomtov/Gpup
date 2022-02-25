@@ -444,18 +444,21 @@ public class BackDataManager implements DataManager {
         //to convert them execute and the change in task view the execute target
         if(!minionsToSend.isEmpty()) {
             List<ExecuteTarget> executeTargetList = this.transferFromMinionToExecuteTarget(currentTask, taskData);
-            executeTargetsToSend = this.findExecuteTargetsToSend(executeTargetList);
+            executeTargetsToSend = this.findExecuteTargetsToSend(executeTargetList, currentTask);
             taskData.setExecuteTargetList(executeTargetList);
         }
 
         return executeTargetsToSend;
     }
 
-    private List<ExecuteTarget> findExecuteTargetsToSend(List<ExecuteTarget> executeTargetList) {
+    private List<ExecuteTarget> findExecuteTargetsToSend(List<ExecuteTarget> executeTargetList, Task currentTask) {
         List<ExecuteTarget> executeTargetsToSend = new ArrayList<>();
         for(ExecuteTarget executeTarget : executeTargetList){
-            if(executeTarget.getStatus().equals("IN PROCESS"))
+            boolean IWasInProcess = currentTask.IWasInProcess(executeTarget.getTargetName());
+            if(executeTarget.getStatus().equals("IN PROCESS") && !IWasInProcess) {
                 executeTargetsToSend.add(executeTarget);
+                currentTask.getNameToWasInProcess().put(executeTarget.getTargetName(), true);
+            }
         }
         return executeTargetsToSend;
     }
@@ -471,7 +474,9 @@ public class BackDataManager implements DataManager {
             while (!waitingList.isEmpty() && amountOfThreads != minionsToSend.size()) {
                 Minion minion = waitingList.poll();
                 minion.setStatus("IN PROCESS");
-                minion.setCanIRun(false); // because I send him to run and I don't want it will run again, he can't run twice!
+                // because I send him to run and I don't want it will run again, he can't run twice!
+                minion.setCanIRun(false);
+                minion.setiAmFinished(true);
                 minionsToSend.add(minion);
             }
         }

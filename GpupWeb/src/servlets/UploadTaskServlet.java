@@ -21,21 +21,20 @@ public class UploadTaskServlet extends HttpServlet {
 //todo to learn how to make doPost request
     @Override
     protected  void doGet(HttpServletRequest request, HttpServletResponse response){
+
+        Gson gson = new Gson();
         response.setContentType("text/plain;charset=UTF-8");
+
         //get the instance of taskData
         String taskDataObjectString = request.getParameter("taskDataObject");
-        Gson gson = new Gson();
         TaskData taskData = gson.fromJson( taskDataObjectString ,TaskData.class);
         TaskManager taskManager = ServletUtils.getTaskManager(getServletContext());
         GraphManager graphManager = ServletUtils.getGraphManager(getServletContext());
 
         synchronized (this){
 
-            if(taskManager.taskDataExist(taskData.getTaskName()) || !graphManager.graphExists(taskData.getGraphName())){
-
+            if(taskManager.taskDataExist(taskData.getTaskName()) || !graphManager.graphExists(taskData.getGraphName()))
                 response.setStatus(HttpServletResponse.SC_CONFLICT);
-
-            }
             else{
                 try {
                     BackDataManager backDataManager = graphManager.getBDM(taskData.getGraphName());

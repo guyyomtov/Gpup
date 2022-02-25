@@ -115,14 +115,14 @@ public class NewTaskController {
     }
 
     private void showCompilationComponent() {
-        this.gridPane.getChildren().remove(this.simulationComponent);
-        this.gridPane.add(this.compilationComponent, 1, 1);
 
+        this.gridPane.getChildren().remove(this.simulationComponent);
+
+        this.gridPane.add(this.compilationComponent, 1, 1);
     }
 
     @FXML
     void simulationRBOnAction(ActionEvent event) throws ErrorUtils {
-
 
         // check if simulation is an option
         if (thisProcessIsAvailable(SIMULATION)) {
@@ -160,25 +160,29 @@ public class NewTaskController {
 
     @FXML
     void sumbitButtonAction(ActionEvent event) {
+
         // create new Task Data and check handle with Error
         TaskData taskData;
         try {
             // check valid data: valid name, data for process, user choose targets
             this.checkValidity();
+
             taskData = this.createTaskData();
+
             this.sendTaskDataToServer(taskData);
+
         } catch (ErrorUtils e) {
             ErrorUtils.makeJavaFXCutomAlert(e.getMessage());
             return;
         }
-
-
     }
 
     private void sendTaskDataToServer(TaskData taskData) {
 
-        //make url
+        //make json
         String json = Constants.GSON_INSTANCE.toJson(taskData);
+
+        //make url
         String finalUrl = HttpUrl
                 .parse(Constants.UPLOAD_TASK)
                 .newBuilder()
@@ -195,7 +199,6 @@ public class NewTaskController {
                         ErrorUtils.makeJavaFXCutomAlert("server failed")
                 );
                 System.out.println("We failed, server problem");
-
             }
 
             @Override
@@ -206,7 +209,6 @@ public class NewTaskController {
                             ErrorUtils.makeJavaFXCutomAlert("Something went wrong: " + responseBody)
                     );
                     System.out.println("we failed " + response.code());
-
                 } else {
                     Platform.runLater(() -> {
                         AlertMessage.showUserSuccessAlert("Task uploaded successfully");
@@ -223,6 +225,7 @@ public class NewTaskController {
 
 
     private TaskData createTaskData() throws ErrorUtils {
+
         TaskData taskData = new TaskData();
         taskData.setTaskName(this.taskNameTextInput.getText());
         taskData.setGraphName(MainDashboardController2.currGraphName);
@@ -233,6 +236,7 @@ public class NewTaskController {
         taskData.setFromScratch(true);
         taskData.setPricePerTarget(this.getPricePerTarget());
         taskData.calculateTotalPrice();
+
         if(this.simulationRB.isSelected()){
             this.getDataForSimulation(taskData);
         }
@@ -249,7 +253,9 @@ public class NewTaskController {
     }
 
     private void getDataForCompilation(TaskData taskData) {
+
         taskData.setFullPathSource(this.compilationController.getFullPathSource());
+
         taskData.setFullPathDestination(this.compilationController.getFullPathDestination());
     }
 

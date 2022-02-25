@@ -47,7 +47,6 @@ public class NewJobController {
     void applyButtonAction(ActionEvent event) {
 
         jobsManager.addNewTask(taskData);
-
     }
 
     @FXML

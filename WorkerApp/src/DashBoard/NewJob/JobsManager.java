@@ -21,6 +21,7 @@ import static util.Constants.GSON_INSTANCE;
 
 public class JobsManager implements Runnable{
 
+
     private List<TaskData> taskThatWorkerJoined;
     private Integer maxThreads;
     private Integer freeThreads;
@@ -29,7 +30,9 @@ public class JobsManager implements Runnable{
     private Queue<ExecuteTarget> waitingList;
     private Consumer consumerForLogs;
 
+
     public JobsManager(Integer maxThreads){
+
         this.taskThatWorkerJoined = new ArrayList<>();
         this.waitingList = new LinkedList<>();
         this.maxThreads = maxThreads;
@@ -39,11 +42,14 @@ public class JobsManager implements Runnable{
     }
 
     synchronized public void addToWaitingList(List<ExecuteTarget> executeTargetList) throws ErrorUtils {
+
         this.freeThreads -= executeTargetList.size();
+
         for(ExecuteTarget executeTarget : executeTargetList){
+
             if(thisTargetExist(executeTarget.getTargetName()))
                 throw new ErrorUtils(ErrorUtils.invalidInput("double target giving back end problem"));
-            thisTargetExist(executeTarget.getTargetName());
+
             this.waitingList.add(executeTarget);
         }
     }
@@ -75,6 +81,7 @@ public class JobsManager implements Runnable{
 
         while( true /*!this.taskThatWorkerJoined.isEmpty() && !this.waitingList.isEmpty()*/){
             int x;
+
             //call to server
             //get execute target from tasks
             // put in the waiting list
@@ -83,20 +90,28 @@ public class JobsManager implements Runnable{
             this.createWaitingList();
 
             ExecuteTarget executeTarget = this.waitingList.poll();
+
             if(executeTarget != null) {
+
                 executeTarget.setConsumerForLog(this.consumerForLogs);
+
                 executorService.execute(executeTarget);
+
                 ++threadCounter;
             }
-
+            // slow down the requests
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private void createWaitingList() {
-        for(TaskData taskData : this.taskThatWorkerJoined){
+
+        for(TaskData taskData : this.taskThatWorkerJoined)
             this.callToServer(taskData);
-        }
     }
 
     private void callToServer(TaskData taskData) {
@@ -109,6 +124,7 @@ public class JobsManager implements Runnable{
                 .addQueryParameter("amountOfThreads", String.valueOf(this.freeThreads))
                 .build()
                 .toString();
+
         // make a request
         HttpClientUtil.runAsync(finalUrl, new Callback() {
             @Override

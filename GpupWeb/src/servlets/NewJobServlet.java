@@ -24,8 +24,10 @@ public class NewJobServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
         response.setContentType("text/plain;charset=UTF-8");
 
+        // get relevant graph & task from managers
         GraphManager graphManager = ServletUtils.getGraphManager(getServletContext());
         TaskManager taskManager = ServletUtils.getTaskManager(getServletContext());
         //get the query
@@ -33,6 +35,7 @@ public class NewJobServlet extends HttpServlet {
         String graphNameFromParameter = request.getParameter(Constants.GRAPHNAME);
         String amountOFThreadsFromRequest = request.getParameter(Constants.AMOUNT_OF_THREADS);
         Integer amountOfThreads = Integer.valueOf(amountOFThreadsFromRequest);
+
         //check validity parameters
         if(taskNameFromParameter != null && taskManager.taskDataExist(taskNameFromParameter)) {
             if (graphNameFromParameter != null && graphManager.graphExists(graphNameFromParameter)) {

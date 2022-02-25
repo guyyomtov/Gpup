@@ -28,6 +28,7 @@ public class StartTaskServlet extends HttpServlet {
         TaskManager taskManager = ServletUtils.getTaskManager(getServletContext());
         String graphNameFromParameter = request.getParameter(Constants.GRAPHNAME);
         String taskNameFromParameter = request.getParameter(Constants.TASKNAME);
+
         //check validity parameters
         if(taskNameFromParameter != null && taskManager.taskDataExist(taskNameFromParameter)) {
             if (graphNameFromParameter != null && graphManager.graphExists(graphNameFromParameter)) {

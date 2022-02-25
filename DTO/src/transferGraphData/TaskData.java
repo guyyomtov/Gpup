@@ -63,12 +63,12 @@ public class TaskData {
 
     //args for simulation
 
-    private Boolean isRandom;
-    private Integer maxTimePerTarget;
-    private Integer chancesToSuccess;
-    private Integer chancesToWarning;
-    //args for compilation
+    private Boolean isRandom = new Boolean(false);
+    private Integer maxTimePerTarget=  new Integer(0);
+    private Integer chancesToSuccess=  new Integer(0);
+    private Integer chancesToWarning=  new Integer(0);
 
+    //args for compilation
     private String fullPathSource;
     private String fullPathDestination;
 

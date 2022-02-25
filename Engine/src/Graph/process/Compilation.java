@@ -11,8 +11,10 @@ public class Compilation extends Task implements Serializable{
     private String fullPathSource;
     private String fullPathDestination;
     public Compilation(DataSetupProcess dSp) throws ErrorUtils {
+
         super(dSp); //
         this.fullPathSource = dSp.fullPathSource;
+
         this.fullPathDestination = dSp.fullPathDestination;
         //todo should be in the client
 //        TaskFile taskFile = new TaskFile();

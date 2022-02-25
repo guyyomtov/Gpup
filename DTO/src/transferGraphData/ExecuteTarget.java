@@ -71,6 +71,7 @@ public class ExecuteTarget implements Runnable {
 
     @Override
     public void run() {
+
         String outPut  = new String();
         Instant start, end;
         start = Instant.now();
@@ -79,15 +80,16 @@ public class ExecuteTarget implements Runnable {
         outPut = "The target " + this.targetName + " about to run." + "\n";
         logs += outPut;
         consumerForLog.accept(outPut);
+
         if(whatKindOfTask.toLowerCase().equals(SIMULATION))
             runForSimulation();
-
         else // its compilation
             runForCompilation();
 
         outPut = "The system finished the task on target " + this.targetName + "\n";
         this.logs += outPut;
         consumerForLog.accept(outPut);
+
         outPut = "The result of the target " + this.targetName + " is: " + this.status + "\n";
         this.logs += outPut;
         consumerForLog.accept(outPut);
@@ -136,11 +138,15 @@ public class ExecuteTarget implements Runnable {
         String openedParents = "";
         String resSrcArg = new String();
         int res = 0;
+
+        //this.fullPathSource =  this.fullPathSource.replace("\\", "/");
+        //this.fullPathDestination = this.fullPathSource.replace("\\", "/");
+
         // append second needed part
         resSrcArg += this.fullPathSource + "/" + this.generalInfo.replace('.', '/' ) + ".java";
 
         String[] c = {"javac", "-d", this.fullPathDestination, "-cp", this.fullPathDestination, resSrcArg};
-        outPut = "Full command: javac-d"+ " " + this.fullPathDestination +  "-cp " +  this.fullPathDestination + resSrcArg + "\n";
+        outPut = "Full command: javac-d"+ " " + this.fullPathDestination +  " -cp " +  this.fullPathDestination + " "+ resSrcArg + "\n";
         consumerForLog.accept(outPut);
         this.logs += outPut;
 

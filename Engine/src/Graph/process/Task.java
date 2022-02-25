@@ -71,6 +71,8 @@ public abstract class Task implements Serializable, Consumer<String>{
         }
 
         this.AddDataOnMinions();
+
+        this.makeQueue();
     }
 
     public Task(DataSetupProcess dSp, boolean isDemo) {

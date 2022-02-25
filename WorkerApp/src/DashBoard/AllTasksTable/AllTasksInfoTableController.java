@@ -1,5 +1,6 @@
 package DashBoard.AllTasksTable;
 
+import DashBoard.NewJob.JobsManager;
 import DashBoard.NewJob.NewJobController;
 import Utils.ErrorHandling.ErrorHandling;
 import api.HttpStatusUpdate;
@@ -55,7 +56,7 @@ public class AllTasksInfoTableController implements Closeable {
 
     private NewJobController newJobController;
     private Parent newJobComponent;
-
+    private JobsManager jobsManager;
 
     public AllTasksInfoTableController(){
         autoUpdate = new SimpleBooleanProperty(true);
@@ -92,14 +93,14 @@ public class AllTasksInfoTableController implements Closeable {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     TaskData taskData = row.getItem();
-                    openNewJobPage();
+                    openNewJobPage(taskData);
                 }
             });
             return row;
         });
     }
 
-    private void openNewJobPage(){
+    private void openNewJobPage(TaskData taskData){
 
         try {
             //start resources
@@ -108,7 +109,8 @@ public class AllTasksInfoTableController implements Closeable {
             Parent newJob = loader.load();
             this.newJobComponent = newJob;
             this.newJobController = loader.getController();
-
+            this.newJobController.setTaskData(taskData);
+            this.newJobController.setJobsManager(this.jobsManager);
             //set job component data
 
            // this.newJobController.setTaskData(taskData);
@@ -123,7 +125,9 @@ public class AllTasksInfoTableController implements Closeable {
 
     }
 
-    public void initTable(){
+    public void initTable(JobsManager jobsManager){
+
+        this.jobsManager = jobsManager;
 
         taskNameCol.setCellValueFactory(new PropertyValueFactory<>("taskName"));
 
@@ -149,6 +153,10 @@ public class AllTasksInfoTableController implements Closeable {
 
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status")
         );
+    }
+
+    public void setJobsManager(JobsManager jobsManager) {
+        this.jobsManager = jobsManager;
     }
 
     @Override

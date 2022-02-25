@@ -21,7 +21,7 @@ public class Simulation extends Task implements Serializable, Runnable {
 
         super(dSp);
 
-        this.setName();
+        //this.setName();
 //todo not should be in the server, should be in the client
 //        TaskFile taskFile = new TaskFile();
 //        taskFile.makeTaskDir("Simulation");
@@ -149,7 +149,7 @@ public class Simulation extends Task implements Serializable, Runnable {
 
         return iRan;
     }
-    
+
     public void setName(){this.taskName = "simulation";}
 
 

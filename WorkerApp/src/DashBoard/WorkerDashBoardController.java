@@ -1,6 +1,7 @@
 package DashBoard;
 
 import DashBoard.AllTasksTable.AllTasksInfoTableController;
+import DashBoard.NewJob.JobsManager;
 import DashBoard.NewJob.NewJobController;
 import DashBoardAdmin.onlineAdminsComponent.OnlineAdminsController;
 import api.HttpStatusUpdate;
@@ -37,16 +38,24 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
     private Parent workerManagerComponent;
 
     private Integer amountOfThreads;
+    private JobsManager jobsManager;
 
+    public void init(){
 
-    @FXML
-    public void initialize() throws IOException {
+        this.jobsManager = new JobsManager(amountOfThreads);
+        new Thread(this.jobsManager).start();
 
-        this.initOnlineUsersComponent();
+        try {
+            this.initOnlineUsersComponent();
 
-        this.initTasksTableComponent();
+            this.initTasksTableComponent();
 
-        this.initWorkManagerComponent();
+            this.initWorkManagerComponent();
+
+            this.jobsManager.setConsumerForLogs(this.workerManagerController);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initWorkManagerComponent() {
@@ -73,7 +82,7 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
         // start "get data all the time"
         this.allTasksTableController.setHttpStatusUpdate(this);
         this.allTasksTableController.startTaskListRefresher();
-        this.allTasksTableController.initTable();
+        this.allTasksTableController.initTable(this.jobsManager);
 
         // set component on page
         this.boarderPane.setCenter(allTasksTableComponent);

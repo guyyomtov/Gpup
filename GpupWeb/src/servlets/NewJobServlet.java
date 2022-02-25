@@ -4,6 +4,7 @@ import DataManager.BackDataManager;
 import Graph.GraphManager;
 import Graph.process.Task;
 import Graph.process.TaskManager;
+import com.google.gson.Gson;
 import constants.Constants;
 import errors.ErrorUtils;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,6 +16,7 @@ import transferGraphData.TaskData;
 import utils.ServletUtils;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet(name = "newJobServlet", urlPatterns = {"/newJobServlet"})
@@ -38,10 +40,16 @@ public class NewJobServlet extends HttpServlet {
                     BackDataManager bdm = graphManager.getBDM(graphNameFromParameter);
                     TaskData taskData = taskManager.getNameToTaskData().get(taskNameFromParameter);
                     Task currentTask = taskManager.getNameToTask().get(taskNameFromParameter);
-                    List<ExecuteTarget> executeTargetListToSentToTheWorker = bdm.makeExecuteTargetsToSend(currentTask, taskData, amountOfThreads);
-
-                    //code response
-                    response.setStatus(HttpServletResponse.SC_OK);
+                    // get waiting minions
+                    List<ExecuteTarget> executeTargetListToSend = bdm.makeExecuteTargetsToSend(currentTask, taskData, amountOfThreads);
+                    //make jsonh
+                    try (PrintWriter out = response.getWriter()) {
+                        Gson gson = new Gson();
+                        String json = gson.toJson(executeTargetListToSend);
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        out.println(json);
+                        out.flush();
+                    }
                 } catch (ErrorUtils e) {
                     e.getMessage();
                     response.setStatus(HttpServletResponse.SC_CONFLICT);

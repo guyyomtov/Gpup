@@ -2,14 +2,21 @@ package transferGraphData;
 
 import DataManager.consumerData.ConsumerTaskInfo;
 import Graph.process.Minion;
+import com.google.gson.Gson;
+import com.sun.istack.internal.NotNull;
+import errors.ErrorUtils;
 import jdk.nashorn.internal.ir.LexicalContext;
+import okhttp3.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 public class ExecuteTarget implements Runnable {
 
@@ -31,6 +38,12 @@ public class ExecuteTarget implements Runnable {
     private String fullPathDestination;
     private String generalInfo;
 
+    //information for servlet
+    private String taskName;
+    private String graphName;
+    private String logs;
+    private Consumer consumerForLog;
+
     //after user press start
     public ExecuteTarget(TaskData taskData, TargetInfo currentTargetInfo, Minion minion){
         this.targetInfo = currentTargetInfo;
@@ -45,6 +58,8 @@ public class ExecuteTarget implements Runnable {
         this.fullPathSource = minion.getFullPathSource();
         this.fullPathDestination = minion.getFullPathDestination();
         this.generalInfo = currentTargetInfo.getInformation();
+        this.taskName = taskData.getTaskName();
+        this.graphName = taskData.getGraphName();
     }
     // before the admin press start usr that
     public ExecuteTarget(TargetInfo currentTargetInfo){
@@ -56,44 +71,47 @@ public class ExecuteTarget implements Runnable {
 
     @Override
     public void run() {
-        String outPut  = "";
+        String outPut  = new String();
         Instant start, end;
         start = Instant.now();
         this.status = "IN PROCESS";
-        ConsumerTaskInfo cTI = new ConsumerTaskInfo();
-        cTI.openFile(this.targetName);
-        outPut = "The target " + this.targetName + " about to run.";
-        cTI.getInfo(outPut);
+
+        outPut = "The target " + this.targetName + " about to run." + "\n";
+        logs += outPut;
+        consumerForLog.accept(outPut);
         if(whatKindOfTask.toLowerCase().equals(SIMULATION))
-            runForSimulation(cTI);
+            runForSimulation();
 
         else // its compilation
-            runForCompilation(cTI);
+            runForCompilation();
 
-        outPut = "The system finished the task on target " + this.targetName;
-        cTI.getInfo(outPut);
-        outPut = "The result of the target " + this.targetName + " is: " + this.status;
-        cTI.getInfo(outPut);
-        cTI.closeFile();
-
+        outPut = "The system finished the task on target " + this.targetName + "\n";
+        this.logs += outPut;
+        consumerForLog.accept(outPut);
+        outPut = "The result of the target " + this.targetName + " is: " + this.status + "\n";
+        this.logs += outPut;
+        consumerForLog.accept(outPut);
+        //this.sendTheResultToTheServer();
     }
 
     // todo handle with the files tomorrow to see what we need to had
-    private void runForSimulation(ConsumerTaskInfo cTI) {
+
+    private String runForSimulation() {
 
         String outPut = "";
         Duration t = Duration.ofMillis(timeIRun);
-        outPut = "The system is going to sleep for: " + String.format("%02d:%02d:%02d", t.toHours(), t.toMinutes(), t.getSeconds());
-        cTI.getInfo(outPut);
+        outPut = "The system is going to sleep for: " + String.format("%02d:%02d:%02d", t.toHours(), t.toMinutes(), t.getSeconds()) + "\n";
+        this.logs += outPut;
+        consumerForLog.accept(outPut);
+
         try {
             //end = Instant.now();
            // this.minionLiveData.setTimeInProcess(Duration.between(start, end).toMillis());
             Thread.sleep(timeIRun);
         } catch (InterruptedException e) {}
         this.checkTheResultAndUpdateStatus();
-
+        return outPut;
     }
-
     private void checkTheResultAndUpdateStatus() {
 
             Random rand = new Random();
@@ -111,7 +129,8 @@ public class ExecuteTarget implements Runnable {
             }
     }
 
-    private void runForCompilation(ConsumerTaskInfo cTI) {
+    private String runForCompilation() {
+
         String outPut = "";
         Instant start, end;
         String openedParents = "";
@@ -121,16 +140,18 @@ public class ExecuteTarget implements Runnable {
         resSrcArg += this.fullPathSource + "/" + this.generalInfo.replace('.', '/' ) + ".java";
 
         String[] c = {"javac", "-d", this.fullPathDestination, "-cp", this.fullPathDestination, resSrcArg};
-        outPut = "Full command: javac-d"+ " " + this.fullPathDestination +  "-cp " +  this.fullPathDestination + resSrcArg;
-        cTI.getInfo(outPut);
+        outPut = "Full command: javac-d"+ " " + this.fullPathDestination +  "-cp " +  this.fullPathDestination + resSrcArg + "\n";
+        consumerForLog.accept(outPut);
+        this.logs += outPut;
 
         try {
             start = Instant.now();
             Process process = Runtime.getRuntime().exec(c);
             process.waitFor();
             end = Instant.now();
-            outPut = "The compiler finish the task on target " + targetName + " in: " + Duration.between(start, end).toMillis() + " milli second.";
-            cTI.getInfo(outPut);
+            outPut = "The compiler finish the task on target " + targetName + " in: " + Duration.between(start, end).toMillis() + " milli second." + "\n";
+            consumerForLog.accept(outPut);
+            this.logs += outPut;
 
             res = process.exitValue();
             if(res == 0) // of res == 0 == > process on curr target success.
@@ -139,17 +160,15 @@ public class ExecuteTarget implements Runnable {
                 this.status = "FAILURE";
                 String errorMessage = new BufferedReader(
                         new InputStreamReader(process.getErrorStream())).readLine();
-                outPut = "The target is failed, output from javac: " + errorMessage;
-
-                cTI.getInfo(outPut);
-
+                outPut = "The target is failed, output from javac: " + errorMessage + "\n";
+                this.logs += outPut;
+                consumerForLog.accept(outPut);
             }
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-
-
+        return outPut;
     }
 
     public TargetInfo getTargetInfo() {
@@ -190,5 +209,71 @@ public class ExecuteTarget implements Runnable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    private void sendTheResultToTheServer() {
+        //make the gson
+        Gson gson = new Gson();
+        String executeTargetJson = gson.toJson(this);
+       // making the body of the request
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.MIXED)
+                .addFormDataPart("targetExecute", executeTargetJson)
+                .build();
+
+        //making the url
+        String finalUrl = HttpUrl
+                .parse("http://localhost:8080/GpupWeb_Web_exploded" + "/updateTargetResult")
+                .newBuilder()
+                //.addQueryParameter("targetExecute", executeTargetJson)
+                //.addQueryParameter("logs", logs)
+                .build()
+                .toString();
+        // making the request
+        Request request = new Request.Builder().
+                url(finalUrl)
+                .method("POST", body)
+                .build();
+
+        OkHttpClient okHttpClient =
+                new OkHttpClient.Builder()
+                .followRedirects(false)
+                .build();
+
+        runAsync(finalUrl, okHttpClient,new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+//                Platform.runLater(() ->
+//                        ErrorUtils.makeJavaFXCutomAlert("We failed, server problem")
+//                );
+            }
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.code() != 200) {
+                    String responseBody = response.body().string();
+
+
+
+                    System.out.println("we failed " + response.code());
+                } else { // the code is 200
+
+                    }
+                }
+        });
+
+    }
+
+    public void runAsync(String finalUrl, OkHttpClient okHttpClient,Callback callback) {
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .build();
+
+        Call call = okHttpClient.newCall(request);
+
+        call.enqueue(callback);
+    }
+
+    public void setConsumerForLog(Consumer consumerForLog) {
+        this.consumerForLog = consumerForLog;
     }
 }

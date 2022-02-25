@@ -53,6 +53,7 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
             this.initWorkManagerComponent();
 
             this.jobsManager.setConsumerForLogs(this.workerManagerController);
+            this.jobsManager.setTaskRefresherForProcess(this.allTasksTableController);
         } catch (IOException e) {
             e.printStackTrace();
         }

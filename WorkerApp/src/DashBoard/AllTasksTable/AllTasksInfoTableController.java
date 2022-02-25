@@ -163,4 +163,9 @@ public class AllTasksInfoTableController implements Closeable {
     public void close() throws IOException {
 
     }
+
+    public List<TaskData> getTaskDataList(){
+        return this.taskInfoTable.getItems();
+    }
+
 }

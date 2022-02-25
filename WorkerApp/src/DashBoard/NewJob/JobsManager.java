@@ -1,11 +1,13 @@
 package DashBoard.NewJob;
 
+import DashBoard.AllTasksTable.AllTasksInfoTableController;
 import errors.ErrorUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
+import taskView.taskControlPanel.TaskRefresherForProcess;
 import transferGraphData.ExecuteTarget;
 import transferGraphData.TaskData;
 import util.Constants;
@@ -29,6 +31,7 @@ public class JobsManager implements Runnable, Consumer{
     private ExecutorService executorService;
     private Queue<ExecuteTarget> waitingList;
     private Consumer consumerForLogs;
+    private AllTasksInfoTableController allTasksInfoTableController;
 
 
     public JobsManager(Integer maxThreads){
@@ -110,9 +113,11 @@ public class JobsManager implements Runnable, Consumer{
     }
 
     private void updateWaitingList() {
-
+        if(this.allTasksInfoTableController == null)
+            return;
+        Map<String, TaskData> nameToTaskDataTheNewest = this.makeMapOfTaskData(); // maybe status change
         for(TaskData taskData : this.taskThatWorkerJoined) {
-            TaskData.Status status = taskData.getStatus();
+            TaskData.Status status = nameToTaskDataTheNewest.get(taskData.getTaskName()).getStatus();
             // only if the status is available get minions
             if(status == TaskData.Status.AVAILABLE)
                 this.callToServer(taskData);
@@ -121,6 +126,16 @@ public class JobsManager implements Runnable, Consumer{
                 this.taskThatWorkerJoined.remove(taskData);
 
         }
+    }
+
+    private Map<String, TaskData> makeMapOfTaskData() {
+
+        List<TaskData> taskDataList = this.allTasksInfoTableController.getTaskDataList();
+        Map<String, TaskData> nameToTaskData = new HashMap<>();
+        for(TaskData taskData : taskDataList){
+            nameToTaskData.put(taskData.getTaskName(), taskData);
+        }
+        return nameToTaskData;
     }
 
     private void callToServer(TaskData taskData) {
@@ -177,5 +192,10 @@ public class JobsManager implements Runnable, Consumer{
     @Override
     public void accept(Object o) {
         this.threadCounter = this.threadCounter - 1;
+    }
+
+
+    public void setTaskRefresherForProcess(AllTasksInfoTableController allTasksInfoTableController) {
+        this.allTasksInfoTableController = allTasksInfoTableController;
     }
 }

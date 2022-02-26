@@ -34,6 +34,7 @@ public class JobsManager implements Runnable, Consumer{
     private Consumer consumerForLogs;
     private AllTasksInfoTableController allTasksInfoTableController;
     private WorkerDashBoardController workerDashBoardController;
+    private Map<String, MiniJobDataController> taskNameToMiniDataHelper;
 
 
     public JobsManager(Integer maxThreads){
@@ -44,14 +45,12 @@ public class JobsManager implements Runnable, Consumer{
         this.freeThreads = maxThreads;
         this.threadCounter = new Integer(0);
         this.executorService = Executors.newFixedThreadPool(this.maxThreads);
+        taskNameToMiniDataHelper = new HashMap<>();
     }
 
     synchronized public void addToWaitingList(List<ExecuteTarget> executeTargetList) throws ErrorUtils {
 
         for(ExecuteTarget executeTarget : executeTargetList){
-
-//            if(thisTargetExist(executeTarget.getTargetName()))
-//                throw new ErrorUtils(ErrorUtils.invalidInput("double target giving back end problem"));
             this.waitingList.add(executeTarget);
         }
     }
@@ -73,8 +72,28 @@ public class JobsManager implements Runnable, Consumer{
         return res;
     }
 
-    public void addNewTask(TaskData taskData){
+    public void addNewTask(TaskData taskData) throws ErrorUtils {
+
+        // add to jobManger
         this.taskThatWorkerJoined.add(taskData);
+
+        // add to dataHelper
+        if(this.taskNameToMiniDataHelper.containsKey(taskData.getTaskName()))
+            throw new ErrorUtils(ErrorUtils.invalidInput("This task already exists, can't add it again."));
+
+        this.taskNameToMiniDataHelper.put(taskData.getTaskName(), new MiniJobDataController(taskData));
+    }
+
+    public void removeTask(TaskData taskData) throws ErrorUtils {
+
+        // remove from jobManger
+        this.taskThatWorkerJoined.remove(taskData);
+
+        if(!this.taskNameToMiniDataHelper.containsKey(taskData.getTaskName()))
+            throw new ErrorUtils(ErrorUtils.invalidInput("This task doesn't exist in the data."));
+
+        // remove from dataHelper
+        this.taskThatWorkerJoined.remove(taskData.getTaskName());
     }
 
     //always going to run in another thread!
@@ -94,12 +113,28 @@ public class JobsManager implements Runnable, Consumer{
             if(executeTarget != null) {
 
                 if(this.threadCounter <= this.maxThreads) {
+
+                    // set consumers
                     executeTarget.setConsumerForLog(this.consumerForLogs);
                     executeTarget.setConsumerThreadsBack(this);
                     executeTarget.setConsumerForAmountOfCredit(this.workerDashBoardController);
+
+                    // execute target
                     executeTarget.getTaskName();
                     executorService.execute(executeTarget);
+
+                    // update thread counter
                     ++threadCounter;
+
+                    // find relevant task
+                    TaskData relevantTask = this.findRelevantTask(executeTarget.getTaskName(), this.taskThatWorkerJoined);
+
+                    // update miniDataHelper
+                    try {
+                        this.updateValuesInMiniDataHelper(relevantTask);
+                    } catch (ErrorUtils e) {
+                        e.printStackTrace();
+                    }
                 }
                 //we don't have a free thread
                 else
@@ -114,6 +149,33 @@ public class JobsManager implements Runnable, Consumer{
                 e.printStackTrace();
             }
         }
+    }
+
+    private void updateValuesInMiniDataHelper(TaskData relevantTask) throws ErrorUtils {
+
+        // get relevant MiniData
+        MiniJobDataController wantedMini = this.taskNameToMiniDataHelper.get(relevantTask.getTaskName());
+
+        // update all his data
+        wantedMini.updateMyDataAfterTargetExcute(relevantTask);
+    }
+
+    private TaskData findRelevantTask(String i_wantedTaskName, List<TaskData> taskThatWorkerJoined) {
+
+        TaskData res = new TaskData();
+        String curName = new String();
+
+        for(TaskData curT : taskThatWorkerJoined){
+
+            curName = curT.getTaskName();
+
+            if(curName.equals(i_wantedTaskName)){
+
+                res = curT;
+                break;
+            }
+        }
+        return res;
     }
 
     private void updateWaitingList() {
@@ -211,4 +273,71 @@ public class JobsManager implements Runnable, Consumer{
     public void setWorkerDashBoardController(WorkerDashBoardController workerDashBoardController) {
         this.workerDashBoardController = workerDashBoardController;
     }
-}
+
+    public Map<String, MiniJobDataController> getTaskNameToMiniDataHelper(){ return this.taskNameToMiniDataHelper;}
+
+    // HELPER CLASS
+    public class MiniJobDataController{
+
+
+        public String myName;
+        public Integer amountOfTotalTargets;
+        public Integer amountOfTargetsDoneByMy;
+        public Integer amountOfCredits;
+        public TaskData generalTableTaskData;
+        public Integer amountOfTotalWorkersOnTheTask;
+
+
+        public MiniJobDataController(TaskData i_generalTableTaskData) throws ErrorUtils {
+
+            if(i_generalTableTaskData == null)
+                throw new ErrorUtils(ErrorUtils.NEEDED_DATA_IS_NULL);
+
+            this.generalTableTaskData = i_generalTableTaskData;
+
+            this.updateDataFromGeneralTable();
+            this.startExtraData();
+        }
+
+        private void startExtraData() {
+
+            this.amountOfTargetsDoneByMy = new Integer(0);
+            this.amountOfCredits = new Integer(0);
+        }
+
+        private void updateDataFromGeneralTable() {
+
+            this.myName = this.generalTableTaskData.getTaskName();
+            this.amountOfTotalTargets = this.generalTableTaskData.getTotalTargets();
+            this.amountOfTotalWorkersOnTheTask = this.generalTableTaskData.getTotalTargets();
+        }
+
+        public void updateMyDataAfterTargetExcute(TaskData i_generalTableTaskData) throws ErrorUtils {
+
+            if(i_generalTableTaskData.getTaskName() != this.myName)
+                throw new ErrorUtils(ErrorUtils.invalidInput("Given task is different from the original."));
+
+            this.generalTableTaskData = i_generalTableTaskData;
+
+            this.updateDataFromGeneralTable();
+
+            this.updateExtraData();
+        }
+
+        private void updateExtraData() throws ErrorUtils {
+
+            // get how much each target gives me credit
+            Integer amountOfCreditForTarget = this.generalTableTaskData.getPricePerTarget();
+
+            //update my credits
+            this.amountOfCredits += amountOfCreditForTarget;
+
+            // update my amount of targets done
+            this.amountOfTargetsDoneByMy += 1;
+
+            // logic error
+            if(this.amountOfTargetsDoneByMy > this.amountOfTotalTargets || this.amountOfCredits > this.generalTableTaskData.getTotalPrice())
+                throw new ErrorUtils(ErrorUtils.invalidInput("Worker did more work then possible"));
+        }
+    }
+    }

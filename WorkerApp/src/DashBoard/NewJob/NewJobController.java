@@ -45,7 +45,7 @@ public class NewJobController {
     }
 
     @FXML
-    void applyButtonAction(ActionEvent event) {
+    void applyButtonAction(ActionEvent event) throws ErrorUtils {
 
         jobsManager.addNewTask(taskData);
         // close current task window

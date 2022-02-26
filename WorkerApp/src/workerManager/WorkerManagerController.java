@@ -26,15 +26,19 @@ public class WorkerManagerController implements Consumer, HttpStatusUpdate{
     @FXML private TaskWorkerTableController taskWorkerTableController;
     private Integer amountOfThreads;
     private TableView<TaskData> allTasksOnApp;
+    private JobsManager jobsManager;
 
 
-    public void init(Integer amountOfThreads) {
+    public void init(Integer amountOfThreads, JobsManager jobsManager) {
+
+        this.jobsManager = jobsManager;
 
         this.amountOfThreads = amountOfThreads;
         amountOfThreadsLabel.setText(String.valueOf(amountOfThreads));
 
         // start value factory
-        this.taskWorkerTableController.initTable();
+        this.taskWorkerTableController.initTable(this.jobsManager);
+        this.taskWorkerTableController.startTaskListRefresher();
     }
 
     @FXML private void pauseButtonAction(ActionEvent actionEvent) {

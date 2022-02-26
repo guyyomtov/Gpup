@@ -340,4 +340,5 @@ public class JobsManager implements Runnable, Consumer{
                 throw new ErrorUtils(ErrorUtils.invalidInput("Worker did more work then possible"));
         }
     }
-    }
+
+}

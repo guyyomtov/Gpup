@@ -25,6 +25,7 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import taskView.tableForProcess.TableForProcessController;
 import transferGraphData.AllGraphInfo;
+import transferGraphData.ExecuteTarget;
 import transferGraphData.TaskData;
 import util.AlertMessage;
 import util.Constants;
@@ -57,7 +58,6 @@ public class TaskControlPanelController {
     @FXML private TextArea textAreaProcessInfo;
     @FXML private TextArea textAreaProcessInfo1;
     @FXML private TextArea textAreaTargetInfo;
-
     @FXML private Parent tableForProcess;
     @FXML private TableForProcessController tableForProcessController;
     private Timer timer;
@@ -219,10 +219,26 @@ public class TaskControlPanelController {
             for(TaskData currTaskData : taskDataList) {
                 if(currTaskData.getTaskName().equals(taskData.getTaskName())) {
                     tableForProcessController.initTable(currTaskData.getExecuteTargetList(), textAreaTargetInfo);
+                    updateProgressBar(currTaskData.getExecuteTargetList());
                     return;
                 }
             }
         });
+    }
+
+    private void updateProgressBar(List<ExecuteTarget> executeTargetList) {
+        double countTargetsThatFinished = 0;
+        double totalTargets = executeTargetList.size();
+        for(ExecuteTarget executeTarget : executeTargetList){
+            String status = executeTarget.getStatus();
+            if(status.equals("SUCCESS") || status.equals("WARNING") || status.equals("FAILURE") || status.equals("SKIPPED"))
+                countTargetsThatFinished = countTargetsThatFinished + 1;
+        }
+        //the result
+        double res = countTargetsThatFinished/totalTargets;
+        this.progressBar.setProgress(res);
+        this.precentOfProgressBar.setText(String.valueOf(res*100) + " %");
+
     }
 
 }

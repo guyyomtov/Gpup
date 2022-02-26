@@ -118,6 +118,8 @@ public class JobsManager implements Runnable, Consumer{
                     executeTarget.setConsumerForLog(this.consumerForLogs);
                     executeTarget.setConsumerThreadsBack(this);
                     executeTarget.setConsumerForAmountOfCredit(this.workerDashBoardController);
+                    //set Worker That Done Me
+                    executeTarget.setWorkerThatDoneMe(WorkerDashBoardController.workerName);
 
                     // execute target
                     executeTarget.getTaskName();
@@ -213,6 +215,7 @@ public class JobsManager implements Runnable, Consumer{
                     .addQueryParameter("taskname", taskData.getTaskName())
                     .addQueryParameter("graphname", taskData.getGraphName())
                     .addQueryParameter("amountOfThreads", String.valueOf(this.freeThreads))
+                    .addQueryParameter("workername", WorkerDashBoardController.workerName)
                     .build()
                     .toString();
 

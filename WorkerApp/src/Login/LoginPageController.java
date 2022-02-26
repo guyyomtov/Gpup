@@ -119,7 +119,7 @@ public class LoginPageController {
         WorkerDashBoardController dashBoardController= (WorkerDashBoardController) loader.getController();
         dashBoardController.setPrimaryStage(this.primaryStage);
         dashBoardController.setAmountOfThreads(this.threadSpinnerButton.getValue());
-        dashBoardController.init();
+        dashBoardController.init(this.userNameTextField.getText());
         Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
         primaryStage.setScene(scene);
     }

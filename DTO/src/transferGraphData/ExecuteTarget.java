@@ -13,9 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class ExecuteTarget implements Runnable {
@@ -41,11 +39,13 @@ public class ExecuteTarget implements Runnable {
     //information for servlet
     private String taskName;
     private String graphName;
+    private String workerThatDoneMe = new String("");
     private String logs;
     private Consumer consumerForLog;
     private Consumer consumerThreadIsBack;
     private Consumer consumerForAmountOfCredit;
     private Integer pricePerJob;
+    private Set<String> ISkippedBecause = new HashSet<>();
 
     //after user press start
     public ExecuteTarget(TaskData taskData, TargetInfo currentTargetInfo, Minion minion){
@@ -330,5 +330,21 @@ public class ExecuteTarget implements Runnable {
 
     public void setConsumerForAmountOfCredit(Consumer consumerForAmountOfCredit) {
         this.consumerForAmountOfCredit = consumerForAmountOfCredit;
+    }
+
+    public void addWhoClosedMe(String name) {
+        this.ISkippedBecause.add(name);
+    }
+
+    public void setISkippedBecause(Set<String> ISkippedBecause){this.ISkippedBecause = ISkippedBecause;}
+
+    public Set<String> getISkippedBecause(){return this.ISkippedBecause;}
+
+    public String getWorkerThatDoneMe() {
+        return workerThatDoneMe;
+    }
+
+    public void setWorkerThatDoneMe(String workerThatDoneMe) {
+        this.workerThatDoneMe = workerThatDoneMe;
     }
 }

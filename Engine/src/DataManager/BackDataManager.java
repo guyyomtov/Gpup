@@ -426,15 +426,27 @@ public class BackDataManager implements DataManager {
         List<ExecuteTarget> executeTargetList = new ArrayList<>();
         Map<String, Minion> nameToMinion = Minion.startMinionMapFrom(newTask.getMinionsThatUserChose());
         List<TargetInfo> targetInfoList = taskData.getTargetInfoList();
-
+        Map<String, ExecuteTarget> nameToExecuteTarget = this.makeMapNameToExecuteTargets(taskData.getExecuteTargetList());
         for(TargetInfo targetInfo : targetInfoList){
 
             Minion minion = nameToMinion.get(targetInfo.getName());
+            ExecuteTarget lastExecuteTarget = nameToExecuteTarget.get(targetInfo.getName());
             ExecuteTarget executeTarget = new ExecuteTarget(taskData, targetInfo, minion);
+            executeTarget.setLogs(lastExecuteTarget.getLogs());
+            executeTarget.setISkippedBecause(lastExecuteTarget.getISkippedBecause());
+            executeTarget.setWorkerThatDoneMe(lastExecuteTarget.getWorkerThatDoneMe());
             executeTargetList.add(executeTarget);
 
         }
         return executeTargetList;
+    }
+
+    private Map<String, ExecuteTarget> makeMapNameToExecuteTargets(List<ExecuteTarget> executeTargetList) {
+        Map<String, ExecuteTarget> nameToExecuteTarget = new HashMap<>();
+        for(ExecuteTarget executeTarget : executeTargetList){
+            nameToExecuteTarget.put(executeTarget.getTargetName(), executeTarget);
+        }
+        return nameToExecuteTarget;
     }
 
     // the 'execute target' will be with the status not initialized.
@@ -525,6 +537,7 @@ public class BackDataManager implements DataManager {
 
     }
 
+
     private void checkStatusAndUpdateMinions(Minion finishedMinion, Task currentTask, TaskData taskData) {
         String status = finishedMinion.getStatus();
         //if the target done with success
@@ -536,9 +549,20 @@ public class BackDataManager implements DataManager {
         }
         else{ // status is failure
             finishedMinion.checkAndUpdateWhoImClosedTORunning(finishedMinion, true);
+            this.whoClosed(finishedMinion, taskData.getExecuteTargetList());
         }
         // check what minions are changer and update the executeTargetsListdd
         List<ExecuteTarget> executeTargetList = this.transferFromMinionToExecuteTarget(currentTask, taskData);
         taskData.setExecuteTargetList(executeTargetList);
     }
+
+    private void whoClosed(Minion finishedMinion, List<ExecuteTarget> executeTargetList) {
+        Set<String> parentsName = new HashSet<>(finishedMinion.getParentsNames());
+        for(ExecuteTarget executeTarget : executeTargetList){
+            if(parentsName.contains(executeTarget.getTargetName()))
+                executeTarget.addWhoClosedMe(finishedMinion.getName());
+        }
+    }
+
+
 }

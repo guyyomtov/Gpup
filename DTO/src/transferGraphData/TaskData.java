@@ -3,7 +3,9 @@ package transferGraphData;
 import javafx.beans.property.BooleanProperty;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TaskData {
 
@@ -21,6 +23,7 @@ public class TaskData {
     private Integer totalRoots = new Integer(0);
     private Integer totalPrice = new Integer(0);
     private Integer totalWorker = new Integer(0);
+    private Set<String> workersNames = new HashSet<>();
     private List<ExecuteTarget> executeTargetList = new ArrayList<>();
     private List<ExecuteTarget> lastExecuteTargetsList = new ArrayList<>();
     private Integer countTask = new Integer(0);
@@ -307,4 +310,12 @@ public class TaskData {
     public Boolean getRegistered() {return registered;}
 
     public void setRegistered(Boolean registered) {this.registered = registered;}
+
+    public void addWorker(String workerName) {
+        if(!this.workersNames.contains(workerName)) {
+            this.workersNames.add(workerName);
+            this.totalWorker = this.totalWorker + 1;
+        }
+    }
+
 }

@@ -34,6 +34,7 @@ public class NewJobServlet extends HttpServlet {
         String taskNameFromParameter = request.getParameter(Constants.TASKNAME);
         String graphNameFromParameter = request.getParameter(Constants.GRAPHNAME);
         String amountOFThreadsFromRequest = request.getParameter(Constants.AMOUNT_OF_THREADS);
+        String workerName = request.getParameter(Constants.WORKER_NAME);
         Integer amountOfThreads = Integer.valueOf(amountOFThreadsFromRequest);
 
         //check validity parameters
@@ -43,6 +44,8 @@ public class NewJobServlet extends HttpServlet {
                     BackDataManager bdm = graphManager.getBDM(graphNameFromParameter);
                     TaskData taskData = taskManager.getNameToTaskData().get(taskNameFromParameter);
                     Task currentTask = taskManager.getNameToTask().get(taskNameFromParameter);
+                    //add worker name to set in taskData
+                    taskData.addWorker(workerName);
                     // get waiting minions
                     List<ExecuteTarget> executeTargetListToSend = bdm.makeExecuteTargetsToSend(currentTask, taskData, amountOfThreads);
                     //make jsonh

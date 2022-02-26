@@ -37,9 +37,12 @@ public class WorkerDashBoardController implements HttpStatusUpdate, Consumer {
     private Parent workerManagerComponent;
     private Integer amountOfThreads;
     private JobsManager jobsManager;
+    public static String workerName;
 
 
-    public void init(){
+    public void init(String name){
+        //name of the worker
+        workerName = name;
 
         this.jobsManager = new JobsManager(amountOfThreads);
         new Thread(this.jobsManager).start();

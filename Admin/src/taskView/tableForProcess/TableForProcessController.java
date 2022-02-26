@@ -1,14 +1,16 @@
 package taskView.tableForProcess;
 
+import DashBoardAdmin.MainDashboardController2;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import transferGraphData.ExecuteTarget;
-import transferGraphData.TargetInfo;
+import transferGraphData.TaskData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +30,10 @@ public class TableForProcessController {
     private TableColumn<ExecuteTarget, String> statusColumn;
 
 
-    public void initTable(List<ExecuteTarget> targetInfoList, TextArea textAreaForTargetInfo){
+    public void initTable(List<ExecuteTarget> executeTargetList, TextArea textAreaForTargetInfo){
 
         ObservableList<ExecuteTarget> data =
-                FXCollections.observableArrayList(targetInfoList);
+                FXCollections.observableArrayList(executeTargetList);
 
         targetNameColumn.setCellValueFactory(
                 new PropertyValueFactory<>("targetName")
@@ -47,9 +49,70 @@ public class TableForProcessController {
         tableForProcess.getItems().clear();
         tableForProcess.setItems(data);
 
-     //   this.addListener(targetInfo); // todo to see what object return to me the relevant data.
+        this.addListenerToRows(executeTargetList, textAreaForTargetInfo); // todo to see what object return to me the relevant data.
 
     }
+
+    private void addListenerToRows(List<ExecuteTarget> executeTargetList, TextArea textAreaForTargetInfo) {
+        this.tableForProcess.setRowFactory(tmp -> {
+            TableRow<ExecuteTarget> row = new TableRow<>();
+            // String nameOfMakeTask = row.getItem().getUploadedBy();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 1 && (!row.isEmpty())) {
+                    ExecuteTarget executeTarget = row.getItem();
+                    String status = executeTarget.getStatus();
+                    String liveData = this.showLiveData(status, executeTarget);
+                    textAreaForTargetInfo.setText(liveData);
+                }
+            });
+            return row;
+        });
+
+    }
+
+    private String showLiveData(String status, ExecuteTarget executeTarget) {
+        String liveData = new String();
+        liveData = this.makeRegularLiveData(executeTarget);
+        switch (status){
+
+            case "SKIPPED":
+                liveData += "skipped because: " + executeTarget.getISkippedBecause().toString() + "\n";
+
+                break;
+
+            case "WAITING":
+
+                break;
+
+            case "IN PROCESS":
+
+                break;
+
+            case "Not initialized":
+                // do nothing
+                break;
+
+            case "FROZEN":
+                liveData += "frozen because: " + executeTarget.getISkippedBecause().toString() + "\n";
+                break;
+
+            default: // is finished
+                liveData += "The worker " + executeTarget.getWorkerThatDoneMe() + " finished the job."+ "\n";
+                liveData+= "The status is : " + executeTarget.getStatus();
+                liveData += executeTarget.getLogs();
+                break;
+
+        }
+    return liveData;
+    }
+
+    private String makeRegularLiveData(ExecuteTarget executeTarget) {
+        String liveData = new String();
+        liveData += "Target name: " + executeTarget.getTargetName() + "\n";
+        liveData+= "Type: " + executeTarget.getType() + "\n";
+        return liveData;
+    }
+
 
 //    private void addListener(TextArea targetInfo) {
 //

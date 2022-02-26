@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+import static Utils.Constants.AVAILABLE_TASK;
 import static util.Constants.GSON_INSTANCE;
 
 public class JobsManager implements Runnable, Consumer{
@@ -93,7 +94,7 @@ public class JobsManager implements Runnable, Consumer{
             throw new ErrorUtils(ErrorUtils.invalidInput("This task doesn't exist in the data."));
 
         // remove from dataHelper
-        this.taskThatWorkerJoined.remove(taskData.getTaskName());
+        this.taskNameToMiniDataHelper.remove(taskData.getTaskName());
     }
 
     //always going to run in another thread!
@@ -106,7 +107,11 @@ public class JobsManager implements Runnable, Consumer{
 
             if(!waitingList.isEmpty())
                  x = 5;
-            this.updateWaitingList();
+
+            try {
+                this.updateWaitingList();
+            }
+            catch (ErrorUtils e) {e.printStackTrace();}
 
             ExecuteTarget executeTarget = this.waitingList.poll();
 
@@ -178,20 +183,45 @@ public class JobsManager implements Runnable, Consumer{
         return res;
     }
 
-    private void updateWaitingList() {
+    private void updateWaitingList() throws ErrorUtils {
+
         if(this.allTasksInfoTableController == null)
             return;
+
         Map<String, TaskData> nameToTaskDataTheNewest = this.makeMapOfTaskData(this.allTasksInfoTableController.getTaskDataList()); // maybe status change
+
         for(TaskData taskData : this.taskThatWorkerJoined) {
-            TaskData.Status status = nameToTaskDataTheNewest.get(taskData.getTaskName()).getStatus();
-            // only if the status is available get minions
-            if(status == TaskData.Status.AVAILABLE)
+
+            // get task status from ADMIN
+            TaskData.Status adminTaskStatus = nameToTaskDataTheNewest.get(taskData.getTaskName()).getStatus();
+
+            // get task status from WORKER
+            String workerTaskStatus = this.getWorkerTaskStatusFrom(taskData);
+
+            // only if the status is available in admin & in worker get minions
+            if(adminTaskStatus == TaskData.Status.AVAILABLE && workerTaskStatus.equals(AVAILABLE_TASK))
                 this.callToServer(taskData);
             //delete task from worker
-            else if(status == TaskData.Status.DONE || status == TaskData.Status.STOPPED){}
+            else if(adminTaskStatus == TaskData.Status.DONE || adminTaskStatus == TaskData.Status.STOPPED){}
                // this.taskThatWorkerJoined.remove(taskData);
 
         }
+    }
+
+    private String getWorkerTaskStatusFrom(TaskData i_taskData) throws ErrorUtils {
+
+        String resStatus = new String();
+        String taskName = i_taskData.getTaskName();
+
+        if(!this.taskNameToMiniDataHelper.containsKey(taskName))
+            throw new ErrorUtils(ErrorUtils.invalidInput("Mini job data manger doesn't have this task"));
+
+        // get worker status from miniDataHelper
+        MiniJobDataController curMiniData = this.taskNameToMiniDataHelper.get(taskName);
+
+        resStatus = curMiniData.myWorkerTaskStatus;
+
+        return resStatus;
     }
 
     public Map<String, TaskData> makeMapOfTaskData(List<TaskData> taskDataList) {
@@ -286,6 +316,7 @@ public class JobsManager implements Runnable, Consumer{
         public Integer amountOfCredits;
         public TaskData generalTableTaskData;
         public Integer amountOfTotalWorkersOnTheTask;
+        public String myWorkerTaskStatus = AVAILABLE_TASK; // myTaskStatus == status made by worker
 
 
         public MiniJobDataController(TaskData i_generalTableTaskData) throws ErrorUtils {

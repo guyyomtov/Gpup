@@ -5,6 +5,9 @@ import com.google.gson.Gson;
 public class Constants {
 
     // global constants
+    public final static String AVAILABLE_TASK = "available";
+    public final static String PAUSED_TASK = "paused";
+    public final static String STOPPED_TASK = "stopped";
 
 
     // fxml locations

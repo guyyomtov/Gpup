@@ -67,16 +67,6 @@ public class TaskWorkerTableController {
 
     private MyTasksTableData createRowFrom(TaskData curTask) {
 
-        //get all data
-        String taskName = curTask.getTaskName();
-        Integer amountOfWorkers = curTask.getTotalWorker();
-        Integer amountOfEarnedCredits = curTask.getTotalCredit();
-        //make progress string
-        String amountOfTotalTargets = String.valueOf(curTask.getTotalTargets());
-        String amountOfTargetsDoneByMe = String.valueOf(curTask.getAmountOfDoneTargetsByMe());
-        String progress = amountOfTargetsDoneByMe + "/" + amountOfTotalTargets;
-
-        // make row
-        return new MyTasksTableData(taskName, amountOfWorkers, progress, amountOfEarnedCredits, curTask.getAmountOfDoneTargetsByMe());
+        return null;
     }
 }

@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
 import taskView.NewTask.NewTaskController;
 import transferGraphData.ExecuteTarget;
 import transferGraphData.TaskData;
@@ -28,6 +29,7 @@ public class RunTaskAgainController {
         this.updateTheRelevantInformation();
         this.taskData.setFromScratch(true);
         this.newTaskController.sendTaskDataToServer(this.taskData);
+        this.closeWindow();
     }
 
     private void updateTheRelevantInformation() {
@@ -45,6 +47,12 @@ public class RunTaskAgainController {
         this.taskData.setFromScratch(false);
         this.taskData.setLastExecuteTargetsList(this.taskData.getExecuteTargetList());
         this.newTaskController.sendTaskDataToServer(this.taskData);
+        this.closeWindow();
+    }
+
+    public void closeWindow(){
+        Stage stage = (Stage) fromScratchButton.getScene().getWindow();
+        stage.close();
     }
 
     public void init(TaskData taskData, NewTaskController newTaskController){

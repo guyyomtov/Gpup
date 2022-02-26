@@ -64,7 +64,7 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
             this.workerManagerComponent = loader.load();
             this.workerManagerController = loader.getController();
 
-            this.workerManagerController.init(amountOfThreads);
+            this.workerManagerController.init(amountOfThreads, this.jobsManager);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -122,8 +122,6 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
 
         // remove unwanted components from page
         this.boarderPane.setCenter(this.workerManagerComponent);
-
-        this.workerManagerController.updateJobManager(this.jobsManager);
     }
 
     public void setPrimaryStage(Stage primaryStage) {this.primaryStage = primaryStage;}

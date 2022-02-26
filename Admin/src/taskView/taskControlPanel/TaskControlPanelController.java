@@ -151,7 +151,7 @@ public class TaskControlPanelController {
 
     private void changeStatusOfProcessTo(String wantedStatus) throws ErrorUtils {
 
-        if(wantedStatus != START_PROCESS && wantedStatus != PAUSE_PROCESS && wantedStatus != STOP_PROCESS)
+        if(wantedStatus != START_PROCESS && wantedStatus != PAUSE_PROCESS && wantedStatus != STOP_PROCESS && wantedStatus != RESUME_PROCESS)
             throw new ErrorUtils(ErrorUtils.invalidInput("Status given invalid."));
 
         String finalUrl = this.makeUrlForControlProcessServlet(wantedStatus);

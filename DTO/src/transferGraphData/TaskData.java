@@ -295,4 +295,14 @@ public class TaskData {
         this.executeTargetList = executeTargetList;
     }
 
+
+    //TODO
+    public Integer getAmountOfDoneTargetsByMe() {
+
+        return -1;
+    }
+    public Integer getTotalCredit() {
+
+        return -1;
+    }
 }

@@ -76,6 +76,7 @@ public class AllTasksInfoTableController implements Closeable {
     }
 
     private void updateTasksList(List<TaskData> taskDataList) {
+
         Platform.runLater(() -> {
             ObservableList<TaskData> items = taskInfoTable.getItems();
                 items.clear();
@@ -167,5 +168,7 @@ public class AllTasksInfoTableController implements Closeable {
     public List<TaskData> getTaskDataList(){
         return this.taskInfoTable.getItems();
     }
+
+    public TableView<TaskData> getAllTableView(){return this.taskInfoTable;}
 
 }

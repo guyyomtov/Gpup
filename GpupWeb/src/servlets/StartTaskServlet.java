@@ -62,7 +62,6 @@ public class StartTaskServlet extends HttpServlet {
                             this.resumeProcess(taskData);
                             break;
                     }
-
                     //code response
                     response.setStatus(HttpServletResponse.SC_OK);
 
@@ -75,7 +74,6 @@ public class StartTaskServlet extends HttpServlet {
         }else { // graph name doesnt exist or null
             System.out.println(HttpServletResponse.SC_CONFLICT);
             response.setStatus(HttpServletResponse.SC_CONFLICT);
-
         }
     }
 

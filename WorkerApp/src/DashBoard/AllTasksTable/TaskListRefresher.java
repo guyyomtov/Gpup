@@ -46,7 +46,6 @@ public class TaskListRefresher extends TimerTask {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 httpRequestLoggerConsumer.accept("Users Request # " + finalRequestNumber + " | Ended with failure...");
-
             }
 
             @Override
@@ -59,6 +58,4 @@ public class TaskListRefresher extends TimerTask {
             }
         });
     }
-
-
 }

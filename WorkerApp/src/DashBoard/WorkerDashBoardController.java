@@ -30,15 +30,13 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
     private Parent allTasksTableComponent;
     private OnlineAdminsController onlineUsersController;
     private AllTasksInfoTableController allTasksTableController;
-
     private NewJobController newJobController;
     private Parent newJobComponent;
-
     private WorkerManagerController workerManagerController;
     private Parent workerManagerComponent;
-
     private Integer amountOfThreads;
     private JobsManager jobsManager;
+
 
     public void init(){
 
@@ -65,7 +63,9 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(curP));
             this.workerManagerComponent = loader.load();
             this.workerManagerController = loader.getController();
+
             this.workerManagerController.init(amountOfThreads);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -122,6 +122,8 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
 
         // remove unwanted components from page
         this.boarderPane.setCenter(this.workerManagerComponent);
+
+        this.workerManagerController.updateJobManager(this.jobsManager);
     }
 
     public void setPrimaryStage(Stage primaryStage) {this.primaryStage = primaryStage;}

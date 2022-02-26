@@ -55,12 +55,12 @@ public class JobsManager implements Runnable, Consumer{
     }
 
     private Boolean thisTargetExist(String targetName) {
+
         Set<ExecuteTarget> executeTargets = new HashSet<>(this.waitingList);
         // to make the set of the names
         Set<String> allTargetNames = this.makeSetOfNames();
+
         return allTargetNames.contains(targetName);
-
-
     }
 
     private Set<String> makeSetOfNames() {
@@ -198,4 +198,6 @@ public class JobsManager implements Runnable, Consumer{
     public void setTaskRefresherForProcess(AllTasksInfoTableController allTasksInfoTableController) {
         this.allTasksInfoTableController = allTasksInfoTableController;
     }
+
+    public List<TaskData> getTaskThatWorkerJoined(){ return this.taskThatWorkerJoined;}
 }

@@ -4,9 +4,7 @@ import Flagger.Flagger;
 import GpupClassesEx3.GPUPDescriptor;
 import Graph.process.*;
 import errors.ErrorUtils;
-import fileHandler.HandlerLoadFile;
-import fileHandler.HandlerSaveFile;
-import fileHandler.HandlerXmlFile;
+import fileHandler.*;
 
 import java.io.*;
 import java.util.*;
@@ -14,7 +12,6 @@ import java.util.stream.Collectors;
 
 
 import Graph.*;
-import fileHandler.GraphizHHandler;
 import taskView.TaskController;
 import transferGraphData.ExecuteTarget;
 import transferGraphData.TargetInfo;
@@ -485,8 +482,27 @@ public class BackDataManager implements DataManager {
             if(status.equals("IN PROCESS") || status.equals("WAITING"))
                 processIsDone = false;
         }
-        if(processIsDone)
+        if(processIsDone && !taskData.getStatus().equals(TaskData.Status.DONE)) {
             taskData.setStatus(TaskData.Status.DONE);
+            this.openFiles(taskData);
+        }
+    }
+
+    private void openFiles(TaskData taskData) {
+        try {
+            TaskFile taskFile = new TaskFile();
+            // open directory to the task
+            taskFile.makeTaskDir(taskData.getTaskName() + " " + taskData.getWhatKindOfTask());
+            List<ExecuteTarget> executeTargetList = taskData.getExecuteTargetList();
+            for (ExecuteTarget executeTarget : executeTargetList) {
+                if(!executeTarget.getStatus().equals("SKIPPED")) {
+                    //for each target open new log file
+                    taskFile.openFile(executeTarget.getTargetName());
+                    taskFile.writeToFile(executeTarget.getLogs());
+                    taskFile.closeFile();
+                }
+            }
+        }catch (Exception e){}
     }
 
     private List<ExecuteTarget> findExecuteTargetsToSend(List<ExecuteTarget> executeTargetList, Task currentTask) {

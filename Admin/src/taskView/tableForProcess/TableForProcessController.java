@@ -90,6 +90,7 @@ public class TableForProcessController {
 
             case "Not initialized":
                 // do nothing
+                liveData+= "The status is : " + executeTarget.getStatus() + "\n";
                 break;
 
             case "FROZEN":
@@ -97,9 +98,9 @@ public class TableForProcessController {
                 break;
 
             default: // is finished
-                liveData += "The worker " + executeTarget.getWorkerThatDoneMe() + " finished the job."+ "\n";
-                liveData+= "The status is : " + executeTarget.getStatus();
-                liveData += executeTarget.getLogs();
+                liveData += "The worker " + executeTarget.getWorkerThatDoneMe() + " finished the job." + "\n";
+                liveData+= "The status is : " + executeTarget.getStatus() + "\n";
+                liveData += "Logs result: " + "\n" + executeTarget.getLogs();
                 break;
 
         }

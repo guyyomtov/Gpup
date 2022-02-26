@@ -44,6 +44,7 @@ public class UpdateExecuteTargetResultServlet extends HttpServlet {
                     BackDataManager bdm = graphManager.getBDM(graphNameFromParameter);
                     TaskData taskData = taskManager.getNameToTaskData().get(taskNameFromParameter);
                     Task currentTask = taskManager.getNameToTask().get(taskNameFromParameter);
+                    this.updateRelevantDataToToTaskData(taskData, executeTarget);
                     bdm.updateExecuteTargetStatus(currentTask, taskData, executeTarget);
 
                 } catch (ErrorUtils e) {
@@ -58,6 +59,17 @@ public class UpdateExecuteTargetResultServlet extends HttpServlet {
 
         }
 
+    }
+
+    private void updateRelevantDataToToTaskData(TaskData taskData, ExecuteTarget executeTarget) {
+        List<ExecuteTarget> executeTargetList = taskData.getExecuteTargetList();
+        for(ExecuteTarget currentExecuteTarget : executeTargetList){
+            if(currentExecuteTarget.getTargetName().equals(executeTarget.getTargetName())) {
+                currentExecuteTarget.setWorkerThatDoneMe(executeTarget.getWorkerThatDoneMe());
+                currentExecuteTarget.setLogs(executeTarget.getLogs());
+                return;
+            }
+        }
     }
 
 

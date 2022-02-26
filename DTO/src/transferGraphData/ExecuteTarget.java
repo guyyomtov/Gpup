@@ -40,7 +40,7 @@ public class ExecuteTarget implements Runnable {
     private String taskName;
     private String graphName;
     private String workerThatDoneMe = new String("");
-    private String logs;
+    private String logs = new String("");
     private Consumer consumerForLog;
     private Consumer consumerThreadIsBack;
     private Consumer consumerForAmountOfCredit;

@@ -36,6 +36,10 @@ public class RunTaskAgainController {
         Integer countTask = this.taskData.getCountTask();
         String taskName = this.taskData.getTaskName();
         this.taskData.setUploadedBy(MainDashboardController2.userName);
+        if(countTask > 0){
+            String[] s = taskName.split(" ");
+            taskName = s[0];
+        }
         this.taskData.setCountTask(countTask + 1);
         this.taskData.setTaskName(taskName + " " + String.valueOf(this.taskData.getCountTask()));
         this.taskData.setStatus(TaskData.Status.CREATED);

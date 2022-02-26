@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class TaskFile {
 
-    public static String gpupPath;
+    public static String gpupPath ;
     private static String currPath = new String();
     private FileWriter writer;
     private BufferedWriter currBuffer;
@@ -17,6 +17,7 @@ public class TaskFile {
 
     public TaskFile(){
 
+        gpupPath = "c:/gpup-working-dir";
         File theDir = new File(gpupPath);
         if(!theDir.exists())
         {
@@ -59,7 +60,7 @@ public class TaskFile {
             currBuffer.close();
         }catch (IOException e){}}
 
-    public  void openAndWriteToFile(String taskFormat, String targetName) throws IOException
+    public void openAndWriteToFile(String taskFormat, String targetName) throws IOException
     {
         try {
             FileWriter writer = new FileWriter(currPath + "\\" + targetName + ".log");

@@ -2,6 +2,7 @@ package main;
 
 
 import DashBoardAdmin.*;
+import fileHandler.TaskFile;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -85,12 +86,20 @@ public class MainAdminController {
                     Platform.runLater(() -> {
                        // switchToUploadFileView(); --> takes us to gpup part 2 home page
                         switchToDashBoard();
+                        openDirectory();
                         //switchToDashBoard(); --> shouldn't be here
                     });
                     System.out.println("we success " + response.code());
                 }
             }
+
         });
+    }
+    // open "c:\gpup-working-dir" directory in the beginning of the application
+    private void openDirectory() {
+
+        TaskFile taskFile = new TaskFile();
+
     }
 
 

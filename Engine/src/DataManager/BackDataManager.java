@@ -372,6 +372,8 @@ public class BackDataManager implements DataManager {
         dSP.bDM = this;
         dSP.allGraphTargets = this.graph.getAllTargets();
         dSP.minionsChoosenByUser = createMinionsForProcess(taskData);
+        if(!taskData.getFromScratch())// incremental
+            this.updateStatusMinionLikeLastProcess(taskData, dSP.minionsChoosenByUser);
         dSP.chancesToSucceed = taskData.getChancesToSuccess();
         dSP.chancesToBeAWarning = taskData.getChancesToWarning();
         dSP.timeToRun = taskData.getMaxTimePerTarget();
@@ -379,6 +381,17 @@ public class BackDataManager implements DataManager {
         dSP.fullPathDestination = taskData.getFullPathDestination();
         dSP.fullPathSource = taskData.getFullPathSource();
         return dSP;
+    }
+
+    private void updateStatusMinionLikeLastProcess(TaskData taskData, List<Minion> minionsChoosenByUser) {
+        Map<String, Minion> nameToMinion = Minion.startMinionMapFrom(minionsChoosenByUser);
+        List<ExecuteTarget> lastExecuteTargets = taskData.getLastExecuteTargetsList();
+        for(ExecuteTarget executeTarget : lastExecuteTargets){
+            Minion currentMinion = nameToMinion.get(executeTarget.getTargetName());
+            String status = executeTarget.getStatus();
+            currentMinion.setMyStatus(status);
+            currentMinion.setStatus(status);
+        }
     }
 
     private List<Minion> createMinionsForProcess(TaskData taskData) {
@@ -447,8 +460,21 @@ public class BackDataManager implements DataManager {
             executeTargetsToSend = this.findExecuteTargetsToSend(executeTargetList, currentTask);
             taskData.setExecuteTargetList(executeTargetList);
         }
-
+        this.checkIfTaskIsDone(taskData);
         return executeTargetsToSend;
+    }
+
+    private void checkIfTaskIsDone(TaskData taskData) {
+        //if all the status of the execute targets is not in process or waiting so the tasks is done
+        List<ExecuteTarget> executeTargetList = taskData.getExecuteTargetList();
+        boolean processIsDone = true;
+        for(ExecuteTarget executeTarget : executeTargetList){
+            String status = executeTarget.getStatus();
+            if(status.equals("IN PROCESS") || status.equals("WAITING"))
+                processIsDone = false;
+        }
+        if(processIsDone)
+            taskData.setStatus(TaskData.Status.DONE);
     }
 
     private List<ExecuteTarget> findExecuteTargetsToSend(List<ExecuteTarget> executeTargetList, Task currentTask) {

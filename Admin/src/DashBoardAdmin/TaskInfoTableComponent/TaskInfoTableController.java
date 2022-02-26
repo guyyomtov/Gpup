@@ -1,5 +1,7 @@
 package DashBoardAdmin.TaskInfoTableComponent;
 
+import DashBoardAdmin.MainDashboardController2;
+import DashBoardAdmin.runTaskAgain.RunTaskAgainController;
 import api.HttpStatusUpdate;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -17,6 +19,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import taskView.NewTask.NewTaskController;
 import taskView.taskControlPanel.TaskControlPanelController;
 import transferGraphData.TaskData;
 
@@ -41,6 +44,7 @@ public class TaskInfoTableController implements Closeable {
     @FXML private TableColumn<TaskData, Integer> totalPriceCol;
     @FXML private TableColumn<TaskData, Integer> totalWorkersCol;
     @FXML private TableColumn<TaskData, TaskData.Status> statusCol;
+    private NewTaskController newTaskController;
 
     private Timer timer;
     private TimerTask listRefresher;
@@ -51,6 +55,8 @@ public class TaskInfoTableController implements Closeable {
     private TaskControlPanelController taskControlPanelController;
     private Parent taskControlPanelComponent;
 
+    private RunTaskAgainController runTaskAgainController;
+    private Parent runTaskAgainComponent;
 
     public TaskInfoTableController(){
         autoUpdate = new SimpleBooleanProperty(true);
@@ -89,17 +95,39 @@ public class TaskInfoTableController implements Closeable {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     TaskData taskData = row.getItem();
-                    this.initAndUploadTaskControlPanel(taskData);
-                    this.makeNewSceneForTaskPanel();
+                    TaskData.Status status = taskData.getStatus();
+                    // if task is done let the user run incremental / from scratch
+                    if(status.equals(TaskData.Status.DONE)){
+                        this.initAndUploadRunNewTaskComponent(taskData);
+                        this.makeNewSceneForComponent(this.runTaskAgainComponent);
+                    }
+                    // if the admin press on task that he created.
+                    else if(MainDashboardController2.userName.equals(taskData.getUploadedBy())) {
+                        this.initAndUploadTaskControlPanel(taskData);
+                        this.makeNewSceneForComponent(this.taskControlPanelComponent);
+                    }
                 }
             });
             return row;
         });
     }
 
-    private void makeNewSceneForTaskPanel() {
+    private void initAndUploadRunNewTaskComponent(TaskData taskData) {
+            try {
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardAdmin/runTaskAgain/runTaskAgainFxml.fxml"));
+                this.runTaskAgainComponent = loader.load();
+                this.runTaskAgainController = loader.getController();
+                this.runTaskAgainController.init(taskData, this.newTaskController);
+            }
+            catch (IOException e) {
+            }
+    }
+
+
+    private void makeNewSceneForComponent(Parent parent) {
         Stage stage = new Stage();
-        stage.setScene(new Scene(this.taskControlPanelComponent, 500, 400));
+        stage.setScene(new Scene(parent, 500, 400));
         stage.show();
     }
 
@@ -168,4 +196,6 @@ public class TaskInfoTableController implements Closeable {
     public void close() throws IOException {
 
     }
+
+    public void setNewTaskController(NewTaskController newTaskController) {this.newTaskController = newTaskController;}
 }

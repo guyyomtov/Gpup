@@ -97,6 +97,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
             this.newTaskController = loader.getController();
             this.newTaskController.initBabyComponents();
             newTaskController.setMainBorderPane(this.MainBorderPane);
+            this.taskInfoTableController.setNewTaskController(this.newTaskController);
         }
         catch (IOException e) {
         }

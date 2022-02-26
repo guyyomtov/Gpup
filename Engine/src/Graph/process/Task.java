@@ -135,16 +135,18 @@ public abstract class Task implements Serializable, Consumer<String>{
         }
         else
         {
-            for (Minion currMin : kids) {
-               // if (this.minionsChosenByUser.contains(currMin)) {
-                    if (!currMin.getStatus().equals("SUCCESS") || !currMin.getStatus().equals("WARNING")) {
-                        minionToUpdate.setStatus("FROZEN");
-                        minionToUpdate.setMyStatus("FROZEN");
-                        minionToUpdate.setiAmFinished(false);
-                        return;
-                    } else
-                        this.checkIfImWaitingOrFrozen(minionToUpdate,currMin);
-                //}
+            for (Minion currKid : kids) {
+                // if (this.minionsChosenByUser.contains(currMin)) {
+                if (!currKid.getStatus().equals("SUCCESS") && !currKid.getStatus().equals("WARNING")) {
+                    minionToUpdate.setStatus("FROZEN");
+                    minionToUpdate.setMyStatus("FROZEN");
+                    minionToUpdate.setiAmFinished(false);
+                    return;
+                } else
+                {
+                    this.checkIfImWaitingOrFrozen(minionToUpdate,currKid);
+
+                }
             }
         }
     }
@@ -160,6 +162,7 @@ public abstract class Task implements Serializable, Consumer<String>{
 
     private void updateMinions() {
         for(Minion minion : minions) {
+            minion.initMyKindsAndParents(this.minions);
             minion.setConsumer(this);
         }
     }
@@ -271,16 +274,24 @@ public abstract class Task implements Serializable, Consumer<String>{
     public void makeQueue() {
        // waitingList.clear();
         this.makeMapNameToInProcess();
-        for(Minion curM : this.minionsChosenByUser)
-            if(curM.getCanIRun() && !curM.imFinished()) {
+        for(Minion curM : this.minionsChosenByUser) {
+            boolean IWasInProcess = this.nameToWasInProcess.get(curM.getName());
+            if (curM.getCanIRun() && !curM.imFinished() && !IWasInProcess) {
                 waitingList.add(curM);
             }
+        }
     }
 
     public void makeMapNameToInProcess()
     {
         for(Minion minion : this.minionsChosenByUser){
-            this.nameToWasInProcess.put(minion.getName(), false);
+            String status = minion.getStatus();
+            if(status.equals("SUCCESS") || status.equals("WARNING")) {
+                this.nameToWasInProcess.put(minion.getName(), true);
+                minion.setiAmFinished(true);
+            }
+            else
+                this.nameToWasInProcess.put(minion.getName(), false);
         }
     }
 

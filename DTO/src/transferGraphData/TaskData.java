@@ -22,7 +22,8 @@ public class TaskData {
     private Integer totalPrice = new Integer(0);
     private Integer totalWorker = new Integer(0);
     private List<ExecuteTarget> executeTargetList = new ArrayList<>();
-
+    private List<ExecuteTarget> lastExecuteTargetsList = new ArrayList<>();
+    private Integer countTask = new Integer(0);
 
 
     public enum Status {
@@ -295,4 +296,11 @@ public class TaskData {
         this.executeTargetList = executeTargetList;
     }
 
+    public Integer getCountTask() { return countTask;}
+
+    public void setCountTask(Integer countTask) { this.countTask = countTask;}
+
+    public List<ExecuteTarget> getLastExecuteTargetsList() {return lastExecuteTargetsList;}
+
+    public void setLastExecuteTargetsList(List<ExecuteTarget> lastExecuteTargetsList) {this.lastExecuteTargetsList = lastExecuteTargetsList;}
 }

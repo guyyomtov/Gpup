@@ -182,7 +182,7 @@ public class NewTaskController {
         stage.close();
     }
 
-    private void sendTaskDataToServer(TaskData taskData) {
+    public void sendTaskDataToServer(TaskData taskData) {
 
         //make json
         String json = Constants.GSON_INSTANCE.toJson(taskData);

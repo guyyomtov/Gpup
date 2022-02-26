@@ -94,6 +94,7 @@ public class JobsManager implements Runnable, Consumer{
                 if(this.threadCounter <= this.maxThreads) {
                     executeTarget.setConsumerForLog(this.consumerForLogs);
                     executeTarget.setConsumerThreadsBack(this);
+                    executeTarget.getTaskName();
                     executorService.execute(executeTarget);
                     ++threadCounter;
                 }
@@ -122,8 +123,8 @@ public class JobsManager implements Runnable, Consumer{
             if(status == TaskData.Status.AVAILABLE)
                 this.callToServer(taskData);
             //delete task from worker
-            else if(status == TaskData.Status.DONE || status == TaskData.Status.STOPPED)
-                this.taskThatWorkerJoined.remove(taskData);
+            else if(status == TaskData.Status.DONE || status == TaskData.Status.STOPPED){}
+               // this.taskThatWorkerJoined.remove(taskData);
 
         }
     }

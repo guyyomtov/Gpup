@@ -97,7 +97,7 @@ public class TaskInfoTableController implements Closeable {
                     TaskData taskData = row.getItem();
                     TaskData.Status status = taskData.getStatus();
                     // if task is done let the user run incremental / from scratch
-                    if(status.equals(TaskData.Status.DONE)){
+                    if(status.equals(TaskData.Status.DONE) || status.equals(TaskData.Status.STOPPED)){
                         this.initAndUploadRunNewTaskComponent(taskData);
                         this.makeNewSceneForComponent(this.runTaskAgainComponent);
                     }
@@ -119,6 +119,7 @@ public class TaskInfoTableController implements Closeable {
                 this.runTaskAgainComponent = loader.load();
                 this.runTaskAgainController = loader.getController();
                 this.runTaskAgainController.init(taskData, this.newTaskController);
+
             }
             catch (IOException e) {
             }
@@ -143,9 +144,18 @@ public class TaskInfoTableController implements Closeable {
             this.taskControlPanelComponent = loader.load();
             this.taskControlPanelController = loader.getController();
             this.taskControlPanelController.init(taskData);
+            this.initButtonsAccordinglyToStatus(taskData);
         }
         catch (IOException e) {
         }
+    }
+
+    private void initButtonsAccordinglyToStatus(TaskData taskData) {
+        // user already been in control panel
+        if(taskData.getStatus().equals(TaskData.Status.AVAILABLE))
+            this.taskControlPanelController.setControlButtons(true, false, false, true);
+        else if(taskData.getStatus().equals(TaskData.Status.PAUSED))
+            this.taskControlPanelController.setControlButtons(true, true, false, false);
     }
 
 

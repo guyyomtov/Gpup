@@ -29,6 +29,7 @@ import transferGraphData.TaskData;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,6 +48,7 @@ public class AllTasksInfoTableController implements Closeable {
     @FXML private TableColumn<TaskData, Integer> totalPriceCol;
     @FXML private TableColumn<TaskData, Integer> totalWorkersCol;
     @FXML private TableColumn<TaskData, TaskData.Status> statusCol;
+    @FXML private TableColumn<TaskData, Boolean> registeredCol;
 
     private Timer timer;
     private TimerTask listRefresher;
@@ -80,11 +82,20 @@ public class AllTasksInfoTableController implements Closeable {
         Platform.runLater(() -> {
             ObservableList<TaskData> items = taskInfoTable.getItems();
                 items.clear();
+                updateIfIRegistered(taskDataList);
                 items = FXCollections.observableArrayList(taskDataList);
                 taskInfoTable.setItems(items);
                 totalGraph.set(taskDataList.size());
                 addListenerToRows();
         });
+    }
+
+    private void updateIfIRegistered(List<TaskData> taskDataList) {
+        Map<String, TaskData> nameToTaskIRegistered = this.jobsManager.makeMapOfTaskData(this.jobsManager.getTaskThatWorkerJoined());
+        for(TaskData taskData : taskDataList){
+            if(nameToTaskIRegistered.containsKey(taskData.getTaskName()))
+                taskData.setRegistered(true);
+        }
     }
 
     private void addListenerToRows() {
@@ -94,7 +105,11 @@ public class AllTasksInfoTableController implements Closeable {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     TaskData taskData = row.getItem();
-                    openNewJobPage(taskData);
+                    TaskData.Status status = taskData.getStatus();
+                    // check if he can register to task
+                    if(status.equals(TaskData.Status.AVAILABLE) || status.equals(TaskData.Status.PAUSED))
+                        if(!taskData.getRegistered())
+                            openNewJobPage(taskData);
                 }
             });
             return row;
@@ -152,8 +167,10 @@ public class AllTasksInfoTableController implements Closeable {
 
         totalWorkersCol.setCellValueFactory(new PropertyValueFactory<>("totalWorker"));
 
-        statusCol.setCellValueFactory(new PropertyValueFactory<>("status")
-        );
+        statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        registeredCol.setCellValueFactory(new PropertyValueFactory<>("registered"));
+
     }
 
     public void setJobsManager(JobsManager jobsManager) {

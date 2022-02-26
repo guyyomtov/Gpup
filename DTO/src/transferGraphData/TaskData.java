@@ -24,7 +24,7 @@ public class TaskData {
     private List<ExecuteTarget> executeTargetList = new ArrayList<>();
     private List<ExecuteTarget> lastExecuteTargetsList = new ArrayList<>();
     private Integer countTask = new Integer(0);
-
+    private Boolean registered = new Boolean(false); // only for using the worker UI dont use this field
 
     public enum Status {
         CREATED {
@@ -303,4 +303,8 @@ public class TaskData {
     public List<ExecuteTarget> getLastExecuteTargetsList() {return lastExecuteTargetsList;}
 
     public void setLastExecuteTargetsList(List<ExecuteTarget> lastExecuteTargetsList) {this.lastExecuteTargetsList = lastExecuteTargetsList;}
+
+    public Boolean getRegistered() {return registered;}
+
+    public void setRegistered(Boolean registered) {this.registered = registered;}
 }

@@ -1,6 +1,7 @@
 package DashBoard.NewJob;
 
 import DashBoard.AllTasksTable.AllTasksInfoTableController;
+import DashBoard.WorkerDashBoardController;
 import errors.ErrorUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -32,6 +33,7 @@ public class JobsManager implements Runnable, Consumer{
     private Queue<ExecuteTarget> waitingList;
     private Consumer consumerForLogs;
     private AllTasksInfoTableController allTasksInfoTableController;
+    private WorkerDashBoardController workerDashBoardController;
 
 
     public JobsManager(Integer maxThreads){
@@ -94,6 +96,7 @@ public class JobsManager implements Runnable, Consumer{
                 if(this.threadCounter <= this.maxThreads) {
                     executeTarget.setConsumerForLog(this.consumerForLogs);
                     executeTarget.setConsumerThreadsBack(this);
+                    executeTarget.setConsumerForAmountOfCredit(this.workerDashBoardController);
                     executeTarget.getTaskName();
                     executorService.execute(executeTarget);
                     ++threadCounter;
@@ -116,7 +119,7 @@ public class JobsManager implements Runnable, Consumer{
     private void updateWaitingList() {
         if(this.allTasksInfoTableController == null)
             return;
-        Map<String, TaskData> nameToTaskDataTheNewest = this.makeMapOfTaskData(); // maybe status change
+        Map<String, TaskData> nameToTaskDataTheNewest = this.makeMapOfTaskData(this.allTasksInfoTableController.getTaskDataList()); // maybe status change
         for(TaskData taskData : this.taskThatWorkerJoined) {
             TaskData.Status status = nameToTaskDataTheNewest.get(taskData.getTaskName()).getStatus();
             // only if the status is available get minions
@@ -129,9 +132,8 @@ public class JobsManager implements Runnable, Consumer{
         }
     }
 
-    private Map<String, TaskData> makeMapOfTaskData() {
+    public Map<String, TaskData> makeMapOfTaskData(List<TaskData> taskDataList) {
 
-        List<TaskData> taskDataList = this.allTasksInfoTableController.getTaskDataList();
         Map<String, TaskData> nameToTaskData = new HashMap<>();
         for(TaskData taskData : taskDataList){
             nameToTaskData.put(taskData.getTaskName(), taskData);
@@ -201,4 +203,12 @@ public class JobsManager implements Runnable, Consumer{
     }
 
     public List<TaskData> getTaskThatWorkerJoined(){ return this.taskThatWorkerJoined;}
+
+    public WorkerDashBoardController getWorkerDashBoardController() {
+        return workerDashBoardController;
+    }
+
+    public void setWorkerDashBoardController(WorkerDashBoardController workerDashBoardController) {
+        this.workerDashBoardController = workerDashBoardController;
+    }
 }

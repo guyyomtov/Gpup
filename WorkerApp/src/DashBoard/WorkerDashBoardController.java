@@ -5,6 +5,7 @@ import DashBoard.NewJob.JobsManager;
 import DashBoard.NewJob.NewJobController;
 import DashBoardAdmin.onlineAdminsComponent.OnlineAdminsController;
 import api.HttpStatusUpdate;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,9 +18,9 @@ import javafx.stage.Stage;
 import workerManager.WorkerManagerController;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
-public class WorkerDashBoardController implements HttpStatusUpdate {
-
+public class WorkerDashBoardController implements HttpStatusUpdate, Consumer {
     
     @FXML private BorderPane boarderPane;
     @FXML private TextField amountOfCreditsEarnedField;
@@ -50,8 +51,10 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
 
             this.initWorkManagerComponent();
 
+            this.amountOfCreditsEarnedField.setText("0");
             this.jobsManager.setConsumerForLogs(this.workerManagerController);
             this.jobsManager.setTaskRefresherForProcess(this.allTasksTableController);
+            this.jobsManager.setWorkerDashBoardController(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,8 +144,13 @@ public class WorkerDashBoardController implements HttpStatusUpdate {
         this.amountOfThreads = amountOfThreads;
     }
 
-    public void updateAmountOfThreadsTextField(Integer value) {
-        this.amountOfCreditsEarnedField.setText(String.valueOf(value));
+    @Override
+    public void accept(Object amountOfCredit) {
+        Platform.runLater(()->
+        {
+            Integer amountOfCreditTillNow = Integer.valueOf(this.amountOfCreditsEarnedField.getText());
+            Integer amountOfCreditFromCurrentTarget = (Integer) amountOfCredit;
+            this.amountOfCreditsEarnedField.setText(String.valueOf(amountOfCreditFromCurrentTarget + amountOfCreditTillNow));
+        });
     }
-
 }

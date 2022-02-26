@@ -48,7 +48,6 @@ public class NewJobController {
     void applyButtonAction(ActionEvent event) {
 
         jobsManager.addNewTask(taskData);
-
         // close current task window
         Stage stage = (Stage) applyButton.getScene().getWindow();
         stage.close();

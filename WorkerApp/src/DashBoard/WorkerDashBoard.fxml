@@ -24,7 +24,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label prefHeight="34.0" prefWidth="150.0" text="Amount of credits earned:">
+                  <Label prefHeight="34.0" prefWidth="187.0" text="Amount of credits earned:">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>

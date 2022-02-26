@@ -44,6 +44,8 @@ public class ExecuteTarget implements Runnable {
     private String logs;
     private Consumer consumerForLog;
     private Consumer consumerThreadIsBack;
+    private Consumer consumerForAmountOfCredit;
+    private Integer pricePerJob;
 
     //after user press start
     public ExecuteTarget(TaskData taskData, TargetInfo currentTargetInfo, Minion minion){
@@ -61,6 +63,7 @@ public class ExecuteTarget implements Runnable {
         this.generalInfo = currentTargetInfo.getInformation();
         this.taskName = taskData.getTaskName();
         this.graphName = taskData.getGraphName();
+        this.pricePerJob = taskData.getPricePerTarget();
     }
     // before the admin press start usr that
     public ExecuteTarget(TargetInfo currentTargetInfo){
@@ -95,6 +98,7 @@ public class ExecuteTarget implements Runnable {
         this.logs += outPut;
         consumerForLog.accept(outPut);
         this.consumerThreadIsBack.accept(true);
+        this.consumerForAmountOfCredit.accept(this.pricePerJob);
         this.sendTheResultToTheServer();
         //i think here we should update the thread counter
     }
@@ -256,6 +260,8 @@ public class ExecuteTarget implements Runnable {
         //make the gson
         this.consumerForLog = null;
         this.consumerThreadIsBack = null;
+        this.consumerForAmountOfCredit = null;
+
         Gson gson = new Gson();
         String executeTargetJson = gson.toJson(this);
         // making the body of the request
@@ -316,5 +322,13 @@ public class ExecuteTarget implements Runnable {
 
     public void setConsumerThreadsBack(Consumer threadIsBack) {
         this.consumerThreadIsBack = threadIsBack;
+    }
+
+    public Consumer getConsumerForAmountOfCredit() {
+        return consumerForAmountOfCredit;
+    }
+
+    public void setConsumerForAmountOfCredit(Consumer consumerForAmountOfCredit) {
+        this.consumerForAmountOfCredit = consumerForAmountOfCredit;
     }
 }

@@ -141,7 +141,7 @@ public class TaskControlPanelController {
         this.setControlButtons(true, false, false, true);
     }
 
-    private void setControlButtons(boolean disableStart, boolean disablePause, boolean disableStop, boolean disableResume) {
+    public void setControlButtons(boolean disableStart, boolean disablePause, boolean disableStop, boolean disableResume) {
 
         this.startButton.setDisable(disableStart);
         this.pauseButton.setDisable(disablePause);
@@ -224,4 +224,5 @@ public class TaskControlPanelController {
             }
         });
     }
+
 }

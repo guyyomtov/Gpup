@@ -120,7 +120,6 @@ public class LoginPageController {
         dashBoardController.setPrimaryStage(this.primaryStage);
         dashBoardController.setAmountOfThreads(this.threadSpinnerButton.getValue());
         dashBoardController.init();
-        dashBoardController.updateAmountOfThreadsTextField(this.threadSpinnerButton.getValue());
         Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
         primaryStage.setScene(scene);
     }

@@ -9,9 +9,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import transferGraphData.TaskData;
+import workerManager.WorkerManagerController;
 
 import java.util.*;
 
@@ -29,13 +31,19 @@ public class TaskWorkerTableController {
     private TimerTask listRefresher;
     private BooleanProperty autoUpdate;
     private HttpStatusUpdate httpStatusUpdate;
+    private WorkerManagerController dadComponent;
 
 
 
-    public void initTable(JobsManager jobsManager){
+    public void initTable(JobsManager i_jobsManager, WorkerManagerController i_dadComponent){
 
-        this.jobsManager = jobsManager;
+        // start for control panel
+        this.dadComponent = i_dadComponent;
 
+        // start needed data
+        this.jobsManager = i_jobsManager;
+
+        // start columns factory
          taskNameCol.setCellValueFactory(new PropertyValueFactory<>("taskName"));
          workerAmountCol.setCellValueFactory(new PropertyValueFactory<>("amountOfWorkers"));
          progressCol.setCellValueFactory(new PropertyValueFactory<>("progress"));
@@ -61,17 +69,48 @@ public class TaskWorkerTableController {
         Platform.runLater(() -> {
 
             try {
-                List<MyTasksTableData> myTasksTableDataList = this.createList(jM);
-
+                // clear old data
                 this.taskInfoTable.getItems().clear();
 
+                // create new rows
+                List<MyTasksTableData> myTasksTableDataList = this.createList(jM);
                 ObservableList<MyTasksTableData> items = FXCollections.observableArrayList(myTasksTableDataList);
-
                 this.taskInfoTable.setItems(items);
+
+                //add listener for each row
+                this.addListenerAndActionToRows();
+
             } catch (ErrorUtils e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    private void addListenerAndActionToRows() {
+
+        this.taskInfoTable.setRowFactory(tmp -> {
+
+            TableRow<MyTasksTableData> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+
+                    // get wanted row
+                    MyTasksTableData wantedRowTaskData = row.getItem();
+
+                    // init control panel
+                    try {
+                        this.dadComponent.ControlPanelFor(wantedRowTaskData);
+                    } catch (ErrorUtils e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return row;
+        });
+    }
+
+    private void openWorkerControlPanelPage() {
+
     }
 
     private List<MyTasksTableData> createList(JobsManager jM) throws ErrorUtils {

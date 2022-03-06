@@ -469,7 +469,7 @@ public class BackDataManager implements DataManager {
             executeTargetsToSend = this.findExecuteTargetsToSend(executeTargetList, currentTask);
             taskData.setExecuteTargetList(executeTargetList);
         }
-        this.checkIfTaskIsDone(taskData);
+        synchronized (this){this.checkIfTaskIsDone(taskData);}
         return executeTargetsToSend;
     }
 
@@ -525,7 +525,7 @@ public class BackDataManager implements DataManager {
         Queue<Minion> waitingList = task.getWaitingList();
         List<Minion> minionsToSend = new ArrayList<>();
         synchronized (this) {
-            while (!waitingList.isEmpty() && amountOfThreads != minionsToSend.size()) {
+            while (!waitingList.isEmpty() && amountOfThreads > minionsToSend.size()) {
                 Minion minion = waitingList.poll();
                 minion.setStatus("IN PROCESS");
                 // because I send him to run and I don't want it will run again, he can't run twice!

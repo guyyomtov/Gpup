@@ -96,7 +96,7 @@ public class LoginPageController {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
                     Platform.runLater(() ->
-                            errorMessageProperty.set("Something went wrong: " + responseBody)
+                            errorMessageProperty.set(responseBody)
                     );
                 } else {
                     Platform.runLater(() -> {
@@ -114,14 +114,16 @@ public class LoginPageController {
     private void switchToDashBoard() throws IOException {
 
         // This takes us to worker dashboard
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(DASHBOARD_FXML));
-        Parent load = loader.load();
-        WorkerDashBoardController dashBoardController= (WorkerDashBoardController) loader.getController();
-        dashBoardController.setPrimaryStage(this.primaryStage);
-        dashBoardController.setAmountOfThreads(this.threadSpinnerButton.getValue());
-        dashBoardController.init(this.userNameTextField.getText());
-        Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
-        primaryStage.setScene(scene);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(DASHBOARD_FXML));
+            Parent load = loader.load();
+            WorkerDashBoardController dashBoardController = (WorkerDashBoardController) loader.getController();
+            dashBoardController.setPrimaryStage(this.primaryStage);
+            dashBoardController.setAmountOfThreads(this.threadSpinnerButton.getValue());
+            dashBoardController.init(this.userNameTextField.getText());
+            Scene scene = new Scene(load, primaryStage.getWidth(), primaryStage.getHeight());
+            primaryStage.setScene(scene);
+        }catch (Exception e){}
     }
 
     private String makeUrl(String urlPath, String queryParameter1Name, String queryParameter1Value) throws ErrorUtils {

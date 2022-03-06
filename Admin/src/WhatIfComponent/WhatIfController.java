@@ -1,9 +1,8 @@
 package WhatIfComponent;
 
 import AnimationComponent.SkinsUtils;
-import DashBoardAdmin.MainDashboardController2;
+import DashBoardAdmin.MainDashboardController;
 import DataManager.BackDataManager;
-import Graph.Target;
 import errors.ErrorUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,7 +23,6 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import transferGraphData.AllGraphInfo;
 import transferGraphData.TargetInfo;
-import util.AlertMessage;
 import util.Constants;
 import util.http.HttpClientUtil;
 
@@ -120,7 +118,7 @@ public class WhatIfController {
                     .newBuilder()
                     .addQueryParameter("src", srcV)
                     .addQueryParameter("relationship",relationshipType)
-                    .addQueryParameter("graphname", MainDashboardController2.currGraphName)
+                    .addQueryParameter("graphname", MainDashboardController.currGraphName)
                     .build()
                     .toString();
 

@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -14,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="MainBorderPane" prefHeight="879.0" prefWidth="1159.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DashBoardAdmin.MainDashboardController2">
+<BorderPane fx:id="MainBorderPane" prefHeight="879.0" prefWidth="1159.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DashBoardAdmin.MainDashboardController">
    <left>
       <VBox prefHeight="748.0" prefWidth="132.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
@@ -30,18 +29,7 @@
    <top>
       <MenuBar prefWidth="564.0" BorderPane.alignment="CENTER">
          <menus>
-            <Menu mnemonicParsing="false" text="File">
-               <items>
-                  <MenuItem fx:id="dashboardButton" mnemonicParsing="false" onAction="#dashboardButtonAction" text="Upload File" />
-               </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Skins">
-               <items>
-                  <MenuItem mnemonicParsing="false" onAction="#defualtSkinAction" text="Defualt" />
-                  <MenuItem mnemonicParsing="false" onAction="#blueSkinAction" text="Blue" />
-                  <MenuItem mnemonicParsing="false" onAction="#redSkinAction" text="Red" />
-               </items>
-            </Menu>
+            <Menu fx:id="userNameAdminLabel" mnemonicParsing="false" text="Hello name" />
          </menus>
       </MenuBar>
    </top>

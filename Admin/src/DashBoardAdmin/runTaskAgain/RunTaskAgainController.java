@@ -1,8 +1,6 @@
 package DashBoardAdmin.runTaskAgain;
 
-import DashBoardAdmin.MainDashboardController2;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import DashBoardAdmin.MainDashboardController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -35,13 +33,9 @@ public class RunTaskAgainController {
     private void updateTheRelevantInformation() {
         Integer countTask = this.taskData.getCountTask();
         String taskName = this.taskData.getTaskName();
-        this.taskData.setUploadedBy(MainDashboardController2.userName);
-        if(countTask > 0){
-            String[] s = taskName.split(" ");
-            taskName = s[0];
-        }
+        this.taskData.setUploadedBy(MainDashboardController.userName);
         this.taskData.setCountTask(countTask + 1);
-        this.taskData.setTaskName(taskName + " " + String.valueOf(this.taskData.getCountTask()));
+       // this.taskData.setTaskName(taskName + " " + String.valueOf(this.taskData.getCountTask()));
         this.taskData.setStatus(TaskData.Status.CREATED);
     }
 
@@ -49,9 +43,13 @@ public class RunTaskAgainController {
     void incrementalButtonAction(ActionEvent event) {
         this.updateTheRelevantInformation();
         this.taskData.setFromScratch(false);
-        this.taskData.setLastExecuteTargetsList(this.taskData.getExecuteTargetList());
         this.newTaskController.sendTaskDataToServer(this.taskData);
-        this.closeWindow();
+        this.closeWindowIncremental();
+    }
+
+    private void closeWindowIncremental() {
+        Stage stage = (Stage) incrementalButton.getScene().getWindow();
+        stage.close();
     }
 
     public void closeWindow(){

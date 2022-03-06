@@ -117,7 +117,7 @@ public class JobsManager implements Runnable, Consumer{
 
             if(executeTarget != null) {
 
-                if(this.threadCounter <= this.maxThreads) {
+                if(this.threadCounter < this.maxThreads) {
 
                     // set consumers
                     executeTarget.setConsumerForLog(this.consumerForLogs);
@@ -132,6 +132,7 @@ public class JobsManager implements Runnable, Consumer{
 
                     // update thread counter
                     ++threadCounter;
+                    this.workerDashBoardController.updateFreeThreadsField();
 
                     // find relevant task
                     TaskData relevantTask = this.findRelevantTask(executeTarget.getTaskName(), this.taskThatWorkerJoined);
@@ -151,7 +152,7 @@ public class JobsManager implements Runnable, Consumer{
 
             // slow down the requests
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -201,7 +202,7 @@ public class JobsManager implements Runnable, Consumer{
             String workerTaskStatus = this.getWorkerTaskStatusFrom(taskData);
 
             // only if the status is available in admin & in worker get minions
-            if(adminTaskStatus == TaskData.Status.AVAILABLE && workerTaskStatus.equals(AVAILABLE_TASK))
+            if(adminTaskStatus.equals(TaskData.Status.AVAILABLE) && workerTaskStatus.equals(AVAILABLE_TASK))
                 this.callToServer(taskData);
             //delete task from worker
             else if(adminTaskStatus == TaskData.Status.DONE || adminTaskStatus == TaskData.Status.STOPPED){}

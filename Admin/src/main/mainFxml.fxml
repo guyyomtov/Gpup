@@ -29,7 +29,6 @@
                <rowConstraints>
                   <RowConstraints vgrow="NEVER" />
                   <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="NEVER" />
-                  <RowConstraints maxHeight="1.7976931348623157E308" minHeight="20.0" prefHeight="20.0" vgrow="ALWAYS" />
                   <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" vgrow="NEVER" />
                </rowConstraints>
                <children>
@@ -39,18 +38,18 @@
                      </GridPane.margin>
                   </Label>
                   <TextField fx:id="userNameTextField" onKeyTyped="#userNameKeyTyped" GridPane.columnIndex="1" />
-                  <HBox alignment="CENTER" prefHeight="103.0" prefWidth="488.0" spacing="15.0" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                  <HBox alignment="CENTER" prefHeight="103.0" prefWidth="488.0" spacing="15.0" GridPane.columnSpan="2" GridPane.rowIndex="2">
                      <children>
                         <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginButtonClicked" styleClass="main-action-button" text="Login" />
                         <Button id="quit-button" mnemonicParsing="false" onAction="#quitButtonClicked" styleClass="main-action-button" text="Quit" />
                      </children>
                   </HBox>
-                  <Label fx:id="errorMessageLabel" maxWidth="1.7976931348623157E308" styleClass="error-label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </GridPane>
+            <Label fx:id="errorMessageLabel" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="798.0" styleClass="error-label" wrapText="true" />
          </children>
       </VBox>
    </content>

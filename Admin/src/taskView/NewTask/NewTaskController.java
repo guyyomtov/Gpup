@@ -1,8 +1,7 @@
 package taskView.NewTask;
 
-import DashBoardAdmin.MainDashboardController2;
+import DashBoardAdmin.MainDashboardController;
 import DashBoardAdmin.TaskInfoTableComponent.TaskInfoTableController;
-import Graph.process.Task;
 import errors.ErrorUtils;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -12,15 +11,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.Response;
+import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import tableView.TableController;
 import taskView.compilationComponent.CompilationController;
@@ -186,17 +181,24 @@ public class NewTaskController {
 
         //make json
         String json = Constants.GSON_INSTANCE.toJson(taskData);
-
+//        RequestBody body = new MultipartBody.Builder()
+//                .addFormDataPart("taskDataObject", json)
+//                .build();
         //make url
         String finalUrl = HttpUrl
                 .parse(Constants.UPLOAD_TASK)
                 .newBuilder()
-                .addQueryParameter("taskDataObject", json)
+                //.addQueryParameter("taskDataObject", json)
                 .build()
                 .toString();
 
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                        .post(RequestBody.create(json.getBytes()))
+                                .build();
+
         // make a request
-        HttpClientUtil.runAsync(finalUrl, new Callback() {
+        HttpClientUtil.runPostRequest(request, new Callback() {
 
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -211,7 +213,7 @@ public class NewTaskController {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
                     Platform.runLater(() ->
-                            ErrorUtils.makeJavaFXCutomAlert("Something went wrong: " + responseBody)
+                            ErrorUtils.makeJavaFXCutomAlert("Something went wrong: please chose different name.")
                     );
                     System.out.println("we failed " + response.code());
                 } else {
@@ -233,11 +235,11 @@ public class NewTaskController {
 
         TaskData taskData = new TaskData();
         taskData.setTaskName(this.taskNameTextInput.getText());
-        taskData.setGraphName(MainDashboardController2.currGraphName);
+        taskData.setGraphName(MainDashboardController.currGraphName);
         taskData.setTargetInfoList(this.targetTableController.getTargetInfoThatUserSelected());
         taskData.setStatus(TaskData.Status.CREATED);
         taskData.setWhatKindOfTask(this.compilationRB.isSelected() ? COMPILATION : SIMULATION);
-        taskData.setUploadedBy(MainDashboardController2.userName);
+        taskData.setUploadedBy(MainDashboardController.userName);
         taskData.setFromScratch(true);
         taskData.setPricePerTarget(this.getPricePerTarget());
         taskData.calculateTotalPrice();

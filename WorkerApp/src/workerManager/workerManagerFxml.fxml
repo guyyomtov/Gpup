@@ -40,8 +40,7 @@
                            <children>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                  <children>
-                                    <Label prefHeight="21.0" prefWidth="193.0" text="Amount of available threads:" />
-                                    <Label fx:id="amountOfThreadsLabel" prefHeight="21.0" prefWidth="57.0" text="num" />
+                                    <Label prefHeight="21.0" prefWidth="193.0" />
                                  </children>
                               </HBox>
                               <HBox prefHeight="100.0" prefWidth="1110.0">

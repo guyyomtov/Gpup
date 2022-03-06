@@ -4,10 +4,7 @@ import errors.ErrorUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -31,6 +28,7 @@ import java.util.logging.ErrorManager;
 public class NewJobController {
 
 
+    @FXML public TextField jobNameTextField;
     @FXML private TitledPane newJobTitlePane;
     @FXML private Spinner<Integer> amountOfTargetsSpinner;
     @FXML private Spinner<Integer> amountOfThreadsSpinner;
@@ -68,5 +66,9 @@ public class NewJobController {
 
     public void setJobsManager(JobsManager jobsManager) {
         this.jobsManager = jobsManager;
+    }
+
+    public void init() {
+        this.jobNameTextField.setText(this.taskData.getTaskName());
     }
 }

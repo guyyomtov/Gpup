@@ -27,7 +27,6 @@ public class WorkerManagerController implements Consumer, HttpStatusUpdate{
     @FXML private Button pauseButton;
     @FXML private Button playButton;
     @FXML private Button stopButton;
-    @FXML private Label amountOfThreadsLabel;
     @FXML private TextArea textAreaForLooger;
     @FXML private Parent taskWorkerTable;
     @FXML private TaskWorkerTableController taskWorkerTableController;
@@ -43,7 +42,7 @@ public class WorkerManagerController implements Consumer, HttpStatusUpdate{
         this.jobsManager = jobsManager;
 
         this.amountOfThreads = amountOfThreads;
-        amountOfThreadsLabel.setText(String.valueOf(amountOfThreads));
+
 
         // start value factory
         this.taskWorkerTableController.initTable(this.jobsManager, this);

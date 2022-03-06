@@ -1,9 +1,8 @@
 package FindPathComponent;
 
 import AnimationComponent.SkinsUtils;
-import DashBoardAdmin.MainDashboardController2;
+import DashBoardAdmin.MainDashboardController;
 import DataManager.BackDataManager;
-import Graph.Target;
 import api.HttpStatusUpdate;
 import errors.ErrorUtils;
 import javafx.application.Platform;
@@ -22,7 +21,6 @@ import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
-import sun.net.www.http.HttpClient;
 import transferGraphData.AllGraphInfo;
 import transferGraphData.TargetInfo;
 import util.AlertMessage;
@@ -97,7 +95,7 @@ public class FindPathController implements HttpStatusUpdate {
                     .addQueryParameter("src", srcV)
                     .addQueryParameter("dest", dstV)
                     .addQueryParameter("relationship",relationShipNeededSyntax)
-                    .addQueryParameter("graphname", MainDashboardController2.currGraphName)
+                    .addQueryParameter("graphname", MainDashboardController.currGraphName)
                     .build()
                     .toString();
 

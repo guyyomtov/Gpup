@@ -15,10 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
@@ -44,16 +41,16 @@ import java.util.Map;
 
 import static util.Constants.GSON_INSTANCE;
 
-public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
+public class MainDashboardController implements Closeable, HttpStatusUpdate {
 
 
+    @FXML private Menu userNameAdminLabel;
     private AllGraphInfo allGraphInfo;
     private Stage primaryStage;
     @FXML public Button interrogatorButton;
     @FXML private BorderPane MainBorderPane;
     @FXML private Button uploadFileButton;
     @FXML private Button newAssignmentButton;
-    @FXML private MenuItem dashboardButton;
     @FXML private Parent graphInfoTable;
     @FXML private GraphInfoTableController graphInfoTableController;
     @FXML private Parent taskInfoTable;
@@ -84,6 +81,7 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
 
     public void initComponents() {
 
+        this.userNameAdminLabel.setText("Hello " + userName);
         this.initLeftSide();
         this.initNewAssignment();
     }
@@ -167,15 +165,6 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
         });
     }
 
-    @FXML
-    void blueSkinAction(ActionEvent event) {
-
-    }
-
-    @FXML
-    void defualtSkinAction(ActionEvent event) {
-
-    }
 
     @FXML
     void newAssignmentButtonAction(ActionEvent event) throws ErrorUtils {
@@ -254,10 +243,6 @@ public class MainDashboardController2 implements Closeable, HttpStatusUpdate {
         stage.show();
     }
 
-    @FXML
-    void redSkinAction(ActionEvent event) {
-
-    }
 
     public void setActive() {
         this.onlineAdminController.setHttpStatusUpdate(this);

@@ -1,7 +1,7 @@
 package FindCircleComponent;
 
 import AnimationComponent.SkinsUtils;
-import DashBoardAdmin.MainDashboardController2;
+import DashBoardAdmin.MainDashboardController;
 import DataManager.BackDataManager;
 import Graph.Target;
 import errors.ErrorUtils;
@@ -64,7 +64,7 @@ public class FindCircleController {
                     .parse(Constants.FIND_CIRCLE)
                     .newBuilder()
                     .addQueryParameter("src", tName)
-                    .addQueryParameter("graphname", MainDashboardController2.currGraphName)
+                    .addQueryParameter("graphname", MainDashboardController.currGraphName)
                     .build()
                     .toString();
 

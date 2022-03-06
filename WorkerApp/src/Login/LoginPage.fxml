@@ -22,7 +22,7 @@
                   <Font size="32.0" />
                </font>
             </Label>
-            <GridPane hgap="3.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="192.0" prefWidth="303.0" vgap="3.0">
+            <GridPane hgap="3.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="192.0" prefWidth="342.0" vgap="3.0">
                <columnConstraints>
                   <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
                   <ColumnConstraints hgrow="ALWAYS" />
@@ -46,7 +46,6 @@
                         <Button id="quit-button" mnemonicParsing="false" onAction="#quitButtonClicked" styleClass="main-action-button" text="Quit" />
                      </children>
                   </HBox>
-                  <Label fx:id="errorMessageLabel" maxWidth="1.7976931348623157E308" styleClass="error-label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label maxWidth="1.7976931348623157E308" minWidth="-Infinity" text="How Many Threads:" GridPane.rowIndex="2" />
                   <Spinner fx:id="threadSpinnerButton" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                </children>
@@ -54,6 +53,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </GridPane>
+            <Label fx:id="errorMessageLabel" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="159.0" styleClass="error-label" wrapText="true" />
          </children>
       </VBox>
    </content>

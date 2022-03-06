@@ -129,6 +129,7 @@ public class AllTasksInfoTableController implements Closeable {
             //set job component data
             this.newJobController.setTaskData(taskData);
             this.newJobController.setJobsManager(this.jobsManager);
+            this.newJobController.init();
 
             //open component in new page
             Stage stage = new Stage();

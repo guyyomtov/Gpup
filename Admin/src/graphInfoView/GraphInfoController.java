@@ -30,17 +30,13 @@ public class GraphInfoController {
 
     @FXML private ScrollPane welcomeView;
     @FXML private GridPane gridPane;
-    @FXML private ChoiceBox<String> choiceBoxSerialSets;
     @FXML private BarChart<String, Integer> barChart;
     @FXML private Label resultOfChoiceBox;
     @FXML private Label summaryTable;
     @FXML private Label summaryBy;
     @FXML private TextField wantedUserPath;
     private List<Label> labels = new ArrayList<>();
-    @FXML private CheckBox whatIfCheckBox;
     private List<CheckBox> checkBoxes = new ArrayList<>();
-    @FXML private RadioButton dependsOnButton;
-    @FXML private RadioButton requiredForButton;
     private List<RadioButton> radioButtons = new ArrayList<>();
     private boolean tableIsFull = false;
     @FXML private Parent tableComponent;
@@ -63,8 +59,7 @@ public class GraphInfoController {
         this.initSummary();
         this.initBarChart();
 
-        this.radioButtons = Arrays.asList(this.dependsOnButton, this.requiredForButton);
-        this.checkBoxes = Arrays.asList(this.whatIfCheckBox);
+
         this.labels = Arrays.asList(this.resultOfChoiceBox, this.summaryBy, this.summaryTable);
 
         this.initAnimation();
@@ -106,17 +101,7 @@ public class GraphInfoController {
 
     }
 
-    @FXML
-    void whatIfCheckBoxAction(ActionEvent event){
-        if(this.whatIfCheckBox.isSelected()) {
-            this.dependsOnButton.setDisable(false);
-            this.requiredForButton.setDisable(false);
-        }
-        else{
-            this.dependsOnButton.setDisable(true);
-            this.requiredForButton.setDisable(true);
-        }
-    }
+
 
 
     public TableController getTableComponentController(){ return this.tableComponentController;}
@@ -125,13 +110,6 @@ public class GraphInfoController {
         this.bDM = bDM;
     }
 
-    public CheckBox getWhatIfCheckBox() {
-        return this.whatIfCheckBox;
-    }
-
-    public RadioButton getDependsOnRadioButton(){
-        return this.dependsOnButton;
-    }
 
     public BackDataManager getbDM(){
         return this.bDM;

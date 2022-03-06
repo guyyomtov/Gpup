@@ -79,7 +79,7 @@ public class MainAdminController {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
                     Platform.runLater(() ->
-                            errorMessageProperty.set("Something went wrong: " + responseBody)
+                            errorMessageProperty.set(responseBody)
                     );
                     System.out.println("we failed " + response.code());
                 } else {
@@ -95,6 +95,7 @@ public class MainAdminController {
 
         });
     }
+
     // open "c:\gpup-working-dir" directory in the beginning of the application
     private void openDirectory() {
 
@@ -130,9 +131,9 @@ public class MainAdminController {
             //this.testUploadFile();
 
             // This takes us to Admin dashboard
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardAdmin/MainDashBoard2Fxml.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardAdmin/mainDashboard2Fxml.fxml"));
             Parent load = loader.load();
-            MainDashboardController2 dashBoardController = (MainDashboardController2) loader.getController();
+            MainDashboardController dashBoardController = loader.getController();
             dashBoardController.setPrimaryStage(this.primaryStage);
             dashBoardController.setActive();
             dashBoardController.setUserName(userNameTextField.getText());

@@ -1,6 +1,6 @@
 package DashBoardAdmin.TaskInfoTableComponent;
 
-import DashBoardAdmin.MainDashboardController2;
+import DashBoardAdmin.MainDashboardController;
 import DashBoardAdmin.runTaskAgain.RunTaskAgainController;
 import api.HttpStatusUpdate;
 import javafx.application.Platform;
@@ -102,7 +102,7 @@ public class TaskInfoTableController implements Closeable {
                         this.makeNewSceneForComponent(this.runTaskAgainComponent);
                     }
                     // if the admin press on task that he created.
-                    else if(MainDashboardController2.userName.equals(taskData.getUploadedBy())) {
+                    else if(MainDashboardController.userName.equals(taskData.getUploadedBy())) {
                         this.initAndUploadTaskControlPanel(taskData);
                         this.makeNewSceneForComponent(this.taskControlPanelComponent);
                     }
@@ -128,7 +128,7 @@ public class TaskInfoTableController implements Closeable {
 
     private void makeNewSceneForComponent(Parent parent) {
         Stage stage = new Stage();
-        stage.setScene(new Scene(parent, 500, 400));
+        stage.setScene(new Scene(parent, 800, 800));
         stage.show();
     }
 

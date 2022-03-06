@@ -23,7 +23,7 @@ public class MainAdmin extends Application {
 
         primaryStage.setMinHeight(600);
         primaryStage.setMinWidth(600);
-        primaryStage.setTitle("Chat App Client");
+        primaryStage.setTitle("Admin App");
 
         URL loginPage = getClass().getResource(MAIN_PAGE_FXML_RESOURCE_LOCATION);
         try {

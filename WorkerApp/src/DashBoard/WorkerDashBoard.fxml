@@ -14,7 +14,7 @@
    <content>
       <BorderPane fx:id="boarderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="1000.0" minWidth="2000.0" prefHeight="400.0" prefWidth="600.0">
          <top>
-            <HBox prefHeight="38.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <HBox prefHeight="38.0" prefWidth="600.0" spacing="5.0" BorderPane.alignment="CENTER">
                <children>
                   <Label prefHeight="33.0" prefWidth="105.0" text="Worker App">
                      <font>
@@ -24,6 +24,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
+                  <Label fx:id="workerNameLabel" prefHeight="38.0" prefWidth="92.0" text="Hello worker name" />
                   <Label prefHeight="34.0" prefWidth="187.0" text="Amount of credits earned:">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -37,6 +38,8 @@
                         <Insets top="5.0" />
                      </HBox.margin>
                   </TextField>
+                  <Label prefHeight="38.0" prefWidth="95.0" text="Free Threads" />
+                  <TextField fx:id="freeThreadsTextField" prefHeight="31.0" prefWidth="88.0" />
                </children>
             </HBox>
          </top>

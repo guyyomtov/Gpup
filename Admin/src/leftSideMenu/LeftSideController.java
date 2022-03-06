@@ -1,10 +1,8 @@
 package leftSideMenu;
 
-import DashBoardAdmin.GraphsInfoTableComponent.GraphInfoTableController;
-import DashBoardAdmin.MainDashboardController2;
+import DashBoardAdmin.MainDashboardController;
 import InterrogatorComponent.InterrogatorController;
 import graphInfoView.GraphInfoController;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,7 +21,7 @@ public class LeftSideController {
     private AllGraphInfo allGraphInfo;
 
     private BorderPane mainBorderPane;
-    private MainDashboardController2 mainDashboardController;
+    private MainDashboardController mainDashboardController;
 
     private GraphInfoController graphInfoController;
     private Node graphInfoView;
@@ -109,7 +107,7 @@ public class LeftSideController {
     }
 
 
-    public void setMainDashboardController(MainDashboardController2 mainDashboardController) {
+    public void setMainDashboardController(MainDashboardController mainDashboardController) {
         this.mainDashboardController = mainDashboardController;
     }
 }

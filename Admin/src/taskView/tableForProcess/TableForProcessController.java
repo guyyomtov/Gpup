@@ -1,6 +1,5 @@
 package taskView.tableForProcess;
 
-import DashBoardAdmin.MainDashboardController2;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,7 +9,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import transferGraphData.ExecuteTarget;
-import transferGraphData.TaskData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,16 +74,17 @@ public class TableForProcessController {
         switch (status){
 
             case "SKIPPED":
+                liveData+= "The status is : " + executeTarget.getStatus() + "\n";
                 liveData += "skipped because: " + executeTarget.getISkippedBecause().toString() + "\n";
 
                 break;
 
             case "WAITING":
-
+                liveData+= "The status is : " + executeTarget.getStatus() + "\n";
                 break;
 
             case "IN PROCESS":
-
+                liveData+= "The status is : " + executeTarget.getStatus() + "\n";
                 break;
 
             case "Not initialized":
@@ -94,7 +93,7 @@ public class TableForProcessController {
                 break;
 
             case "FROZEN":
-                liveData += "frozen because: " + executeTarget.getISkippedBecause().toString() + "\n";
+                liveData+= "The status is : " + executeTarget.getStatus() + "\n";
                 break;
 
             default: // is finished
